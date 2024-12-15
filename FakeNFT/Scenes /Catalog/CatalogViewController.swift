@@ -1,6 +1,6 @@
 import UIKit
 
-final class TestCatalogViewController: UIViewController {
+final class CatalogViewController: UIViewController {
 
     let servicesAssembly: ServicesAssembly
     let testNftButton = UIButton()
@@ -17,7 +17,7 @@ final class TestCatalogViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .yWhite
 
         view.addSubview(testNftButton)
         testNftButton.constraintCenters(to: view)
