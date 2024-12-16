@@ -27,8 +27,8 @@ final class AlertPresenter {
         viewController.present(alertController, animated: true, completion: nil)
     }
     
-    static func presentSortOptions(on viewController: UIViewController, title: String?, message: String?, cancelActionTitle: String, options: [String], selectionHandler: @escaping (String) -> Void) {
-        let alertController = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
+    static func presentSortOptions(on viewController: UIViewController, title: String?, cancelActionTitle: String, options: [String], selectionHandler: @escaping (String) -> Void) {
+        let alertController = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
 
         for option in options {
             let action = UIAlertAction(title: option, style: .default) { _ in
