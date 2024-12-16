@@ -6,7 +6,6 @@ protocol NftDetailView: AnyObject, ErrorView, LoadingView {
 }
 
 final class NftDetailViewController: UIViewController {
-
     private let presenter: NftDetailPresenter
 
     private lazy var collectionView: UICollectionView = {

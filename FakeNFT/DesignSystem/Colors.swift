@@ -1,7 +1,6 @@
 import UIKit
 
 extension UIColor {
-    
     // Semantic Colors
     static let primary = UIColor.yBlueUniversal
     static let secondary = UIColor.yYellowUniversal
