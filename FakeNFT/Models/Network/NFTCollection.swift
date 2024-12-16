@@ -1,13 +1,6 @@
-//
-//  Collections.swift
-//  FakeNFT
-//
-//  Created by Ilya Kalin on 16.12.2024.
-//
-
 import Foundation
 
-struct nftCollection: Decodable {
+struct NftCollection: Decodable {
     let createdAt: String
     let name: String
     let cover: String
