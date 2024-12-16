@@ -1,10 +1,3 @@
-//
-//  RatingView.swift
-//  FakeNFT
-//
-//  Created by Simon Butenko on 16.12.2024.
-//
-
 import SnapKit
 import Then
 import UIKit
