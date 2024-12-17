@@ -467,7 +467,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				C1433DA42D0FFAB100DAEE08 /* PBXTargetDependency */,
+				C10A0B5B2D11CBA600260F9C /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				F0D9D5202D0DAFF7004307C7 /* Helpers */,
@@ -544,12 +544,12 @@
 			};
 			buildConfigurationList = 3F68068E29CBBAF100B4F915 /* Build configuration list for PBXProject "FakeNFT" */;
 			compatibilityVersion = "Xcode 14.0";
-			developmentRegion = ru;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				en,
 				Base,
 				ru,
+				en,
 			);
 			mainGroup = 3F68068A29CBBAF100B4F915;
 			packageReferences = (
@@ -557,7 +557,8 @@
 				3F603CCE29DB4A74000C43D7 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				C1008F942D101B7400F990FF /* XCRemoteSwiftPackageReference "Then" */,
 				C1008F972D101B8900F990FF /* XCRemoteSwiftPackageReference "SnapKit" */,
-				C1433DA22D0F68DA00DAEE08 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
+				C1E19B472D11C97F00E9E0DE /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
+				C10A0B592D11CB7900260F9C /* XCRemoteSwiftPackageReference "xcstrings-tool-plugin" */,
 			);
 			productRefGroup = 3F68069429CBBAF100B4F915 /* Products */;
 			projectDirPath = "";
@@ -704,9 +705,9 @@
 			target = 3F68069229CBBAF100B4F915 /* FakeNFT */;
 			targetProxy = 3F6806B429CBBAF200B4F915 /* PBXContainerItemProxy */;
 		};
-		C1433DA42D0FFAB100DAEE08 /* PBXTargetDependency */ = {
+		C10A0B5B2D11CBA600260F9C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			productRef = C1433DA32D0FFAB100DAEE08 /* SwiftLintBuildToolPlugin */;
+			productRef = C10A0B5A2D11CBA600260F9C /* XCStringsToolPlugin */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1052,7 +1053,15 @@
 				minimumVersion = 5.7.1;
 			};
 		};
-		C1433DA22D0F68DA00DAEE08 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
+		C10A0B592D11CB7900260F9C /* XCRemoteSwiftPackageReference "xcstrings-tool-plugin" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/liamnichols/xcstrings-tool-plugin";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+		C1E19B472D11C97F00E9E0DE /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SimplyDanny/SwiftLintPlugins";
 			requirement = {
@@ -1083,10 +1092,10 @@
 			package = C1008F972D101B8900F990FF /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
 		};
-		C1433DA32D0FFAB100DAEE08 /* SwiftLintBuildToolPlugin */ = {
+		C10A0B5A2D11CBA600260F9C /* XCStringsToolPlugin */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = C1433DA22D0F68DA00DAEE08 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */;
-			productName = "plugin:SwiftLintBuildToolPlugin";
+			package = C10A0B592D11CB7900260F9C /* XCRemoteSwiftPackageReference "xcstrings-tool-plugin" */;
+			productName = "plugin:XCStringsToolPlugin";
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
