@@ -8,7 +8,6 @@ enum LogLevel: String {
 }
 
 final class Logger {
-    
     static func log(_ message: String, level: LogLevel = .info, fileID: String = #fileID, functionName: String = #function) {
         let formattedTime = currentTimestamp()
         let fileName = extractFileName(from: fileID)

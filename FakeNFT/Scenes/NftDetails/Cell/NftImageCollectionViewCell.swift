@@ -1,7 +1,6 @@
 import UIKit
 
 final class NftImageCollectionViewCell: UICollectionViewCell, ReuseIdentifying {
-
     // MARK: - Properties
 
     private lazy var scrollView: UIScrollView = {
@@ -46,7 +45,6 @@ final class NftImageCollectionViewCell: UICollectionViewCell, ReuseIdentifying {
 // MARK: - UIScrollViewDelegate
 
 extension NftImageCollectionViewCell: UIScrollViewDelegate {
-
     func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
         scrollView.setZoomScale(scrollView.minimumZoomScale, animated: true)
     }

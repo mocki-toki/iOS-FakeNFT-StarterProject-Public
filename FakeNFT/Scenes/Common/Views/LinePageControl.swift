@@ -1,7 +1,6 @@
 import UIKit
 
 final class LinePageControl: UIView {
-
     // MARK: - Properties
 
     var numberOfItems: Int = 0 {
