@@ -1,5 +1,5 @@
 {
-  "originHash" : "f849e0e43a40d5c2fb7b572c3fdd44a78a5173b12736805ecba5e7e027b0f227",
+  "originHash" : "673df49e572842374016dd776aa4b990b95a42c36365e35cdbde849d6ae2d579",
   "pins" : [
     {
       "identity" : "kingfisher",
@@ -20,12 +20,30 @@
       }
     },
     {
+      "identity" : "snapkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SnapKit/SnapKit",
+      "state" : {
+        "revision" : "2842e6e84e82eb9a8dac0100ca90d9444b0307f4",
+        "version" : "5.7.1"
+      }
+    },
+    {
       "identity" : "swiftlintplugins",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SimplyDanny/SwiftLintPlugins",
       "state" : {
         "revision" : "f9731bef175c3eea3a0ca960f1be78fcc2bc7853",
         "version" : "0.57.1"
+      }
+    },
+    {
+      "identity" : "then",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/devxoul/Then",
+      "state" : {
+        "revision" : "d41ef523faef0f911369f79c0b96815d9dbb6d7a",
+        "version" : "3.0.0"
       }
     }
   ],
