@@ -1,7 +1,6 @@
 import UIKit
 
 final class CatalogViewController: UIViewController {
-
     let servicesAssembly: ServicesAssembly
     let testNftButton = UIButton()
 

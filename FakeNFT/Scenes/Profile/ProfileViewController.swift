@@ -1,7 +1,6 @@
 import UIKit
 
 final class ProfileViewController: UIViewController {
-    
     let servicesAssembly: ServicesAssembly
     
     init(servicesAssembly: ServicesAssembly) {
@@ -17,5 +16,4 @@ final class ProfileViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .yWhite
     }
-    
 }

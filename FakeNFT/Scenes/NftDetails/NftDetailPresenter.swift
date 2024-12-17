@@ -13,7 +13,6 @@ enum NftDetailState {
 }
 
 final class NftDetailPresenterImpl: NftDetailPresenter {
-
     // MARK: - Properties
 
     weak var view: NftDetailView?
