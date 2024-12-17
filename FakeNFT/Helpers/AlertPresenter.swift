@@ -2,38 +2,46 @@ import UIKit
 
 // MARK: - Alert Presenter
 final class AlertPresenter {
-    static func presentAlertWithOneButton(on viewController: UIViewController,
-                                          title: String?, message: String?, buttonTitle: String) {
-        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let action = UIAlertAction(title: buttonTitle, style: .cancel, handler: nil)
-        alertController.addAction(action)
-        
+    struct Button {
+        let title: String
+        let action: (() -> Void)?
+        let style: UIAlertAction.Style
+        let isPreferred: Bool
+    }
+
+    static func presentAlert(
+        on viewController: UIViewController,
+        title: String?, message: String?, buttons: [Button]
+    ) {
+        let alertController = UIAlertController(
+            title: title, message: message, preferredStyle: .alert)
+
+        var preferredUIAlertAction: UIAlertAction?
+        if !buttons.isEmpty {
+            for button in buttons {
+                let action = UIAlertAction(title: button.title, style: button.style) { _ in
+                    button.action?()
+                }
+                alertController.addAction(action)
+
+                if button.isPreferred {
+                    preferredUIAlertAction = action
+                }
+            }
+
+            alertController.preferredAction = preferredUIAlertAction
+        }
+
         viewController.present(alertController, animated: true, completion: nil)
     }
- 
-    static func presentAlertWithTwoButtons(on viewController: UIViewController,
-                                           title: String?, message: String?,
-                                           firstButtonTitle: String, secondButtonTitle: String,
-                                           firstAction: (() -> Void)?, secondAction: (() -> Void)?) {
-        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let firstAction = UIAlertAction(title: firstButtonTitle, style: .default) { _ in
-            firstAction?()
-        }
-        alertController.addAction(firstAction)
-        
-        let secondAction = UIAlertAction(title: secondButtonTitle, style: .default) { _ in
-            secondAction?()
-        }
-        alertController.addAction(secondAction)
-        alertController.preferredAction = secondAction
-        
-        viewController.present(alertController, animated: true, completion: nil)
-    }
-    
-    static func presentSortOptions(on viewController: UIViewController,
-                                   title: String?, cancelActionTitle: String,
-                                   options: [String], selectionHandler: @escaping (String) -> Void) {
-        let alertController = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
+
+    static func presentSortOptions(
+        on viewController: UIViewController,
+        title: String?, cancelActionTitle: String,
+        options: [String], selectionHandler: @escaping (String) -> Void
+    ) {
+        let alertController = UIAlertController(
+            title: title, message: nil, preferredStyle: .actionSheet)
 
         for option in options {
             let action = UIAlertAction(title: option, style: .default) { _ in
@@ -41,10 +49,10 @@ final class AlertPresenter {
             }
             alertController.addAction(action)
         }
-        
+
         let cancelAction = UIAlertAction(title: cancelActionTitle, style: .cancel, handler: nil)
         alertController.addAction(cancelAction)
-        
+
         viewController.present(alertController, animated: true, completion: nil)
     }
 }
