@@ -1,7 +1,6 @@
 import UIKit
 
 final class StatisticsViewController: UIViewController {
-    
     let servicesAssembly: ServicesAssembly
     
     init(servicesAssembly: ServicesAssembly) {

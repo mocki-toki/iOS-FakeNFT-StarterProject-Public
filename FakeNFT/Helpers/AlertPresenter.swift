@@ -2,8 +2,8 @@ import UIKit
 
 // MARK: - Alert Presenter
 final class AlertPresenter {
-    
-    static func presentAlertWithOneButton(on viewController: UIViewController, title: String?, message: String?, buttonTitle: String) {
+    static func presentAlertWithOneButton(on viewController: UIViewController,
+                                          title: String?, message: String?, buttonTitle: String) {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let action = UIAlertAction(title: buttonTitle, style: .cancel, handler: nil)
         alertController.addAction(action)
@@ -11,7 +11,10 @@ final class AlertPresenter {
         viewController.present(alertController, animated: true, completion: nil)
     }
  
-    static func presentAlertWithTwoButtons(on viewController: UIViewController, title: String?, message: String?, firstButtonTitle: String, secondButtonTitle: String, firstAction: (() -> Void)?, secondAction: (() -> Void)?) {
+    static func presentAlertWithTwoButtons(on viewController: UIViewController,
+                                           title: String?, message: String?,
+                                           firstButtonTitle: String, secondButtonTitle: String,
+                                           firstAction: (() -> Void)?, secondAction: (() -> Void)?) {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let firstAction = UIAlertAction(title: firstButtonTitle, style: .default) { _ in
             firstAction?()
@@ -27,7 +30,9 @@ final class AlertPresenter {
         viewController.present(alertController, animated: true, completion: nil)
     }
     
-    static func presentSortOptions(on viewController: UIViewController, title: String?, cancelActionTitle: String, options: [String], selectionHandler: @escaping (String) -> Void) {
+    static func presentSortOptions(on viewController: UIViewController,
+                                   title: String?, cancelActionTitle: String,
+                                   options: [String], selectionHandler: @escaping (String) -> Void) {
         let alertController = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
 
         for option in options {
@@ -43,6 +48,3 @@ final class AlertPresenter {
         viewController.present(alertController, animated: true, completion: nil)
     }
 }
-
-
-

@@ -1,7 +1,6 @@
 import UIKit
 
 extension UIFont {
-    
     // Collection name
     static var bold22 = UIFont.systemFont(ofSize: 22, weight: .bold)
     static var bold17 = UIFont.systemFont(ofSize: 17, weight: .bold)

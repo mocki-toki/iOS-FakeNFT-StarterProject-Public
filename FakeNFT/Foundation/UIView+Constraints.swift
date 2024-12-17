@@ -1,7 +1,6 @@
 import UIKit
 
 extension UIView {
-
     func constraintEdges(to view: UIView) {
         translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([

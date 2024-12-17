@@ -1,7 +1,6 @@
 import UIKit
 
 final class CartViewController: UIViewController {
-    
     let servicesAssembly: ServicesAssembly
     
     init(servicesAssembly: ServicesAssembly) {
@@ -18,4 +17,3 @@ final class CartViewController: UIViewController {
         view.backgroundColor = .yWhite
     }
 }
-
