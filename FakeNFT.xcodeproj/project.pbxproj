@@ -116,8 +116,6 @@
 		3FC8C39229D246BA0081F015 /* DateFormatters+Presets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateFormatters+Presets.swift"; sourceTree = "<group>"; };
 		558E39E62C68CE0900FB86AC /* NftService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NftService.swift; sourceTree = "<group>"; };
 		C1008FA22D10608400F990FF /* RatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingView.swift; sourceTree = "<group>"; };
-		C10A0B6B2D11D11F00260F9C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
-		C10A0B6C2D11D11F00260F9C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		C1433DA72D0FFC7F00DAEE08 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		E19CD5AA2A98B56600CA39A5 /* NftImageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NftImageCollectionViewCell.swift; sourceTree = "<group>"; };
 		E1A1B9D92AA01CE400C3AFBC /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
@@ -374,13 +372,6 @@
 			path = Requests;
 			sourceTree = "<group>";
 		};
-		C1E19B492D11CA1300E9E0DE /* Generated */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Generated;
-			sourceTree = "<group>";
-		};
 		E19CD5A92A98B55900CA39A5 /* Cell */ = {
 			isa = PBXGroup;
 			children = (
@@ -402,7 +393,6 @@
 		E1CD40DA2A96BE9B00BE7FE8 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				C1E19B492D11CA1300E9E0DE /* Generated */,
 				3F68069C29CBBAF100B4F915 /* Main.storyboard */,
 				3F68069F29CBBAF200B4F915 /* Assets.xcassets */,
 				F0BB21992D0E3551009A2305 /* Localizable.xcstrings */,
@@ -691,7 +681,6 @@
 			children = (
 				3F68069D29CBBAF100B4F915 /* Base */,
 				E1CD40D82A96BE7D00BE7FE8 /* ru */,
-				C10A0B6B2D11D11F00260F9C /* en */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -701,7 +690,6 @@
 			children = (
 				3F6806A229CBBAF200B4F915 /* Base */,
 				E1CD40D92A96BE7D00BE7FE8 /* ru */,
-				C10A0B6C2D11D11F00260F9C /* en */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
