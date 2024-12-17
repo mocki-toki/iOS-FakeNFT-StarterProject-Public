@@ -1,7 +1,6 @@
 import UIKit
 
 final class PrimaryButton: UIButton {
-    
     init(title: String) {
         super.init(frame: .zero)
         setupButton()
@@ -21,4 +20,3 @@ final class PrimaryButton: UIButton {
         self.layer.cornerRadius = 16
     }
 }
-

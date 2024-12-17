@@ -1,7 +1,6 @@
 import UIKit
 
 final class SecondaryButton: UIButton {
-    
     init(title: String) {
         super.init(frame: .zero)
         setupButton()
@@ -27,4 +26,3 @@ final class SecondaryButton: UIButton {
         layer.borderColor = UIColor.yBlack.cgColor
     }
 }
-
