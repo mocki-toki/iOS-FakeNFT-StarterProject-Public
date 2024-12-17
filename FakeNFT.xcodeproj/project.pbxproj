@@ -116,6 +116,8 @@
 		3FC8C39229D246BA0081F015 /* DateFormatters+Presets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateFormatters+Presets.swift"; sourceTree = "<group>"; };
 		558E39E62C68CE0900FB86AC /* NftService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NftService.swift; sourceTree = "<group>"; };
 		C1008FA22D10608400F990FF /* RatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingView.swift; sourceTree = "<group>"; };
+		C10A0B6B2D11D11F00260F9C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
+		C10A0B6C2D11D11F00260F9C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		C1433DA72D0FFC7F00DAEE08 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		E19CD5AA2A98B56600CA39A5 /* NftImageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NftImageCollectionViewCell.swift; sourceTree = "<group>"; };
 		E1A1B9D92AA01CE400C3AFBC /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
@@ -372,6 +374,13 @@
 			path = Requests;
 			sourceTree = "<group>";
 		};
+		C1E19B492D11CA1300E9E0DE /* Generated */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Generated;
+			sourceTree = "<group>";
+		};
 		E19CD5A92A98B55900CA39A5 /* Cell */ = {
 			isa = PBXGroup;
 			children = (
@@ -393,6 +402,7 @@
 		E1CD40DA2A96BE9B00BE7FE8 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				C1E19B492D11CA1300E9E0DE /* Generated */,
 				3F68069C29CBBAF100B4F915 /* Main.storyboard */,
 				3F68069F29CBBAF200B4F915 /* Assets.xcassets */,
 				F0BB21992D0E3551009A2305 /* Localizable.xcstrings */,
@@ -440,7 +450,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				C1433DA42D0FFAB100DAEE08 /* PBXTargetDependency */,
+				C10A0B5B2D11CBA600260F9C /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				F0D9D5202D0DAFF7004307C7 /* Helpers */,
@@ -517,12 +527,12 @@
 			};
 			buildConfigurationList = 3F68068E29CBBAF100B4F915 /* Build configuration list for PBXProject "FakeNFT" */;
 			compatibilityVersion = "Xcode 14.0";
-			developmentRegion = ru;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				en,
 				Base,
 				ru,
+				en,
 			);
 			mainGroup = 3F68068A29CBBAF100B4F915;
 			packageReferences = (
@@ -530,7 +540,8 @@
 				3F603CCE29DB4A74000C43D7 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				C1008F942D101B7400F990FF /* XCRemoteSwiftPackageReference "Then" */,
 				C1008F972D101B8900F990FF /* XCRemoteSwiftPackageReference "SnapKit" */,
-				C1433DA22D0F68DA00DAEE08 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
+				C1E19B472D11C97F00E9E0DE /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
+				C10A0B592D11CB7900260F9C /* XCRemoteSwiftPackageReference "xcstrings-tool-plugin" */,
 			);
 			productRefGroup = 3F68069429CBBAF100B4F915 /* Products */;
 			projectDirPath = "";
@@ -668,9 +679,9 @@
 			target = 3F68069229CBBAF100B4F915 /* FakeNFT */;
 			targetProxy = 3F6806B429CBBAF200B4F915 /* PBXContainerItemProxy */;
 		};
-		C1433DA42D0FFAB100DAEE08 /* PBXTargetDependency */ = {
+		C10A0B5B2D11CBA600260F9C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			productRef = C1433DA32D0FFAB100DAEE08 /* SwiftLintBuildToolPlugin */;
+			productRef = C10A0B5A2D11CBA600260F9C /* XCStringsToolPlugin */;
 		};
 /* End PBXTargetDependency section */
 
@@ -680,6 +691,7 @@
 			children = (
 				3F68069D29CBBAF100B4F915 /* Base */,
 				E1CD40D82A96BE7D00BE7FE8 /* ru */,
+				C10A0B6B2D11D11F00260F9C /* en */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -689,6 +701,7 @@
 			children = (
 				3F6806A229CBBAF200B4F915 /* Base */,
 				E1CD40D92A96BE7D00BE7FE8 /* ru */,
+				C10A0B6C2D11D11F00260F9C /* en */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -1016,7 +1029,15 @@
 				minimumVersion = 5.7.1;
 			};
 		};
-		C1433DA22D0F68DA00DAEE08 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
+		C10A0B592D11CB7900260F9C /* XCRemoteSwiftPackageReference "xcstrings-tool-plugin" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/liamnichols/xcstrings-tool-plugin";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+		C1E19B472D11C97F00E9E0DE /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SimplyDanny/SwiftLintPlugins";
 			requirement = {
@@ -1047,10 +1068,10 @@
 			package = C1008F972D101B8900F990FF /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
 		};
-		C1433DA32D0FFAB100DAEE08 /* SwiftLintBuildToolPlugin */ = {
+		C10A0B5A2D11CBA600260F9C /* XCStringsToolPlugin */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = C1433DA22D0F68DA00DAEE08 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */;
-			productName = "plugin:SwiftLintBuildToolPlugin";
+			package = C10A0B592D11CB7900260F9C /* XCRemoteSwiftPackageReference "xcstrings-tool-plugin" */;
+			productName = "plugin:XCStringsToolPlugin";
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
