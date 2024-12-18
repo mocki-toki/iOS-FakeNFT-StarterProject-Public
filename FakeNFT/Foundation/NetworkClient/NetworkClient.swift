@@ -21,7 +21,6 @@ protocol NetworkClient {
 }
 
 extension NetworkClient {
-
     @discardableResult
     func send(request: NetworkRequest,
               onResponse: @escaping (Result<Data, Error>) -> Void) -> NetworkTask? {
