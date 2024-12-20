@@ -70,6 +70,13 @@ final class CartViewModel {
         }
     }
     
+    func removeItem(_ item: CartItem) {
+        if let index = cartItems.firstIndex(where: { $0.name == item.name }) {
+            cartItems.remove(at: index)
+            onCartUpdated?()
+        }
+    }
+    
     // MARK: - Private Methods
     private func saveSortOption(_ option: String) {
         UserDefaults.standard.set(option, forKey: sortOptionKey)

@@ -58,6 +58,7 @@ final class CartViewController: UIViewController {
         emptyStateLabel.isHidden = !isCartEmpty
         tableView.isHidden = isCartEmpty
         footerView.isHidden = isCartEmpty
+        navigationController?.navigationBar.isHidden = isCartEmpty
     }
     
     private func setupNavigationBar() {
@@ -182,6 +183,22 @@ final class CartViewController: UIViewController {
         totalPriceLabel.text = viewModel.formattedTotalCost
     }
     
+    private func presentDeleteConfirmation(for item: CartItem) {
+        let viewModel = DeleteConfirmationViewModel(
+            nftImage: item.image,
+            message: String(localizable: .cartDeleteConfirmation),
+            onConfirm: { [weak self] in
+                self?.viewModel.removeItem(item)
+            },
+            onCancel: {
+                Logger.log("User canceled deletion")
+            }
+        )
+        let confirmationVC = DeleteConfirmationViewController(viewModel: viewModel)
+        confirmationVC.modalPresentationStyle = .overFullScreen
+        present(confirmationVC, animated: true, completion: nil)
+    }
+    
     @objc private func handleCheckout() {
         Logger.log("Checkout button tapped")
     }
@@ -220,8 +237,8 @@ extension CartViewController: UITableViewDataSource, UITableViewDelegate {
         cell.configure(
             with: .cart,
             onLike: {},
-            onCart: {
-                Logger.log("Remove from cart button tapped for \(item.name)")
+            onCart: { [weak self] in
+                self?.presentDeleteConfirmation(for: item)
             })
         setValuesToCell(cell, item)
         

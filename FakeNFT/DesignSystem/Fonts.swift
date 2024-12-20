@@ -14,4 +14,7 @@ extension UIFont {
     
     // Action sheet
     static var regular20 = UIFont.systemFont(ofSize: 20, weight: .regular)
+    
+    // Buttons
+    static var regular17 = UIFont.systemFont(ofSize: 17, weight: .regular)
 }
