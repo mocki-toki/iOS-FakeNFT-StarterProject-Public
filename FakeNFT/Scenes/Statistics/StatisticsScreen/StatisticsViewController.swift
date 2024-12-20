@@ -13,10 +13,6 @@ final class StatisticsViewController: UIViewController {
         $0.separatorStyle = .none
         $0.register(UserCell.self, forCellReuseIdentifier: "UserCell")
     }
-    private let sortButton = UIButton().then {
-        $0.setImage(UIImage(named: "Sort"), for: .normal)
-        $0.addTarget(self, action: #selector(sortButtonTapped), for: .touchUpInside)
-    }
     
     // MARK: - Initialization
     init(servicesAssembly: ServicesAssembly, viewModel: StatisticsViewModel? = nil) {
@@ -45,21 +41,26 @@ final class StatisticsViewController: UIViewController {
         }
     }
     
+    private func setupNavigationBar() {
+        let sortButton = UIBarButtonItem(
+            image: UIImage(named: "Sort"),
+            style: .plain,
+            target: self,
+            action: #selector(sortButtonTapped)
+        )
+        sortButton.tintColor = .yBlack
+        navigationItem.rightBarButtonItem = sortButton
+    }
+    
     // MARK: - UI Setup
     private func setupUI() {
+        setupNavigationBar()
         tableView.dataSource = self
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
             make.top.equalTo(108)
             make.left.right.equalTo(view)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
-        }
-        
-        view.addSubview(sortButton)
-        sortButton.snp.makeConstraints { make in
-            make.top.equalTo(view.snp.top).offset(46)
-            make.left.equalTo(view.snp.right).offset(-50)
-            make.width.height.equalTo(42)
         }
     }
     
@@ -69,7 +70,7 @@ final class StatisticsViewController: UIViewController {
             on: self,
             title: String(localizable: .sortAlert),
             cancelActionTitle: String(localizable: .sortClose),
-            options: [String(localizable: .sortName), String(localizable: .sortRating)]
+            options: [String(localizable: .sortUserName), String(localizable: .sortRating)]
         ) { selectedOption in
             print("Selected option: \(selectedOption)")
         }
