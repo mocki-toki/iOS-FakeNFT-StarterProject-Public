@@ -59,6 +59,8 @@
 		C1E19B292D118FC200E9E0DE /* CartButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1E19B282D118FC200E9E0DE /* CartButton.swift */; };
 		E19CD5AB2A98B56600CA39A5 /* NftImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19CD5AA2A98B56600CA39A5 /* NftImageCollectionViewCell.swift */; };
 		E1A1B9DA2AA01CE400C3AFBC /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A1B9D92AA01CE400C3AFBC /* TabBarController.swift */; };
+		F091F7E52D1384BF0060D731 /* CartItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F091F7E42D1384830060D731 /* CartItem.swift */; };
+		F091F7E72D1385390060D731 /* CartViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F091F7E62D1385380060D731 /* CartViewModel.swift */; };
 		F0BB219A2D0E3551009A2305 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = F0BB21992D0E3551009A2305 /* Localizable.xcstrings */; };
 		F0BB21A42D0F2993009A2305 /* StatisticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BB21A32D0F298B009A2305 /* StatisticsViewController.swift */; };
 		F0BB21A62D0F29B7009A2305 /* CartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BB21A52D0F29AF009A2305 /* CartViewController.swift */; };
@@ -139,6 +141,8 @@
 		E1A1B9D92AA01CE400C3AFBC /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		E1CD40D82A96BE7D00BE7FE8 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Main.strings; sourceTree = "<group>"; };
 		E1CD40D92A96BE7D00BE7FE8 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		F091F7E42D1384830060D731 /* CartItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartItem.swift; sourceTree = "<group>"; };
+		F091F7E62D1385380060D731 /* CartViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartViewModel.swift; sourceTree = "<group>"; };
 		F0BB21992D0E3551009A2305 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		F0BB21A32D0F298B009A2305 /* StatisticsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsViewController.swift; sourceTree = "<group>"; };
 		F0BB21A52D0F29AF009A2305 /* CartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartViewController.swift; sourceTree = "<group>"; };
@@ -439,6 +443,8 @@
 		F0BB21A12D0F293E009A2305 /* Cart */ = {
 			isa = PBXGroup;
 			children = (
+				F091F7E62D1385380060D731 /* CartViewModel.swift */,
+				F091F7E42D1384830060D731 /* CartItem.swift */,
 				F0BB21A52D0F29AF009A2305 /* CartViewController.swift */,
 			);
 			path = Cart;
@@ -632,6 +638,8 @@
 				0C79EE662A76DDFF00EE90EA /* NftDetailViewController.swift in Sources */,
 				E1A1B9DA2AA01CE400C3AFBC /* TabBarController.swift in Sources */,
 				3F478ED129DB476500F6D39E /* Fonts.swift in Sources */,
+				F091F7E72D1385390060D731 /* CartViewModel.swift in Sources */,
+				F091F7E52D1384BF0060D731 /* CartItem.swift in Sources */,
 				0C79EE6A2A76DE1000EE90EA /* NftDetailAssembly.swift in Sources */,
 				3FC8C39329D246BA0081F015 /* DateFormatters+Presets.swift in Sources */,
 				0CFCB7422A78013E0009A829 /* Nft.swift in Sources */,

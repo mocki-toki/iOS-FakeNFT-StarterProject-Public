@@ -1,6 +1,40 @@
 {
   "sourceLanguage" : "ru",
   "strings" : {
+    "Cart.price" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Price"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Цена"
+          }
+        }
+      }
+    },
+    "Cart.toPay" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checkout"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "К оплате"
+          }
+        }
+      }
+    },
     "Catalog.openNft" : {
       "extractionState" : "manual",
       "localizations" : {
