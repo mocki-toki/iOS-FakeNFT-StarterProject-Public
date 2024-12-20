@@ -1,6 +1,5 @@
 import UIKit
 
-// MARK: - Модель для элемента корзины
 struct CartItem {
     let name: String
     let price: Double

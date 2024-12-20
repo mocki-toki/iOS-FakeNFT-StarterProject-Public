@@ -10,6 +10,7 @@ final class CartViewController: UIViewController {
     private let totalPriceLabel = UILabel()
     private let checkoutButton = UIButton()
     private let footerContent = UIView()
+    private let emptyStateLabel = UILabel()
     private let viewModel: CartViewModel
     
     // MARK: - Public Properties
@@ -31,22 +32,52 @@ final class CartViewController: UIViewController {
         super.viewDidLoad()
         setupView()
         setupBindings()
+        updateFooter()
     }
     
     // MARK: - Private Methods
     private func setupView() {
         view.backgroundColor = .yWhite
+        setupCommonViews()
+        setupConstraints()
+        updateUI(for: viewModel.isCartEmpty)
+    }
+    
+    private func setupCommonViews() {
+        view.addSubview(tableView)
+        view.addSubview(footerView)
+        view.addSubview(emptyStateLabel)
+        
         setupTableView()
         setupFooterView()
-        setupConstraints()
-        updateFooter()
+        setupEmptyStateLabel()
+    }
+    
+    private func updateUI(for isCartEmpty: Bool) {
+        emptyStateLabel.isHidden = !isCartEmpty
+        tableView.isHidden = isCartEmpty
+        footerView.isHidden = isCartEmpty
+    }
+    
+    private func setupEmptyStateLabel() {
+        emptyStateLabel.do {
+            $0.text = String(localizable: .cartEmpty)
+            $0.textColor = .yBlack
+            $0.font = .bold17
+            $0.textAlignment = .center
+            $0.numberOfLines = 0
+        }
+        
+        emptyStateLabel.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(16)
+        }
     }
     
     private func setupTableView() {
         tableView.register(NftTableViewCell.self, forCellReuseIdentifier: "NftTableViewCell")
         tableView.dataSource = self
         tableView.delegate = self
-        view.addSubview(tableView)
     }
     
     private func setupFooterView() {
@@ -55,7 +86,6 @@ final class CartViewController: UIViewController {
             $0.layer.cornerRadius = 12
             $0.clipsToBounds = true
         }
-        view.addSubview(footerView)
         footerView.addSubview(footerContent)
         setupFooterComponents()
     }
@@ -131,6 +161,7 @@ final class CartViewController: UIViewController {
             guard let self = self else { return }
             self.tableView.reloadData()
             self.updateFooter()
+            self.updateUI(for: self.viewModel.isCartEmpty)
         }
     }
     

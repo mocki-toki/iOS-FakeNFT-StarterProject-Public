@@ -11,6 +11,10 @@ final class CartViewModel {
         cartItems.reduce(0) { $0 + ($1.isInCart ? $1.price : 0) }
     }
     
+    var isCartEmpty: Bool {
+        totalItems == 0
+    }
+    
     var totalItems: Int {
         cartItems.filter { $0.isInCart }.count
     }
