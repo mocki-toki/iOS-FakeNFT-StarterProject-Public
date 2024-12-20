@@ -3,22 +3,26 @@ import UIKit
 final class TabBarFactory {
     static func createControllers(servicesAssembly: ServicesAssembly) -> [UIViewController] {
         return [
-            ProfileViewController(servicesAssembly: servicesAssembly)
+            UINavigationController(rootViewController: ProfileViewController(servicesAssembly: servicesAssembly))
                 .configured(with: String(localizable: .tabProfile), image: UIImage.inactiveProfile, tag: 0),
             
-            CatalogViewController(servicesAssembly: servicesAssembly)
+            UINavigationController(rootViewController: CatalogViewController(servicesAssembly: servicesAssembly))
                 .configured(with: String(localizable: .tabCatalog), image: UIImage.inactiveCatalog, tag: 1),
             
-            CartViewController(servicesAssembly: servicesAssembly, viewModel: createCartViewModel())
-                .configured(with: String(localizable: .tabCart), image: UIImage.inactiveCart, tag: 2),
+            UINavigationController(
+                rootViewController: CartViewController(
+                    servicesAssembly: servicesAssembly,
+                    viewModel: createCartViewModel()
+                )
+            ).configured(with: String(localizable: .tabCart), image: UIImage.inactiveCart, tag: 2),
             
-            StatisticsViewController(servicesAssembly: servicesAssembly)
-                .configured(with: String(String(localizable: .tabStatistics)), image: UIImage.inactiveStatistics, tag: 3)
+            UINavigationController(rootViewController: StatisticsViewController(servicesAssembly: servicesAssembly))
+                .configured(with: String(localizable: .tabStatistics), image: UIImage.inactiveStatistics, tag: 3)
         ]
     }
     
     // MARK: - Test Data Factory
-
+    
     private static func createCartViewModel() -> CartViewModel {
         let image = UIImage(named: "SucessfulPayment")
         let testItems = [
