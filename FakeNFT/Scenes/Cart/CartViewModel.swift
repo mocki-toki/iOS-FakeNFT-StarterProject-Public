@@ -45,4 +45,18 @@ final class CartViewModel {
         cartItems[index].isInCart.toggle()
         onCartUpdated?()
     }
+    
+    func sortItems(by option: String) {
+        switch option {
+        case String(localizable: .sortPrice):
+            cartItems.sort { $0.price < $1.price }
+        case String(localizable: .sortRating):
+            cartItems.sort { $0.rating > $1.rating }
+        case String(localizable: .sortNftName):
+            cartItems.sort { $0.name < $1.name }
+        default:
+            break
+        }
+        onCartUpdated?()
+    }
 }

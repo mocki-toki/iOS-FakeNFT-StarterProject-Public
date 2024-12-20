@@ -33,6 +33,7 @@ final class CartViewController: UIViewController {
         setupView()
         setupBindings()
         updateFooter()
+        setupNavigationBar()
     }
     
     // MARK: - Private Methods
@@ -57,6 +58,17 @@ final class CartViewController: UIViewController {
         emptyStateLabel.isHidden = !isCartEmpty
         tableView.isHidden = isCartEmpty
         footerView.isHidden = isCartEmpty
+    }
+    
+    private func setupNavigationBar() {
+        let hamburgerButton = UIBarButtonItem().then {
+            $0.image = .sort
+            $0.style = .plain
+            $0.target = self
+            $0.action = #selector(hamburgerButtonTapped)
+            $0.tintColor = .yBlack
+        }
+        navigationItem.rightBarButtonItem = hamburgerButton
     }
     
     private func setupEmptyStateLabel() {
@@ -172,6 +184,21 @@ final class CartViewController: UIViewController {
     
     @objc private func handleCheckout() {
         Logger.log("Checkout button tapped")
+    }
+    
+    @objc private func hamburgerButtonTapped() {
+        AlertPresenter.presentSortOptions(
+            on: self,
+            title: String(localizable: .sortAlert),
+            cancelActionTitle: String(localizable: .sortClose),
+            options: [
+                String(localizable: .sortPrice),
+                String(localizable: .sortRating),
+                String(localizable: .sortNftName)
+            ]) { [weak self] selectedOption in
+                self?.viewModel.sortItems(by: selectedOption)
+                Logger.log("User sorted list of items by \(selectedOption)")
+            }
     }
 }
 
