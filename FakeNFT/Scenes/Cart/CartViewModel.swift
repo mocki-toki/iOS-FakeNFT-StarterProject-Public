@@ -3,6 +3,7 @@ import Foundation
 final class CartViewModel {
     // MARK: - Private Properties
     private var cartItems: [CartItem] = []
+    private let sortOptionKey = "SelectedSortOption"
     
     // MARK: - Public Properties
     var onCartUpdated: (() -> Void)?
@@ -30,6 +31,7 @@ final class CartViewModel {
     // MARK: - Initializer
     init(items: [CartItem]) {
         self.cartItems = items
+        applySavedSortOption()
     }
     
     // MARK: - Public Methods
@@ -47,6 +49,8 @@ final class CartViewModel {
     }
     
     func sortItems(by option: String) {
+        saveSortOption(option)
+        
         switch option {
         case String(localizable: .sortPrice):
             cartItems.sort { $0.price < $1.price }
@@ -58,5 +62,20 @@ final class CartViewModel {
             break
         }
         onCartUpdated?()
+    }
+    
+    func applySavedSortOption() {
+        if let savedOption = loadSortOption() {
+            sortItems(by: savedOption)
+        }
+    }
+    
+    // MARK: - Private Methods
+    private func saveSortOption(_ option: String) {
+        UserDefaults.standard.set(option, forKey: sortOptionKey)
+    }
+    
+    private func loadSortOption() -> String? {
+        return UserDefaults.standard.string(forKey: sortOptionKey) ?? String(localizable: .sortNftName)
     }
 }
