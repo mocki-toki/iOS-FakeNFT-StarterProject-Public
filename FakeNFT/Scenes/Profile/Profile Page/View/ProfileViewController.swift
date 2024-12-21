@@ -4,8 +4,11 @@ import Then
 
 final class ProfileViewController: UIViewController {
     // MARK: - Properties
+    
+    private let viewModel: ProfileViewModel
     let servicesAssembly: ServicesAssembly
     
+    // MARK: - UI components
     private lazy var avatarImageView = UIImageView().then {
         $0.backgroundColor = .lightGray
         $0.layer.cornerRadius = 35
@@ -49,10 +52,20 @@ final class ProfileViewController: UIViewController {
         $0.alignment = .leading
         $0.distribution = .equalSpacing
     }
+    
     // MARK: - UITableView
-
+    private lazy var tableView = UITableView().then {
+        $0.delegate = self
+        $0.dataSource = self
+        $0.separatorStyle = .none
+        $0.register(ProfileLinkTableViewCell.self, forCellReuseIdentifier: "ProfileCell")
+    }
+    
+    // MARK: - Navigation
+    
     // MARK: - Initialization
-    init(servicesAssembly: ServicesAssembly) {
+    init(viewModel: ProfileViewModel = ProfileViewModel(), servicesAssembly: ServicesAssembly) {
+        self.viewModel = viewModel
         self.servicesAssembly = servicesAssembly
         super.init(nibName: nil, bundle: nil)
     }
@@ -77,7 +90,7 @@ final class ProfileViewController: UIViewController {
         profileStackView.addArrangedSubview(bioLabel)
         view.addSubview(profileStackView)
         view.addSubview(websiteLink)
-        //        view.addSubview(tableView)
+        view.addSubview(tableView)
     }
     
     private func setupConstraints() {
@@ -86,7 +99,7 @@ final class ProfileViewController: UIViewController {
             make.left.equalTo(view.safeAreaLayoutGuide).offset(16)
             make.right.equalTo(view.safeAreaLayoutGuide).inset(16)
         }
-
+        
         avatarImageView.snp.makeConstraints { make in
             make.width.height.equalTo(70)
         }
@@ -100,7 +113,40 @@ final class ProfileViewController: UIViewController {
             make.top.equalTo(profileStackView.snp.bottom).offset(8)
             make.left.equalTo(profileStackView.snp.left)
         }
+        
+        tableView.snp.makeConstraints { make in
+            make.top.equalTo(websiteLink.snp.bottom).offset(40)
+            make.left.right.bottom.equalTo(view.safeAreaLayoutGuide)
+        }
     }
     
     // MARK: - Actions
+}
+// MARK: - UITableViewDelegate
+extension ProfileViewController: UITableViewDelegate {
+    // Обработка нажатия на ячейку
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let selectedItem = viewModel.tableItems[indexPath.row]
+        navigationController?.pushViewController(selectedItem.destination, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 54
+    }
+}
+
+// MARK: - UITableViewDataSource
+extension ProfileViewController: UITableViewDataSource {
+    //кол-во ячеек
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return viewModel.tableItems.count
+    }
+    // настройка ячейки
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "ProfileCell", for: indexPath) as? ProfileLinkTableViewCell else { return UITableViewCell() }
+        cell.selectionStyle = .none // Отключаем выделение
+        let item = viewModel.tableItems[indexPath.row]
+        cell.configure(with: item.title, amount: item.count)
+        return cell
+    }
 }
