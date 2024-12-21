@@ -63,5 +63,3 @@ class ProfileLinkTableViewCell: UITableViewCell {
         amountNftLabel.text = "(\(amount))"
     }
 }
-
-

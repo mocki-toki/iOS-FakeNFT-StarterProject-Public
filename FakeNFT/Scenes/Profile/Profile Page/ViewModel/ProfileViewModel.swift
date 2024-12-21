@@ -1,6 +1,13 @@
 import UIKit
 
-final class ProfileViewModel {
+protocol ProfileViewViewModelType {
+    var tableItems: [ProfileTableItem] { get }
+    var username: String { get }
+    var bio: String { get }
+    var website: String { get }
+}
+
+final class ProfileViewModel: ProfileViewViewModelType {
     // Массив для данных таблицы
     private(set) var tableItems: [ProfileTableItem] = [
         ProfileTableItem(title: "Мои NFT", count: 112, destination: TestViewController()),

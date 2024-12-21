@@ -5,10 +5,11 @@ import Then
 final class ProfileViewController: UIViewController {
     // MARK: - Properties
     
-    private let viewModel: ProfileViewModel
+    private let viewModel: ProfileViewViewModelType?
     let servicesAssembly: ServicesAssembly
     
     // MARK: - UI components
+    
     private lazy var avatarImageView = UIImageView().then {
         $0.backgroundColor = .lightGray
         $0.layer.cornerRadius = 35
@@ -16,16 +17,12 @@ final class ProfileViewController: UIViewController {
     }
     
     lazy var usernameLabel = UILabel().then {
-        $0.text = "Joaquin Phoenix"
         $0.textAlignment = .left
         $0.font = UIFont.bold22
         $0.textColor = UIColor.textPrimary
     }
     
     private lazy var bioLabel = UILabel().then {
-        $0.text = """
-                    Дизайнер из Казани, люблю цифровое искусство и бейглы. В моей коллекции уже 100+ NFT, и еще больше — на моём сайте. Открыт к коллаборациям.
-                    """
         $0.font = UIFont.regular13
         $0.numberOfLines = 0
         $0.textAlignment = .left
@@ -33,7 +30,6 @@ final class ProfileViewController: UIViewController {
     }
     
     private lazy var websiteLink = UIButton(type: .system).then {
-        $0.setTitle("www.mysite.com", for: .normal)
         $0.titleLabel?.font = UIFont.regular15
         $0.titleLabel?.textColor = UIColor.primary
         //        $0.addTarget(self, action: #selector(openWebsite), for: .touchUpInside)
@@ -54,6 +50,7 @@ final class ProfileViewController: UIViewController {
     }
     
     // MARK: - UITableView
+    
     private lazy var tableView = UITableView().then {
         $0.delegate = self
         $0.dataSource = self
@@ -61,9 +58,8 @@ final class ProfileViewController: UIViewController {
         $0.register(ProfileLinkTableViewCell.self, forCellReuseIdentifier: "ProfileCell")
     }
     
-    // MARK: - Navigation
-    
     // MARK: - Initialization
+    
     init(viewModel: ProfileViewModel = ProfileViewModel(), servicesAssembly: ServicesAssembly) {
         self.viewModel = viewModel
         self.servicesAssembly = servicesAssembly
@@ -75,14 +71,40 @@ final class ProfileViewController: UIViewController {
     }
     
     // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .yWhite
         
+        setupNavBar()
         setupViews()
         setupConstraints()
+        bindViewModel()
     }
+    
+    // MARK: - Navigation
+    
+    private func setupNavBar() {
+        let editButton = UIBarButtonItem(
+            image: UIImage(named: "Edit"),
+            style: .plain,
+            target: self,
+            action: #selector(editButtonDidTapped)
+        )
+        editButton.tintColor = .yBlack
+        navigationItem.rightBarButtonItem = editButton
+    }
+    
+    // MARK: - Binding
+    
+    private func bindViewModel() {
+        usernameLabel.text = viewModel?.username
+        bioLabel.text = viewModel?.bio
+        websiteLink.setTitle(viewModel?.website, for: .normal)
+    }
+    
     // MARK: - UI Setup
+    
     private func setupViews() {
         avatarStackView.addArrangedSubview(avatarImageView)
         avatarStackView.addArrangedSubview(usernameLabel)
@@ -121,11 +143,23 @@ final class ProfileViewController: UIViewController {
     }
     
     // MARK: - Actions
+    
+    @objc private func editButtonDidTapped() {
+        print("Edit Profile button tapped!")
+
+        let editProfileViewController = EditProfileViewController()
+        let navController = UINavigationController(rootViewController: editProfileViewController)
+        navController.modalPresentationStyle = .pageSheet
+        present(navController, animated: true, completion: nil)
+    }
 }
-// MARK: - UITableViewDelegate
+
+    // MARK: - UITableViewDelegate
+
 extension ProfileViewController: UITableViewDelegate {
     // Обработка нажатия на ячейку
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let viewModel = viewModel else { return }
         let selectedItem = viewModel.tableItems[indexPath.row]
         navigationController?.pushViewController(selectedItem.destination, animated: true)
     }
@@ -135,15 +169,18 @@ extension ProfileViewController: UITableViewDelegate {
     }
 }
 
-// MARK: - UITableViewDataSource
+    // MARK: - UITableViewDataSource
 extension ProfileViewController: UITableViewDataSource {
     //кол-во ячеек
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        guard let viewModel = viewModel else { return 3 }
         return viewModel.tableItems.count
     }
     // настройка ячейки
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "ProfileCell", for: indexPath) as? ProfileLinkTableViewCell else { return UITableViewCell() }
+        guard let viewModel = viewModel,
+              let cell = tableView.dequeueReusableCell(withIdentifier: "ProfileCell",
+                                                       for: indexPath) as? ProfileLinkTableViewCell else { return UITableViewCell() }
         cell.selectionStyle = .none // Отключаем выделение
         let item = viewModel.tableItems[indexPath.row]
         cell.configure(with: item.title, amount: item.count)

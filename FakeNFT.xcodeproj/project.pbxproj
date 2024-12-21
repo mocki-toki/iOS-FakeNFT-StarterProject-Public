@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		012773BA2D1646FD005B656F /* EditProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012773B92D1646EC005B656F /* EditProfileViewController.swift */; };
 		0170DE0E2D163CF800D14A11 /* ProfileLinkTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0170DE0D2D163CDE00D14A11 /* ProfileLinkTableViewCell.swift */; };
 		0170DE102D163E4C00D14A11 /* TestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0170DE0F2D163E3F00D14A11 /* TestViewController.swift */; };
 		0170DE1C2D1640C400D14A11 /* ProfileTableItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0170DE1B2D1640B900D14A11 /* ProfileTableItem.swift */; };
@@ -87,6 +88,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		012773B92D1646EC005B656F /* EditProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileViewController.swift; sourceTree = "<group>"; };
 		0170DE0D2D163CDE00D14A11 /* ProfileLinkTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileLinkTableViewCell.swift; sourceTree = "<group>"; };
 		0170DE0F2D163E3F00D14A11 /* TestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestViewController.swift; sourceTree = "<group>"; };
 		0170DE1B2D1640B900D14A11 /* ProfileTableItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileTableItem.swift; sourceTree = "<group>"; };
@@ -471,6 +473,7 @@
 			isa = PBXGroup;
 			children = (
 				0170DE0F2D163E3F00D14A11 /* TestViewController.swift */,
+				012773B92D1646EC005B656F /* EditProfileViewController.swift */,
 				0170DE192D16404800D14A11 /* Profile Page */,
 			);
 			path = Profile;
@@ -691,6 +694,7 @@
 				3F68069729CBBAF100B4F915 /* AppDelegate.swift in Sources */,
 				26250E562D107EB0005F5BE3 /* Profile.swift in Sources */,
 				01871FF72D10E2BB00800E57 /* PrimaryButton.swift in Sources */,
+				012773BA2D1646FD005B656F /* EditProfileViewController.swift in Sources */,
 				3F68069929CBBAF100B4F915 /* SceneDelegate.swift in Sources */,
 				01871FF92D10E2D500800E57 /* SecondaryButton.swift in Sources */,
 				0C79EE6C2A76DE2E00EE90EA /* ServicesAssemly.swift in Sources */,
