@@ -87,10 +87,10 @@ final class UserCell: UITableViewCell {
         }
     }
     
-    func configure(with user: MockUser) {
-        rankLabel.text = "\(user.rank)"
-        avatarImageView.image = user.avatar
+    func configure(with user: Users, rank: Int) {
+        rankLabel.text = "\(rank)"
+        avatarImageView.kf.setImage(with: URL(string: user.avatar), placeholder: UIImage(named: "AvatarStub"))
         nameLabel.text = user.name
-        nftCountLabel.text = "\(user.nfts)"
+        nftCountLabel.text = "\(user.nfts.count)"
     }
 }

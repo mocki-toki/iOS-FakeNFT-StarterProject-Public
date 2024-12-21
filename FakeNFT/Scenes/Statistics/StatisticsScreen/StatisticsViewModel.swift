@@ -1,36 +1,45 @@
 import UIKit
 
-struct MockUser {
-    let rank: String
-    let avatar: UIImage
-    let name: String
-    let nfts: Int
-}
-
 final class StatisticsViewModel {
     private let nftService: NftService
-    private(set) var users: [MockUser] = []
+    private let userService: UserService
     
+    enum Sort: String {
+        case byRate
+        case byName
+    }
+    
+    var users: [Users] = [] {
+        didSet {
+            onDataUpdated?()
+        }
+    }
     var onDataUpdated: (() -> Void)?
     
-    init(nftService: NftService) {
+    init(nftService: NftService, userService: UserService) {
         self.nftService = nftService
+        self.userService = userService
     }
     
     func loadUsers() {
-        let mockUsers = [
-            MockUser(rank: "1", avatar: UIImage(named: "AvatarStub")!, name: "Alice", nfts: 10),
-            MockUser(rank: "2", avatar: UIImage(named: "AvatarStub")!, name: "Alice", nfts: 9),
-            MockUser(rank: "3", avatar: UIImage(named: "AvatarStub")!, name: "Alice", nfts: 8),
-            MockUser(rank: "4", avatar: UIImage(named: "AvatarStub")!, name: "Alice", nfts: 7),
-            MockUser(rank: "5", avatar: UIImage(named: "AvatarStub")!, name: "Alice", nfts: 6),
-            MockUser(rank: "6", avatar: UIImage(named: "AvatarStub")!, name: "Alice", nfts: 5),
-            MockUser(rank: "7", avatar: UIImage(named: "AvatarStub")!, name: "Alice", nfts: 4),
-            MockUser(rank: "8", avatar: UIImage(named: "AvatarStub")!, name: "Alice", nfts: 3),
-            MockUser(rank: "9", avatar: UIImage(named: "AvatarStub")!, name: "Alice", nfts: 2)
-        ]
-        
-        self.users = mockUsers
-        onDataUpdated?()
+        userService.fetchUsers { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let fetchedUsers):
+                    self?.users = fetchedUsers.sorted { $0.nfts.count > $1.nfts.count }
+                case .failure(let error):
+                    print("Error fetching users: \(error)")
+                }
+            }
+        }
+    }
+    
+    func sortedUsers(_ type: Sort) {
+        switch type {
+        case .byRate:
+            users = users.sorted { $0.nfts.count > $1.nfts.count }
+        case .byName:
+            users = users.sorted { $0.name < $1.name }
+        }
     }
 }

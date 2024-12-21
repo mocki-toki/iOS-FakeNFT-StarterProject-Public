@@ -18,7 +18,8 @@ final class StatisticsViewController: UIViewController {
     init(servicesAssembly: ServicesAssembly, viewModel: StatisticsViewModel? = nil) {
         self.servicesAssembly = servicesAssembly
         let nftService = servicesAssembly.nftService
-        self.viewModel = viewModel ?? StatisticsViewModel(nftService: nftService)
+        let userService = servicesAssembly.userService
+        self.viewModel = viewModel ?? StatisticsViewModel(nftService: nftService, userService: userService)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -71,8 +72,13 @@ final class StatisticsViewController: UIViewController {
             title: String(localizable: .sortAlert),
             cancelActionTitle: String(localizable: .sortClose),
             options: [String(localizable: .sortUserName), String(localizable: .sortRating)]
-        ) { selectedOption in
-            print("Selected option: \(selectedOption)")
+        ) { [weak self] selectedOption in
+            guard let self = self else { return }
+            if selectedOption == String(localizable: .sortUserName) {
+                viewModel.sortedUsers(.byName)
+            } else if selectedOption == String(localizable: .sortRating) {
+                viewModel.sortedUsers(.byRate)
+            }
         }
     }
 }
@@ -89,7 +95,7 @@ extension StatisticsViewController: UITableViewDataSource {
         }
         
         let user = viewModel.users[indexPath.row]
-        cell.configure(with: user)
+        cell.configure(with: user, rank: indexPath.row + 1)
         return cell
     }
 }
