@@ -46,7 +46,9 @@ final class CartViewModel {
     
     func toggleCartState(for index: Int) {
         cartItems[index].isInCart.toggle()
-        Logger.log("Toggled cart state for item: \(cartItems[index].name). Now in cart: \(cartItems[index].isInCart)", level: .debug)
+        Logger.log(
+            "Toggled cart state for item: \(cartItems[index].name). Now in cart: \(cartItems[index].isInCart)",
+            level: .debug)
         onCartUpdated?()
     }
     
@@ -62,7 +64,6 @@ final class CartViewModel {
             cartItems.sort { $0.name < $1.name }
         default:
             Logger.log("Unknown sort option: \(option)", level: .warning)
-            break
         }
         onCartUpdated?()
     }

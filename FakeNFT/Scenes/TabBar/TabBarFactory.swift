@@ -12,24 +12,13 @@ final class TabBarFactory {
             UINavigationController(
                 rootViewController: CartViewController(
                     servicesAssembly: servicesAssembly,
-                    viewModel: createCartViewModel()
+                    viewModel: CartViewModel(items: [])
                 )
             ).configured(with: String(localizable: .tabCart), image: UIImage.inactiveCart, tag: 2),
             
             UINavigationController(rootViewController: StatisticsViewController(servicesAssembly: servicesAssembly))
                 .configured(with: String(localizable: .tabStatistics), image: UIImage.inactiveStatistics, tag: 3)
         ]
-    }
-    
-    // MARK: - Test Data Factory
-    
-    private static func createCartViewModel() -> CartViewModel {
-        let image = UIImage(named: "SucessfulPayment")
-        let testItems = [
-            CartItem(name: "April", price: 1.78, rating: 1, image: image ?? UIImage(), isInCart: true),
-            CartItem(name: "April", price: 1.78, rating: 1, image: image ?? UIImage(), isInCart: true)
-        ]
-        return CartViewModel(items: testItems)
     }
 }
 
