@@ -30,6 +30,7 @@ final class CartViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        Logger.log("CartViewController loaded")
         setupView()
         setupBindings()
         updateFooter()
@@ -55,6 +56,7 @@ final class CartViewController: UIViewController {
     }
     
     private func updateUI(for isCartEmpty: Bool) {
+        Logger.log(isCartEmpty ? "Cart is empty" : "Cart has items")
         emptyStateLabel.isHidden = !isCartEmpty
         tableView.isHidden = isCartEmpty
         footerView.isHidden = isCartEmpty
@@ -172,6 +174,7 @@ final class CartViewController: UIViewController {
     private func setupBindings() {
         viewModel.onCartUpdated = { [weak self] in
             guard let self = self else { return }
+            Logger.log("Cart updated: \(self.viewModel.numberOfItems()) items, total \(self.viewModel.formattedTotalCost)")
             self.tableView.reloadData()
             self.updateFooter()
             self.updateUI(for: self.viewModel.isCartEmpty)
@@ -184,14 +187,16 @@ final class CartViewController: UIViewController {
     }
     
     private func presentDeleteConfirmation(for item: CartItem) {
+        Logger.log("User initiated deletion for item: \(item.name)")
         let viewModel = DeleteConfirmationViewModel(
             nftImage: item.image,
             message: String(localizable: .cartDeleteConfirmation),
             onConfirm: { [weak self] in
                 self?.viewModel.removeItem(item)
+                Logger.log("User confirmed deletion for item: \(item.name)", level: .debug)
             },
             onCancel: {
-                Logger.log("User canceled deletion")
+                Logger.log("User canceled deletion for item: \(item.name)", level: .debug)
             }
         )
         let confirmationVC = DeleteConfirmationViewController(viewModel: viewModel)
@@ -200,10 +205,11 @@ final class CartViewController: UIViewController {
     }
     
     @objc private func handleCheckout() {
-        Logger.log("Checkout button tapped")
+        Logger.log("Checkout initiated with \(viewModel.numberOfItems()) items totaling \(viewModel.formattedTotalCost)")
     }
     
     @objc private func hamburgerButtonTapped() {
+        Logger.log("Hamburger button tapped", level: .debug)
         AlertPresenter.presentSortOptions(
             on: self,
             title: String(localizable: .sortAlert),
@@ -230,10 +236,12 @@ extension CartViewController: UITableViewDataSource, UITableViewDelegate {
             withIdentifier: "NftTableViewCell",
             for: indexPath
         ) as? NftTableViewCell else {
+            Logger.log("Failed to dequeue NftTableViewCell at index \(indexPath.row)", level: .error)
             return UITableViewCell()
         }
         
         let item = viewModel.item(at: indexPath.row)
+        Logger.log("Configuring cell for item: \(item.name) at index \(indexPath.row)", level: .debug)
         cell.configure(
             with: .cart,
             onLike: {},

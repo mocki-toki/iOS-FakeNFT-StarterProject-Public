@@ -31,6 +31,7 @@ final class CartViewModel {
     // MARK: - Initializer
     init(items: [CartItem]) {
         self.cartItems = items
+        Logger.log("CartViewModel initialized with \(items.count) items")
         applySavedSortOption()
     }
     
@@ -45,6 +46,7 @@ final class CartViewModel {
     
     func toggleCartState(for index: Int) {
         cartItems[index].isInCart.toggle()
+        Logger.log("Toggled cart state for item: \(cartItems[index].name). Now in cart: \(cartItems[index].isInCart)", level: .debug)
         onCartUpdated?()
     }
     
@@ -59,6 +61,7 @@ final class CartViewModel {
         case String(localizable: .sortNftName):
             cartItems.sort { $0.name < $1.name }
         default:
+            Logger.log("Unknown sort option: \(option)", level: .warning)
             break
         }
         onCartUpdated?()
@@ -66,19 +69,26 @@ final class CartViewModel {
     
     func applySavedSortOption() {
         if let savedOption = loadSortOption() {
+            Logger.log("Applying saved sort option: \(savedOption)")
             sortItems(by: savedOption)
+        } else {
+            Logger.log("No saved sort option found. Using default: \(String(localizable: .sortNftName))", level: .debug)
         }
     }
     
     func removeItem(_ item: CartItem) {
         if let index = cartItems.firstIndex(where: { $0.name == item.name }) {
+            Logger.log("Removing item: \(item.name) at index \(index)")
             cartItems.remove(at: index)
             onCartUpdated?()
+        } else {
+            Logger.log("Attempted to remove non-existing item: \(item.name)", level: .error)
         }
     }
     
     // MARK: - Private Methods
     private func saveSortOption(_ option: String) {
+        Logger.log("Saving sort option: \(option)", level: .debug)
         UserDefaults.standard.set(option, forKey: sortOptionKey)
     }
     
