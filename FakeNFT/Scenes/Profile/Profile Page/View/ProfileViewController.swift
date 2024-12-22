@@ -5,10 +5,15 @@ import Then
 final class ProfileViewController: UIViewController {
     // MARK: - Properties
     
-    private let viewModel: ProfileViewViewModelType?
+    private var viewModel: ProfileViewViewModelType?
     let servicesAssembly: ServicesAssembly
     
     // MARK: - UI components
+    
+    private lazy var activityIndicator = UIActivityIndicatorView(style: .medium).then {
+        $0.hidesWhenStopped = true
+        $0.color = .gray
+    }
     
     private lazy var avatarImageView = UIImageView().then {
         $0.backgroundColor = .lightGray
@@ -60,8 +65,8 @@ final class ProfileViewController: UIViewController {
     
     // MARK: - Initialization
     
-    init(viewModel: ProfileViewModel = ProfileViewModel(), servicesAssembly: ServicesAssembly) {
-        self.viewModel = viewModel
+    init(servicesAssembly: ServicesAssembly) {
+        self.viewModel = ProfileViewModel(profileNetworkService: servicesAssembly.profileNetworkService)
         self.servicesAssembly = servicesAssembly
         super.init(nibName: nil, bundle: nil)
     }
@@ -80,6 +85,11 @@ final class ProfileViewController: UIViewController {
         setupViews()
         setupConstraints()
         bindViewModel()
+        viewModel?.loadData()
+        
+        viewModel?.onProfileDataUpdated = { [weak self] in
+               self?.updateUI()
+           }
     }
     
     // MARK: - Navigation
@@ -98,10 +108,34 @@ final class ProfileViewController: UIViewController {
     // MARK: - Binding
     
     private func bindViewModel() {
-        guard let viewModel = viewModel else {return}
-        usernameLabel.text = viewModel.username
-        bioLabel.text = viewModel.bio
-        websiteLink.setTitle(viewModel.website, for: .normal)
+        guard var viewModel = viewModel else {return}
+        viewModel.onProfileDataUpdated = { [weak self] in
+            self?.updateUI()
+        }
+        
+        viewModel.onLoadingStatusChanged = { [weak self] isLoading in
+            self?.updateLoadingIndicator(isLoading)
+        }
+    }
+    
+    private func updateUI() {
+            guard let viewModel = viewModel else { return }
+            
+            usernameLabel.text = viewModel.userProfile?.name
+            bioLabel.text = viewModel.userProfile?.description
+            websiteLink.setTitle(viewModel.userProfile?.website, for: .normal)
+            
+            tableView.reloadData()
+        }
+    
+    private func updateLoadingIndicator(_ isLoading: Bool) {
+        if isLoading {
+            activityIndicator.startAnimating()
+            print("Loading data...")
+        } else {
+            activityIndicator.stopAnimating()
+            print("Data loaded")
+        }
     }
     
     // MARK: - UI Setup
@@ -114,9 +148,14 @@ final class ProfileViewController: UIViewController {
         view.addSubview(profileStackView)
         view.addSubview(websiteLink)
         view.addSubview(tableView)
+        view.addSubview(activityIndicator)
     }
     
     private func setupConstraints() {
+        activityIndicator.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+        
         profileStackView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
             make.left.equalTo(view.safeAreaLayoutGuide).offset(16)
@@ -147,7 +186,7 @@ final class ProfileViewController: UIViewController {
     
     @objc private func editButtonDidTapped() {
         print("Edit Profile button tapped!")
-
+        
         let editProfileViewController = EditProfileViewController()
         let navController = UINavigationController(rootViewController: editProfileViewController)
         navController.modalPresentationStyle = .pageSheet
@@ -155,15 +194,16 @@ final class ProfileViewController: UIViewController {
     }
     
     @objc private func openUserWebsite() {
-        guard let viewModel = viewModel else { return }
+        guard let viewModel = viewModel,
+              let website = viewModel.userProfile?.website else { return }
         
-        let webViewModel = WebViewModel(urlString: viewModel.website)
+        let webViewModel = WebViewModel(urlString: website)
         let webViewController = WebViewController(viewModel: webViewModel)
         navigationController?.pushViewController(webViewController, animated: true)
     }
 }
 
-    // MARK: - UITableViewDelegate
+// MARK: - UITableViewDelegate
 
 extension ProfileViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -177,7 +217,7 @@ extension ProfileViewController: UITableViewDelegate {
     }
 }
 
-    // MARK: - UITableViewDataSource
+// MARK: - UITableViewDataSource
 extension ProfileViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard let viewModel = viewModel else { return 3 }

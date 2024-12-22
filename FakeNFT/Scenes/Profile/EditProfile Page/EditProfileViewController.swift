@@ -218,7 +218,6 @@ class EditProfileViewController: UIViewController {
             message: "Пожалуйста, введите новый URL фотографии",
             buttons: [okButton, cancelButton],
             textFieldHandler: { textField in
-                // Здесь можно настроить свойства текстового поля
                 textField.placeholder = "Введите URL"
                 textField.keyboardType = .URL
                 textField.text = self.currentURL

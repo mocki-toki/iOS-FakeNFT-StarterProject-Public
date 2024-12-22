@@ -16,4 +16,8 @@ final class ServicesAssembly {
             storage: nftStorage
         )
     }
+    
+    lazy var profileNetworkService: ProfileNetworkService = {
+        ProfileNetworkService(networkClient: networkClient)
+    }()
 }
