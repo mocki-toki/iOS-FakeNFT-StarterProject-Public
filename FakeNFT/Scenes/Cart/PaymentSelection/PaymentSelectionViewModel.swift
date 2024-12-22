@@ -11,6 +11,7 @@ struct PaymentMethod {
 final class PaymentSelectionViewModel {
     @Published private(set) var paymentMethods: [PaymentMethod] = []
     @Published var selectedMethod: PaymentMethod?
+    @Published var shouldShowSuccessScreen: Bool = false
     
     init() {
         loadPaymentMethods()
@@ -32,5 +33,12 @@ final class PaymentSelectionViewModel {
     func selectPaymentMethod(at index: Int) {
         guard index < paymentMethods.count else { return }
         selectedMethod = paymentMethods[index]
+    }
+    
+    func processPayment() {
+        guard let selectedMethod = selectedMethod else { return }
+        if selectedMethod.id == "btc" {
+            shouldShowSuccessScreen = true
+        }
     }
 }

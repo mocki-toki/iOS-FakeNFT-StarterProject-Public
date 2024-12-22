@@ -206,7 +206,7 @@ final class CartViewController: UIViewController {
     
     @objc private func handleCheckout() {
         Logger.log("Checkout initiated with \(viewModel.numberOfItems()) items totaling \(viewModel.formattedTotalCost)")
-        let paymentVC = PaymentSelectionViewController()
+        let paymentVC = PaymentSelectionViewController(cartViewModel: viewModel)
         paymentVC.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(paymentVC, animated: true)
     }

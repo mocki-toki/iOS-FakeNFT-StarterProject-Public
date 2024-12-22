@@ -5,6 +5,7 @@ import Then
 
 final class PaymentSelectionViewController: UIViewController {
     private let viewModel = PaymentSelectionViewModel()
+    private let cartViewModel: CartViewModel
     private var subscriptions = Set<AnyCancellable>()
     
     private lazy var collectionView: UICollectionView = {
@@ -84,6 +85,15 @@ final class PaymentSelectionViewController: UIViewController {
             $0.addTarget(self, action: #selector(payButtonTapped), for: .touchUpInside)
         }
     
+    init(cartViewModel: CartViewModel) {
+        self.cartViewModel = cartViewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -130,6 +140,15 @@ final class PaymentSelectionViewController: UIViewController {
                 Logger.log("Selected Method: \(selectedMethod?.title ?? "None")")
             }
             .store(in: &subscriptions)
+        
+        viewModel.$shouldShowSuccessScreen
+            .receive(on: RunLoop.main)
+            .sink { [weak self] shouldShow in
+                if shouldShow {
+                    self?.showSuccessScreen()
+                }
+            }
+            .store(in: &subscriptions)
     }
     
     @objc private func backButtonTapped() {
@@ -138,12 +157,22 @@ final class PaymentSelectionViewController: UIViewController {
     
     @objc private func payButtonTapped() {
         Logger.log("Pay button tapped")
+        viewModel.processPayment()
     }
     
     @objc private func agreementLinkTapped() {
         if let url = URL(string: "https://en.wikipedia.org/wiki/End-user_license_agreement") {
             UIApplication.shared.open(url)
         }
+    }
+    
+    private func showSuccessScreen() {
+        let successVC = SuccessViewController()
+        successVC.modalPresentationStyle = .fullScreen
+        successVC.onDismiss = { [weak self] in
+            self?.cartViewModel.clearCart()
+        }
+        present(successVC, animated: true, completion: nil)
     }
 }
 
@@ -170,6 +199,6 @@ extension PaymentSelectionViewController: UICollectionViewDelegate {
     }
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        Logger.log("[LOG] Deselected method at index: \(indexPath.item)")
+        Logger.log("Deselected method at index: \(indexPath.item)")
     }
 }
