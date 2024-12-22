@@ -35,6 +35,7 @@ class EditProfileViewController: UIViewController {
         $0.autocorrectionType = .no
         $0.autocapitalizationType = .none
         $0.spellCheckingType = .no
+        $0.clearButtonMode = .whileEditing
         
         let paddingView = UIView()
         paddingView.frame = CGRect(x: 0, y: 0, width: 16, height: 1)
@@ -72,6 +73,7 @@ class EditProfileViewController: UIViewController {
         $0.autocorrectionType = .no
         $0.autocapitalizationType = .none
         $0.spellCheckingType = .no
+        $0.clearButtonMode = .whileEditing
         
         let paddingView = UIView()
         paddingView.frame = CGRect(x: 0, y: 0, width: 16, height: 1)
