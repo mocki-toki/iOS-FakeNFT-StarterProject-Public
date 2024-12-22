@@ -11,7 +11,12 @@ struct PaymentMethod {
 final class PaymentSelectionViewModel {
     @Published private(set) var paymentMethods: [PaymentMethod] = []
     @Published var selectedMethod: PaymentMethod?
-    @Published var shouldShowSuccessScreen: Bool = false
+    @Published var paymentResult: PaymentResult?
+    
+    enum PaymentResult {
+        case success
+        case failure
+    }
     
     init() {
         loadPaymentMethods()
@@ -38,7 +43,9 @@ final class PaymentSelectionViewModel {
     func processPayment() {
         guard let selectedMethod = selectedMethod else { return }
         if selectedMethod.id == "btc" {
-            shouldShowSuccessScreen = true
+            paymentResult = .success
+        } else {
+            paymentResult = .failure
         }
     }
 }

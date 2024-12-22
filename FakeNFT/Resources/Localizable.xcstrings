@@ -120,6 +120,23 @@
         }
       }
     },
+    "Error.cancel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отмена"
+          }
+        }
+      }
+    },
     "Error.network" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -235,6 +252,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Оплатить"
+          }
+        }
+      }
+    },
+    "Payment.fail" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Payment failed"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось произвести оплату"
           }
         }
       }

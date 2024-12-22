@@ -141,12 +141,11 @@ final class PaymentSelectionViewController: UIViewController {
             }
             .store(in: &subscriptions)
         
-        viewModel.$shouldShowSuccessScreen
+        viewModel.$paymentResult
             .receive(on: RunLoop.main)
-            .sink { [weak self] shouldShow in
-                if shouldShow {
-                    self?.showSuccessScreen()
-                }
+            .sink { [weak self] result in
+                guard let result = result else { return }
+                self?.handlePaymentResult(result)
             }
             .store(in: &subscriptions)
     }
@@ -173,6 +172,35 @@ final class PaymentSelectionViewController: UIViewController {
             self?.cartViewModel.clearCart()
         }
         present(successVC, animated: true, completion: nil)
+    }
+    
+    private func handlePaymentResult(_ result: PaymentSelectionViewModel.PaymentResult) {
+        switch result {
+        case .success:
+            showSuccessScreen()
+        case .failure:
+            AlertPresenter.presentAlert(
+                on: self,
+                title: String(localizable: .paymentFail),
+                message: nil,
+                buttons: [
+                    AlertPresenter.Button(
+                        title: String(localizable: .errorCancel),
+                        action: nil,
+                        style: .default,
+                        isPreferred: false
+                    ),
+                    AlertPresenter.Button(
+                        title: String(localizable: .errorRepeat),
+                        action: { [weak self] in
+                            self?.viewModel.processPayment()
+                        },
+                        style: .default,
+                        isPreferred: true
+                    )
+                ]
+            )
+        }
     }
 }
 
