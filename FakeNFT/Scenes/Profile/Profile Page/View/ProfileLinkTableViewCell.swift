@@ -58,8 +58,14 @@ class ProfileLinkTableViewCell: UITableViewCell {
     
     // MARK: - configure
     
-    func configure(with title: String, amount: Int) {
+    func configure(with title: String, amount: Int?) {
         titleLabel.text = title
-        amountNftLabel.text = "(\(amount))"
+        if amount == nil {
+            amountNftLabel.text = nil
+        }
+            else {
+                guard let amount = amount else { return }
+            amountNftLabel.text = "(\(amount))"
+        }
     }
 }

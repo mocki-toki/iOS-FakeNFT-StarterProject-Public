@@ -32,7 +32,7 @@ final class ProfileViewController: UIViewController {
     private lazy var websiteLink = UIButton(type: .system).then {
         $0.titleLabel?.font = UIFont.regular15
         $0.titleLabel?.textColor = UIColor.primary
-        //        $0.addTarget(self, action: #selector(openWebsite), for: .touchUpInside)
+        $0.addTarget(self, action: #selector(openUserWebsite), for: .touchUpInside)
     }
     
     private lazy var avatarStackView = UIStackView().then {
@@ -98,9 +98,10 @@ final class ProfileViewController: UIViewController {
     // MARK: - Binding
     
     private func bindViewModel() {
-        usernameLabel.text = viewModel?.username
-        bioLabel.text = viewModel?.bio
-        websiteLink.setTitle(viewModel?.website, for: .normal)
+        guard let viewModel = viewModel else {return}
+        usernameLabel.text = viewModel.username
+        bioLabel.text = viewModel.bio
+        websiteLink.setTitle(viewModel.website, for: .normal)
     }
     
     // MARK: - UI Setup
@@ -152,6 +153,14 @@ final class ProfileViewController: UIViewController {
         navController.modalPresentationStyle = .pageSheet
         present(navController, animated: true, completion: nil)
     }
+    
+    @objc private func openUserWebsite() {
+        guard let viewModel = viewModel else { return }
+        
+        let webViewModel = WebViewModel(urlString: viewModel.website)
+        let webViewController = WebViewController(viewModel: webViewModel)
+        navigationController?.pushViewController(webViewController, animated: true)
+    }
 }
 
     // MARK: - UITableViewDelegate
@@ -171,7 +180,6 @@ extension ProfileViewController: UITableViewDelegate {
 
     // MARK: - UITableViewDataSource
 extension ProfileViewController: UITableViewDataSource {
-    //кол-во ячеек
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard let viewModel = viewModel else { return 3 }
         return viewModel.tableItems.count
