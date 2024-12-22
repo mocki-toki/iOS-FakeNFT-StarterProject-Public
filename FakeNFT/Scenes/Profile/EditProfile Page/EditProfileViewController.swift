@@ -223,12 +223,13 @@ class EditProfileViewController: UIViewController {
                 textField.keyboardType = .URL
                 textField.text = self.currentURL
                 textField.clearButtonMode = .whileEditing
+                textField.autocapitalizationType = .none
+                textField.autocorrectionType = .no
             }
         )
     }
- 
+    
     func getTextFieldValue() -> String? {
-
         guard let alertController = self.presentedViewController as? UIAlertController,
               let textField = alertController.textFields?.first else {
             return nil

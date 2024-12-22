@@ -8,7 +8,6 @@ protocol ProfileViewViewModelType {
 }
 
 final class ProfileViewModel: ProfileViewViewModelType {
-    // Массив для данных таблицы
     private(set) var tableItems: [ProfileTableItem] = [
         ProfileTableItem(title: "Мои NFT", count: 112, destination: MyNftViewController()),
         ProfileTableItem(title: "Избранные NFT", count: 11, destination: FavoritesViewController()),
@@ -17,7 +16,7 @@ final class ProfileViewModel: ProfileViewViewModelType {
                          destination: WebViewController(viewModel: WebViewModel(urlString: "practicum.yandex.ru")))
     ]
     
-    // Данные профиля
+
     var username: String = "Joaquin Phoenix"
     var bio: String = """
                        Дизайнер из Казани, люблю цифровое искусство и бейглы. В моей коллекции уже 100+ NFT, и еще больше — на моём сайте. Открыт к коллаборациям.

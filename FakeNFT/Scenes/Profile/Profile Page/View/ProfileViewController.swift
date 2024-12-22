@@ -166,7 +166,6 @@ final class ProfileViewController: UIViewController {
     // MARK: - UITableViewDelegate
 
 extension ProfileViewController: UITableViewDelegate {
-    // Обработка нажатия на ячейку
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let viewModel = viewModel else { return }
         let selectedItem = viewModel.tableItems[indexPath.row]
@@ -189,7 +188,7 @@ extension ProfileViewController: UITableViewDataSource {
         guard let viewModel = viewModel,
               let cell = tableView.dequeueReusableCell(withIdentifier: "ProfileCell",
                                                        for: indexPath) as? ProfileLinkTableViewCell else { return UITableViewCell() }
-        cell.selectionStyle = .none // Отключаем выделение
+        cell.selectionStyle = .none
         let item = viewModel.tableItems[indexPath.row]
         cell.configure(with: item.title, amount: item.count)
         return cell
