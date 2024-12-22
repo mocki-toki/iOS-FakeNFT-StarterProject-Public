@@ -206,8 +206,14 @@ final class ProfileViewController: UIViewController {
     
     @objc private func editButtonDidTapped() {
         print("Edit Profile button tapped!")
+        guard let profile = viewModel?.userProfile else { return }
+        let profileEditorViewModel = EditProfileViewModel(profile: profile)
+        let editProfileViewController = EditProfileViewController(viewModel: profileEditorViewModel)
+        profileEditorViewModel.onProfileUpdated = { [weak self] updatedProfile in
+            self?.viewModel?.userProfile = updatedProfile
+            self?.viewModel?.onProfileDataUpdated?()
+        }
         
-        let editProfileViewController = EditProfileViewController()
         let navController = UINavigationController(rootViewController: editProfileViewController)
         navController.modalPresentationStyle = .pageSheet
         present(navController, animated: true, completion: nil)

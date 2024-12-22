@@ -1,13 +1,16 @@
 import UIKit
 import Then
 import SnapKit
+import Kingfisher
 
 class EditProfileViewController: UIViewController {
     // MARK: - Properties
     let currentURL = "test"
+    private let viewModel: EditProfileViewModelProtocol
+    
     // MARK: - UI components
     private lazy var avatarImageView = UIImageView().then {
-        $0.backgroundColor = .lightGray
+        $0.backgroundColor = .yBlack
         $0.layer.cornerRadius = 35
         $0.clipsToBounds = true
     }
@@ -90,6 +93,16 @@ class EditProfileViewController: UIViewController {
     private lazy var scrollView = UIScrollView()
     private lazy var contentView = UIView()
     
+    // MARK: - Initializers
+    init(viewModel: EditProfileViewModelProtocol) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -100,6 +113,7 @@ class EditProfileViewController: UIViewController {
         setupViews()
         setupConstraints()
         setupKeyboardNotifications()
+        setupInitialValues()
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tapGesture)
@@ -179,6 +193,19 @@ class EditProfileViewController: UIViewController {
         websiteTextField.snp.makeConstraints { make in
             make.height.equalTo(44)
             make.width.equalTo(formStackView.snp.width)
+        }
+    }
+    
+    // MARK: - Private Methods
+    
+    private func setupInitialValues() {
+        let profile = viewModel.userProfile
+        nameTextField.text = profile.name
+        bioTextView.text = profile.description
+        websiteTextField.text = profile.website
+        
+        if let avatarURL = URL(string: profile.avatar) {
+            avatarImageView.kf.setImage(with: avatarURL)
         }
     }
     
