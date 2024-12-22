@@ -4,7 +4,7 @@ import SnapKit
 
 class EditProfileViewController: UIViewController {
     // MARK: - Properties
-    
+    let currentURL = "test"
     // MARK: - UI components
     private lazy var avatarImageView = UIImageView().then {
         $0.backgroundColor = .lightGray
@@ -15,8 +15,8 @@ class EditProfileViewController: UIViewController {
     private lazy var changePhotoButton = UIButton(type: .system).then {
         $0.setTitle("Сменить фото", for: .normal)
         $0.titleLabel?.font = UIFont.medium10
-        $0.titleLabel?.numberOfLines = 2 // Разрешаем несколько строк
-        $0.titleLabel?.textAlignment = .center // Выравнивание текста по центру (если нужно)
+        $0.titleLabel?.numberOfLines = 2
+        $0.titleLabel?.textAlignment = .center
         $0.tintColor = UIColor.textOnPrimary
         $0.addTarget(self, action: #selector(changePhotoTapped), for: .touchUpInside)
     }
@@ -99,7 +99,6 @@ class EditProfileViewController: UIViewController {
         setupConstraints()
         setupKeyboardNotifications()
         
-        // Добавляем жест для скрытия клавиатуры при касании экрана
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tapGesture)
     }
@@ -192,6 +191,49 @@ class EditProfileViewController: UIViewController {
                                                object: nil)
     }
     
+    func showAlertWithTextField() {
+        let okButton = AlertPresenter.Button(
+            title: "OK",
+            action: {
+                if let text = self.getTextFieldValue() {
+                    print("Введенный URL: \(text)")
+                }
+            },
+            style: .default,
+            isPreferred: true
+        )
+        
+        let cancelButton = AlertPresenter.Button(
+            title: "Отмена",
+            action: nil,
+            style: .cancel,
+            isPreferred: false
+        )
+        
+        AlertPresenter.presentAlert(
+            on: self,
+            title: "Введите URL",
+            message: "Пожалуйста, введите новый URL фотографии",
+            buttons: [okButton, cancelButton],
+            textFieldHandler: { textField in
+                // Здесь можно настроить свойства текстового поля
+                textField.placeholder = "Введите URL"
+                textField.keyboardType = .URL
+                textField.text = self.currentURL
+                textField.clearButtonMode = .whileEditing
+            }
+        )
+    }
+ 
+    func getTextFieldValue() -> String? {
+
+        guard let alertController = self.presentedViewController as? UIAlertController,
+              let textField = alertController.textFields?.first else {
+            return nil
+        }
+        return textField.text
+    }
+    
     // MARK: - Actions
     @objc private func keyboardWillShow(_ notification: Notification) {
         guard let userInfo = notification.userInfo else { return }
@@ -207,10 +249,10 @@ class EditProfileViewController: UIViewController {
     @objc private func changePhotoTapped() {
         // Логика для смены фото
         print("Change photo button tapped")
+        showAlertWithTextField()
     }
     
     @objc private func dismissKeyboard() {
-        // Закрываем клавиатуру при касании экрана
         view.endEditing(true)
     }
     
