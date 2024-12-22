@@ -62,8 +62,7 @@ class ProfileLinkTableViewCell: UITableViewCell {
         titleLabel.text = title
         if amount == nil {
             amountNftLabel.text = nil
-        }
-            else {
+        } else {
                 guard let amount = amount else { return }
             amountNftLabel.text = "(\(amount))"
         }
