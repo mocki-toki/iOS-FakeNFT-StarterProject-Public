@@ -1,6 +1,7 @@
 import UIKit
 import SnapKit
 import Then
+import Kingfisher
 
 final class ProfileViewController: UIViewController {
     // MARK: - Properties
@@ -19,6 +20,7 @@ final class ProfileViewController: UIViewController {
         $0.backgroundColor = .lightGray
         $0.layer.cornerRadius = 35
         $0.clipsToBounds = true
+        $0.image = UIImage(named: "AvatarStub")
     }
     
     lazy var usernameLabel = UILabel().then {
@@ -88,8 +90,8 @@ final class ProfileViewController: UIViewController {
         viewModel?.loadData()
         
         viewModel?.onProfileDataUpdated = { [weak self] in
-               self?.updateUI()
-           }
+            self?.updateUI()
+        }
     }
     
     // MARK: - Navigation
@@ -119,14 +121,32 @@ final class ProfileViewController: UIViewController {
     }
     
     private func updateUI() {
-            guard let viewModel = viewModel else { return }
-            
-            usernameLabel.text = viewModel.userProfile?.name
-            bioLabel.text = viewModel.userProfile?.description
-            websiteLink.setTitle(viewModel.userProfile?.website, for: .normal)
-            
-            tableView.reloadData()
+        guard let viewModel = viewModel else { return }
+        let profile = viewModel.userProfile
+        guard let profile = profile else { return }
+        
+        usernameLabel.text = profile.name
+        bioLabel.text = profile.description
+        websiteLink.setTitle(profile.website, for: .normal)
+        
+        if let avatarURL = URL(string: profile.avatar) {
+            avatarImageView.kf.setImage(with: avatarURL,
+                                       placeholder: UIImage(named: "AvatarStub"),
+                                       options: nil,
+                                       progressBlock: nil,
+                                       completionHandler: { result in
+                switch result {
+                case .success(let value):
+                    print("Image successfully loaded: \(value.source.url?.absoluteString ?? "")")
+                case .failure(let error):
+                    print("Error loading image: \(error.localizedDescription)")
+                }
+            })
+        } else {
+            print("Invalid URL: \(profile.avatar)")
         }
+        tableView.reloadData()
+    }
     
     private func updateLoadingIndicator(_ isLoading: Bool) {
         if isLoading {
