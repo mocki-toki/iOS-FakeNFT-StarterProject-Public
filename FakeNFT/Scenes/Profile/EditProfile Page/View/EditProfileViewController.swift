@@ -5,7 +5,6 @@ import Kingfisher
 
 class EditProfileViewController: UIViewController {
     // MARK: - Properties
-    let currentURL = "test"
     private let viewModel: EditProfileViewModelProtocol
     
     // MARK: - UI components
@@ -44,6 +43,8 @@ class EditProfileViewController: UIViewController {
         paddingView.frame = CGRect(x: 0, y: 0, width: 16, height: 1)
         $0.leftView = paddingView
         $0.leftViewMode = .always
+        
+        $0.addTarget(self, action: #selector(nameTextFieldDidChange(_:)), for: .editingChanged)
     }
     
     private lazy var bioLabel = UILabel().then {
@@ -60,6 +61,7 @@ class EditProfileViewController: UIViewController {
         $0.autocapitalizationType = .none
         $0.spellCheckingType = .no
         $0.textContainerInset = UIEdgeInsets(top: 11, left: 16, bottom: 11, right: 16)
+        $0.delegate = self
     }
     
     private lazy var websiteLabel = UILabel().then {
@@ -82,6 +84,7 @@ class EditProfileViewController: UIViewController {
         paddingView.frame = CGRect(x: 0, y: 0, width: 16, height: 1)
         $0.leftView = paddingView
         $0.leftViewMode = .always
+        $0.addTarget(self, action: #selector(websiteTextFieldDidChange(_:)), for: .editingChanged)
     }
     
     private lazy var formStackView = UIStackView().then {
@@ -220,47 +223,36 @@ class EditProfileViewController: UIViewController {
                                                object: nil)
     }
     
-    func showAlertWithTextField() {
-        let okButton = AlertPresenter.Button(
-            title: "OK",
-            action: {
-                if let text = self.getTextFieldValue() {
-                    print("Введенный URL: \(text)")
-                }
-            },
-            style: .default,
-            isPreferred: true
-        )
-        
-        let cancelButton = AlertPresenter.Button(
-            title: "Отмена",
-            action: nil,
-            style: .cancel,
-            isPreferred: false
-        )
-        
-        AlertPresenter.presentAlert(
-            on: self,
+    func showAlertWithTextField(with currentURL: String, completion: @escaping (String) -> Void) {
+        let alertController = UIAlertController(
             title: "Введите URL",
             message: "Пожалуйста, введите новый URL фотографии",
-            buttons: [okButton, cancelButton],
-            textFieldHandler: { textField in
-                textField.placeholder = "Введите URL"
-                textField.keyboardType = .URL
-                textField.text = self.currentURL
-                textField.clearButtonMode = .whileEditing
-                textField.autocapitalizationType = .none
-                textField.autocorrectionType = .no
-            }
+            preferredStyle: .alert
         )
-    }
-    
-    func getTextFieldValue() -> String? {
-        guard let alertController = self.presentedViewController as? UIAlertController,
-              let textField = alertController.textFields?.first else {
-            return nil
+        
+        alertController.addTextField { textField in
+            textField.placeholder = "Введите URL"
+            textField.keyboardType = .URL
+            textField.text = currentURL
+            textField.clearButtonMode = .whileEditing
+            textField.autocapitalizationType = .none
+            textField.autocorrectionType = .no
         }
-        return textField.text
+        
+        let okButton = UIAlertAction(title: "OK", style: .default) { _ in
+            if let textField = alertController.textFields?.first,
+               let newValue = textField.text {
+                Logger.log("Новое значение URL: \(newValue)")
+                completion(newValue)
+            }
+        }
+        
+        let cancelButton = UIAlertAction(title: "Отмена", style: .cancel, handler: nil)
+        
+        alertController.addAction(okButton)
+        alertController.addAction(cancelButton)
+        
+        present(alertController, animated: true, completion: nil)
     }
     
     // MARK: - Actions
@@ -276,9 +268,38 @@ class EditProfileViewController: UIViewController {
     }
     
     @objc private func changePhotoTapped() {
-        // Логика для смены фото
-        print("Change photo button tapped")
-        showAlertWithTextField()
+        let currentURL = viewModel.userProfile.avatar
+        showAlertWithTextField(
+            with: currentURL,
+            completion: { [weak self] newURL in
+                guard let self = self else { return }
+                
+                self.viewModel.updateAvatar(newURL)
+                
+                if let url = URL(string: newURL) {
+                    self.avatarImageView.kf.setImage(with: url, options: [.cacheOriginalImage]) { result in
+                        switch result {
+                        case .success(let value):
+                            Logger.log("Аватар успешно обновлен: \(value.source.url?.absoluteString ?? "")", level: .debug)
+                        case .failure(let error):
+                            Logger.log("Ошибка при обновлении аватара: \(error.localizedDescription)", level: .error)
+                        }
+                    }
+                }
+            }
+        )
+    }
+    
+    @objc private func nameTextFieldDidChange(_ textField: UITextField) {
+        viewModel.updateUserName(textField.text ?? "")
+    }
+    
+    @objc private func websiteTextFieldDidChange(_ textField: UITextField) {
+        viewModel.updateUserWebsite(textField.text ?? "")
+    }
+    
+    @objc private func bioTextViewDidChange(_ textView: UITextView) {
+        viewModel.updateUserDescription(textView.text)
     }
     
     @objc private func dismissKeyboard() {
@@ -286,7 +307,31 @@ class EditProfileViewController: UIViewController {
     }
     
     @objc private func exitButtonDidTap() {
-        print("NavBarItem tapped!")
-        dismiss(animated: true, completion: nil)
+        viewModel.updateUserName(nameTextField.text ?? "")
+        viewModel.updateUserDescription(bioTextView.text)
+        viewModel.updateUserWebsite(websiteTextField.text ?? "")
+        
+        viewModel.saveProfileData { [weak self] result in
+            switch result {
+            case .success(let updatedProfile):
+                self?.viewModel.onProfileUpdated?(updatedProfile)
+                Logger.log("Профиль успешно обновлен: \(updatedProfile)")
+                DispatchQueue.main.async {
+                    self?.dismiss(animated: true, completion: nil)
+                }
+            case .failure(let error):
+                Logger.log("Ошибка при обновлении профиля: \(error)", level: .error)
+                DispatchQueue.main.async {
+                    self?.dismiss(animated: true, completion: nil)
+                }
+            }
+        }
+    }
+}
+
+extension EditProfileViewController: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+        bioTextViewDidChange(textView)
+        viewModel.updateUserDescription(textView.text)
     }
 }

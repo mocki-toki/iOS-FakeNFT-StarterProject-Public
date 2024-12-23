@@ -19,11 +19,10 @@ final class ProfileNetworkService: ProfileNetworkServiceProtocol {
         }
     }
     
-    func updateProfile(
-        profileData: String,
-        completion: @escaping (Result<Profile, Error>) -> Void
+    func updateProfile(profileData: UpdateProfileDto,
+                       completion: @escaping (Result<Profile, Error>) -> Void
     ) {
-        let request = UpdateProfileRequest(dto: profileData as? Dto)
+        let request = UpdateProfileRequest(dto: profileData)
         networkClient.send(request: request, type: Profile.self) { result in
             completion(result)
         }

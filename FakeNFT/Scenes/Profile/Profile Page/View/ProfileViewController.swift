@@ -5,12 +5,10 @@ import Kingfisher
 
 final class ProfileViewController: UIViewController {
     // MARK: - Properties
-    
     private var viewModel: ProfileViewViewModelType?
     let servicesAssembly: ServicesAssembly
-    
+//    private var isUIUpdated = false
     // MARK: - UI components
-    
     private lazy var activityIndicator = UIActivityIndicatorView(style: .medium).then {
         $0.hidesWhenStopped = true
         $0.color = .gray
@@ -57,7 +55,6 @@ final class ProfileViewController: UIViewController {
     }
     
     // MARK: - UITableView
-    
     private lazy var tableView = UITableView().then {
         $0.delegate = self
         $0.dataSource = self
@@ -66,7 +63,6 @@ final class ProfileViewController: UIViewController {
     }
     
     // MARK: - Initialization
-    
     init(servicesAssembly: ServicesAssembly) {
         self.viewModel = ProfileViewModel(profileNetworkService: servicesAssembly.profileNetworkService)
         self.servicesAssembly = servicesAssembly
@@ -78,24 +74,18 @@ final class ProfileViewController: UIViewController {
     }
     
     // MARK: - Lifecycle
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .yWhite
-        
+        guard let viewModel = viewModel else { return }
         setupNavBar()
         setupViews()
         setupConstraints()
         bindViewModel()
-        viewModel?.loadData()
-        
-        viewModel?.onProfileDataUpdated = { [weak self] in
-            self?.updateUI()
-        }
+        viewModel.loadData()
     }
     
     // MARK: - Navigation
-    
     private func setupNavBar() {
         let editButton = UIBarButtonItem(
             image: UIImage(named: "Edit"),
@@ -108,17 +98,24 @@ final class ProfileViewController: UIViewController {
     }
     
     // MARK: - Binding
-    
     private func bindViewModel() {
-        guard var viewModel = viewModel else {return}
-        viewModel.onProfileDataUpdated = { [weak self] in
-            self?.updateUI()
-        }
+        guard var viewModel = viewModel else { return }
         
-        viewModel.onLoadingStatusChanged = { [weak self] isLoading in
-            self?.updateLoadingIndicator(isLoading)
-        }
+           viewModel.onProfileDataUpdated = { [weak self] in
+               DispatchQueue.main.async {
+                   guard let self = self else { return }
+                   self.updateUI()
+               }
+           }
+           
+           viewModel.onLoadingStatusChanged = { [weak self] isLoading in
+               DispatchQueue.main.async {
+                   guard let self = self else { return }
+                   self.updateLoadingIndicator(isLoading)
+               }
+           }
     }
+    private var currentAvatarURL: URL?
     
     private func updateUI() {
         guard let viewModel = viewModel else { return }
@@ -128,22 +125,23 @@ final class ProfileViewController: UIViewController {
         usernameLabel.text = profile.name
         bioLabel.text = profile.description
         websiteLink.setTitle(profile.website, for: .normal)
-        
         if let avatarURL = URL(string: profile.avatar) {
             avatarImageView.kf.setImage(with: avatarURL,
                                        placeholder: UIImage(named: "AvatarStub"),
-                                       options: nil,
+                                       options: [.cacheOriginalImage],
                                        progressBlock: nil,
                                        completionHandler: { result in
-                switch result {
-                case .success(let value):
-                    print("Image successfully loaded: \(value.source.url?.absoluteString ?? "")")
-                case .failure(let error):
-                    print("Error loading image: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let value):
+                        Logger.log("Image successfully loaded: \(value.source.url?.absoluteString ?? "")", level: .debug)
+                    case .failure(let error):
+                        Logger.log("Error loading image: \(error.localizedDescription)", level: .error)
+                    }
                 }
             })
         } else {
-            print("Invalid URL: \(profile.avatar)")
+            Logger.log("Уже загружено \(profile.avatar)", level: .warning)
         }
         tableView.reloadData()
     }
@@ -151,15 +149,14 @@ final class ProfileViewController: UIViewController {
     private func updateLoadingIndicator(_ isLoading: Bool) {
         if isLoading {
             activityIndicator.startAnimating()
-            print("Loading data...")
+            Logger.log("Loading data...")
         } else {
             activityIndicator.stopAnimating()
-            print("Data loaded")
+            Logger.log("Data loaded")
         }
     }
     
     // MARK: - UI Setup
-    
     private func setupViews() {
         avatarStackView.addArrangedSubview(avatarImageView)
         avatarStackView.addArrangedSubview(usernameLabel)
@@ -203,15 +200,14 @@ final class ProfileViewController: UIViewController {
     }
     
     // MARK: - Actions
-    
     @objc private func editButtonDidTapped() {
-        print("Edit Profile button tapped!")
+        Logger.log("Edit Profile button tapped!")
         guard let profile = viewModel?.userProfile else { return }
-        let profileEditorViewModel = EditProfileViewModel(profile: profile)
-        let editProfileViewController = EditProfileViewController(viewModel: profileEditorViewModel)
-        profileEditorViewModel.onProfileUpdated = { [weak self] updatedProfile in
+        let editProfileViewModel = EditProfileViewModel(profile: profile)
+        let editProfileViewController = EditProfileViewController(viewModel: editProfileViewModel)
+        editProfileViewModel.onProfileUpdated = { [weak self] updatedProfile in
             self?.viewModel?.userProfile = updatedProfile
-            self?.viewModel?.onProfileDataUpdated?()
+//            self?.viewModel?.onProfileDataUpdated?()
         }
         
         let navController = UINavigationController(rootViewController: editProfileViewController)
@@ -230,7 +226,6 @@ final class ProfileViewController: UIViewController {
 }
 
 // MARK: - UITableViewDelegate
-
 extension ProfileViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let viewModel = viewModel else { return }
@@ -249,7 +244,7 @@ extension ProfileViewController: UITableViewDataSource {
         guard let viewModel = viewModel else { return 3 }
         return viewModel.tableItems.count
     }
-    // настройка ячейки
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let viewModel = viewModel,
               let cell = tableView.dequeueReusableCell(withIdentifier: "ProfileCell",

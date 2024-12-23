@@ -14,13 +14,13 @@ protocol ProfileViewViewModelType {
     func loadData()
     func updateMyNftCount(_ count: [String])
     func updateFavoriteNftCount(_ count: [String])
-    func saveProfileData(completion: @escaping (Result<Profile, Error>) -> Void)
 }
 
 final class ProfileViewModel: ProfileViewViewModelType {
     // MARK: - Public Properties
     var userProfile: Profile? {
         didSet {
+            Logger.log("Profile was updated")
             updateProfileData()
         }
     }
@@ -60,27 +60,6 @@ final class ProfileViewModel: ProfileViewViewModelType {
     func updateFavoriteNftCount(_ count: [String]) {
         if let profile = userProfile {
             userProfile = profile.updateFavoriteNftCount(count)
-        }
-    }
-    
-    func saveProfileData(completion: @escaping (Result<Profile, Error>) -> Void) {
-        guard let profile = userProfile else { return }
-        
-        var encodedLikes = profile.likes.map { String($0) }.joined(separator: ",")
-        if encodedLikes.isEmpty {
-            encodedLikes = "null"
-        }
-        
-        let profileData = "name=\(profile.name)&description=\(profile.description)&website=\(profile.website)&avatar=\(profile.avatar)&likes=\(encodedLikes)"
-        
-        profileNetworkService.updateProfile(profileData: profileData) { result in
-            switch result {
-            case .success(let updatedProfile):
-                self.userProfile = updatedProfile
-                completion(.success(updatedProfile))
-            case .failure(let error):
-                completion(.failure(error))
-            }
         }
     }
     
