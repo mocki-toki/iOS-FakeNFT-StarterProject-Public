@@ -8,7 +8,7 @@ final class StatisticsViewController: UIViewController {
 
     private let viewModel: StatisticsViewModel
     
-    private let tableView = UITableView().then {
+    private lazy var tableView = UITableView().then {
         $0.backgroundColor = .white
         $0.separatorStyle = .none
         $0.register(UserCell.self, forCellReuseIdentifier: "UserCell")
@@ -39,6 +39,11 @@ final class StatisticsViewController: UIViewController {
     private func bindViewModel() {
         viewModel.onDataUpdated = { [weak self] in
             self?.tableView.reloadData()
+        }
+        
+        viewModel.onErrorOccurred = { [weak self] message, retryAction in
+            guard let self = self else { return }
+            self.showErrorAlert(message: message, retryAction: retryAction)
         }
     }
     
@@ -80,6 +85,19 @@ final class StatisticsViewController: UIViewController {
                 viewModel.sortedUsers(.byRate)
             }
         }
+    }
+    
+    private func showErrorAlert(message: String, retryAction: @escaping () -> Void) {
+        let alert = UIAlertController(
+            title: String(localizable: .alertError),
+            message: message,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: String(localizable: .alertRetry), style: .default) { _ in
+            retryAction()
+        })
+        alert.addAction(UIAlertAction(title: String(localizable: .alertCancel), style: .cancel, handler: nil))
+        present(alert, animated: true, completion: nil)
     }
 }
 
