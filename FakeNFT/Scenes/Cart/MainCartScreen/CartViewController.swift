@@ -93,6 +93,7 @@ final class CartViewController: UIViewController {
         tableView.register(NftTableViewCell.self, forCellReuseIdentifier: "NftTableViewCell")
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.separatorStyle = .none
     }
     
     private func setupFooterView() {
@@ -252,7 +253,7 @@ extension CartViewController: UITableViewDataSource, UITableViewDelegate {
                 self?.presentDeleteConfirmation(for: item)
             })
         setValuesToCell(cell, item)
-        
+        cell.selectionStyle = .none
         return cell
     }
     

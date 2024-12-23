@@ -148,6 +148,13 @@ final class PaymentSelectionViewController: UIViewController {
                 self?.handlePaymentResult(result)
             }
             .store(in: &subscriptions)
+        
+        viewModel.$selectedMethod
+            .receive(on: RunLoop.main)
+            .sink { [weak self] selectedMethod in
+                self?.updatePayButtonState(isEnabled: selectedMethod != nil)
+            }
+            .store(in: &subscriptions)
     }
     
     @objc private func backButtonTapped() {
@@ -201,6 +208,11 @@ final class PaymentSelectionViewController: UIViewController {
                 ]
             )
         }
+    }
+    
+    private func updatePayButtonState(isEnabled: Bool) {
+        payButton.isEnabled = isEnabled
+        payButton.backgroundColor = isEnabled ? .yBlack : .yGreyUniversal
     }
 }
 
