@@ -6,7 +6,7 @@ final class TabBarFactory {
             UINavigationController(rootViewController: ProfileViewController(servicesAssembly: servicesAssembly))
                 .configured(with: String(localizable: .tabProfile), image: UIImage.inactiveProfile, tag: 0),
             
-            UINavigationController(rootViewController: CatalogViewController(servicesAssembly: servicesAssembly))
+            UINavigationController(rootViewController: CollectionListAssembly(servicesAssembler: servicesAssembly).build())
                 .configured(with: String(localizable: .tabCatalog), image: UIImage.inactiveCatalog, tag: 1),
             
             UINavigationController(rootViewController: CartViewController(servicesAssembly: servicesAssembly))
