@@ -262,8 +262,25 @@ class EditProfileViewController: UIViewController {
         
         alertController.addAction(okButton)
         alertController.addAction(cancelButton)
-        
-        present(alertController, animated: true, completion: nil)
+        DispatchQueue.main.async {
+            self.present(alertController, animated: true, completion: nil)
+        }
+    }
+    
+    private func disableUI() {
+        avatarImageView.isUserInteractionEnabled = false
+        changePhotoButton.isUserInteractionEnabled = false
+        nameTextField.isUserInteractionEnabled = false
+        bioTextView.isUserInteractionEnabled = false
+        websiteTextField.isUserInteractionEnabled = false
+    }
+
+    private func enableUI() {
+        avatarImageView.isUserInteractionEnabled = true
+        changePhotoButton.isUserInteractionEnabled = true
+        nameTextField.isUserInteractionEnabled = true
+        bioTextView.isUserInteractionEnabled = true
+        websiteTextField.isUserInteractionEnabled = true
     }
     
     // MARK: - Actions
@@ -318,15 +335,21 @@ class EditProfileViewController: UIViewController {
     }
     
     @objc private func exitButtonDidTap() {
+        disableUI()
+        Logger.log("disableUI", level: .debug)
+        
         viewModel.updateUserName(nameTextField.text ?? "")
         viewModel.updateUserDescription(bioTextView.text)
         viewModel.updateUserWebsite(websiteTextField.text ?? "")
         
-        activityIndicator.startAnimating()
+        DispatchQueue.main.async {
+            self.activityIndicator.startAnimating()
+        }
         self.viewModel.saveProfileData { [weak self] result in
             DispatchQueue.main.async {
-
                 self?.activityIndicator.stopAnimating()
+                self?.enableUI()
+                Logger.log("enableUI", level: .debug)
                 
                 switch result {
                 case .success(let updatedProfile):

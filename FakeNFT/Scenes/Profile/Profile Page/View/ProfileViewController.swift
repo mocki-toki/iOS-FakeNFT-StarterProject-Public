@@ -7,7 +7,7 @@ final class ProfileViewController: UIViewController {
     // MARK: - Properties
     private var viewModel: ProfileViewViewModelType?
     let servicesAssembly: ServicesAssembly
-//    private var isUIUpdated = false
+    
     // MARK: - UI components
     private lazy var activityIndicator = UIActivityIndicatorView(style: .medium).then {
         $0.hidesWhenStopped = true
@@ -54,6 +54,15 @@ final class ProfileViewController: UIViewController {
         $0.distribution = .equalSpacing
     }
     
+    private lazy var editButton = UIBarButtonItem().then {
+        $0.image = UIImage(named: "Edit")
+        $0.style = .plain
+        $0.target = self
+        $0.action = #selector(editButtonDidTapped)
+        $0.tintColor = UIColor.closeButton
+    }
+    
+    
     // MARK: - UITableView
     private lazy var tableView = UITableView().then {
         $0.delegate = self
@@ -87,13 +96,6 @@ final class ProfileViewController: UIViewController {
     
     // MARK: - Navigation
     private func setupNavBar() {
-        let editButton = UIBarButtonItem(
-            image: UIImage(named: "Edit"),
-            style: .plain,
-            target: self,
-            action: #selector(editButtonDidTapped)
-        )
-        editButton.tintColor = UIColor.closeButton
         navigationItem.rightBarButtonItem = editButton
     }
     
@@ -101,19 +103,19 @@ final class ProfileViewController: UIViewController {
     private func bindViewModel() {
         guard var viewModel = viewModel else { return }
         
-           viewModel.onProfileDataUpdated = { [weak self] in
-               DispatchQueue.main.async {
-                   guard let self = self else { return }
-                   self.updateUI()
-               }
-           }
-           
-           viewModel.onLoadingStatusChanged = { [weak self] isLoading in
-               DispatchQueue.main.async {
-                   guard let self = self else { return }
-                   self.updateLoadingIndicator(isLoading)
-               }
-           }
+        viewModel.onProfileDataUpdated = { [weak self] in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                self.updateUI()
+            }
+        }
+        
+        viewModel.onLoadingStatusChanged = { [weak self] isLoading in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                self.updateLoadingIndicator(isLoading)
+            }
+        }
     }
     private var currentAvatarURL: URL?
     
@@ -121,37 +123,40 @@ final class ProfileViewController: UIViewController {
         guard let viewModel = viewModel else { return }
         let profile = viewModel.userProfile
         guard let profile = profile else { return }
-        
-        usernameLabel.text = profile.name
-        bioLabel.text = profile.description
-        websiteLink.setTitle(profile.website, for: .normal)
-        if let avatarURL = URL(string: profile.avatar) {
-            avatarImageView.kf.setImage(with: avatarURL,
-                                       placeholder: UIImage(named: "AvatarStub"),
-                                       options: [.cacheOriginalImage],
-                                       progressBlock: nil,
-                                       completionHandler: { result in
-                DispatchQueue.main.async {
+        DispatchQueue.main.async {
+            self.usernameLabel.text = profile.name
+            self.bioLabel.text = profile.description
+            self.websiteLink.setTitle(profile.website, for: .normal)
+            if let avatarURL = URL(string: profile.avatar) {
+                self.avatarImageView.kf.setImage(with: avatarURL,
+                                                 placeholder: UIImage(named: "AvatarStub"),
+                                                 options: [.cacheOriginalImage],
+                                                 progressBlock: nil,
+                                                 completionHandler: { result in
                     switch result {
                     case .success(let value):
                         Logger.log("Image successfully loaded: \(value.source.url?.absoluteString ?? "")", level: .debug)
                     case .failure(let error):
                         Logger.log("Error loading image: \(error.localizedDescription)", level: .error)
                     }
-                }
-            })
-        } else {
-            Logger.log("Уже загружено \(profile.avatar)", level: .warning)
+                })
+            } else {
+                Logger.log("Уже загружено \(profile.avatar)", level: .warning)
+            }
+            self.tableView.reloadData()
         }
-        tableView.reloadData()
     }
     
     private func updateLoadingIndicator(_ isLoading: Bool) {
         if isLoading {
             activityIndicator.startAnimating()
+            tableView.isUserInteractionEnabled = false
+            editButton.isEnabled = false
             Logger.log("Loading data...")
         } else {
             activityIndicator.stopAnimating()
+            tableView.isUserInteractionEnabled = true
+            editButton.isEnabled = true
             Logger.log("Data loaded")
         }
     }
@@ -205,9 +210,11 @@ final class ProfileViewController: UIViewController {
         guard let profile = viewModel?.userProfile else { return }
         let editProfileViewModel = EditProfileViewModel(profile: profile)
         let editProfileViewController = EditProfileViewController(viewModel: editProfileViewModel)
+        
         editProfileViewModel.onProfileUpdated = { [weak self] updatedProfile in
-            self?.viewModel?.userProfile = updatedProfile
-//            self?.viewModel?.onProfileDataUpdated?()
+            DispatchQueue.main.async {
+                self?.viewModel?.userProfile = updatedProfile
+            }
         }
         
         let navController = UINavigationController(rootViewController: editProfileViewController)

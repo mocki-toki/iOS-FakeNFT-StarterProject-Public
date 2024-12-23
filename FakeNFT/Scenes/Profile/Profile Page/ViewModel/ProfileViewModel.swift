@@ -20,6 +20,7 @@ final class ProfileViewModel: ProfileViewViewModelType {
     // MARK: - Public Properties
     var userProfile: Profile? {
         didSet {
+            guard oldValue != userProfile else { return }
             Logger.log("Profile was updated")
             updateProfileData()
         }
@@ -38,16 +39,21 @@ final class ProfileViewModel: ProfileViewViewModelType {
     
     // MARK: - Public Methods
     func loadData() {
-        onLoadingStatusChanged?(true)
+        DispatchQueue.main.async {
+            self.onLoadingStatusChanged?(true)
+        }
         
         profileNetworkService.fetchProfile { [weak self] result in
-            self?.onLoadingStatusChanged?(false)
-            switch result {
-            case .success(let profile):
-                self?.userProfile = profile
-                Logger.log("Profile loaded: \(profile)")
-            case .failure(let error):
-                Logger.log("Error loading profile: \(error)", level: .error)
+            DispatchQueue.main.async {
+                self?.onLoadingStatusChanged?(false)
+                
+                switch result {
+                case .success(let profile):
+                    self?.userProfile = profile
+                    Logger.log("Profile loaded: \(profile)")
+                case .failure(let error):
+                    Logger.log("Error loading profile: \(error)", level: .error)
+                }
             }
         }
     }
@@ -65,7 +71,9 @@ final class ProfileViewModel: ProfileViewViewModelType {
     
     // MARK: - Private Methods
     private func updateProfileData() {
-        onProfileDataUpdated?()
+        DispatchQueue.main.async {
+            self.onProfileDataUpdated?()
+        }
     }
     
     private func generateTableItems() -> [ProfileTableItem] {

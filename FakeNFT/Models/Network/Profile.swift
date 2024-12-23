@@ -1,6 +1,6 @@
 import Foundation
 
-struct Profile: Codable {
+struct Profile: Codable, Equatable {
     var name: String
     var avatar: String
     var description: String

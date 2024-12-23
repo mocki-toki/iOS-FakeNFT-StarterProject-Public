@@ -62,7 +62,9 @@ final class EditProfileViewModel: EditProfileViewModelProtocol {
                 switch result {
                 case .success(let updatedProfile):
                     self?.userProfile = updatedProfile
-                    self?.onProfileUpdated?(updatedProfile)
+                    DispatchQueue.main.async {
+                        self?.onProfileUpdated?(updatedProfile)
+                    }
                     completion(.success(updatedProfile))
                 case .failure(let error):
                     completion(.failure(error))
