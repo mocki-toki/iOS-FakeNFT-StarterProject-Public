@@ -1,6 +1,23 @@
 {
   "sourceLanguage" : "ru",
   "strings" : {
+    "Agreements.goBackTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Назад"
+          }
+        }
+      }
+    },
     "Cart.delete" : {
       "extractionState" : "manual",
       "localizations" : {

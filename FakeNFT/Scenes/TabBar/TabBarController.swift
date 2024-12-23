@@ -1,6 +1,6 @@
 import UIKit
 
-final class TabBarController: UITabBarController, UITabBarControllerDelegate {
+final class TabBarController: UITabBarController {
     var servicesAssembly: ServicesAssembly
     
     init(servicesAssembly: ServicesAssembly) {
@@ -36,8 +36,9 @@ final class TabBarController: UITabBarController, UITabBarControllerDelegate {
         UITabBarItem.appearance().setTitleTextAttributes(normalAttributes, for: .normal)
         UITabBarItem.appearance().setTitleTextAttributes(selectedAttributes, for: .selected)
     }
-    
-    // MARK: - UITabBarControllerDelegate
+}
+
+extension TabBarController: UITabBarControllerDelegate {
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
         if let navigationController = viewController as? UINavigationController,
            navigationController.viewControllers.first is CartViewController {

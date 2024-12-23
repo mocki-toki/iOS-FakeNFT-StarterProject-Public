@@ -68,6 +68,7 @@
 		F03797402D18CD0300391D5D /* SuccessModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F037973F2D18CCFE00391D5D /* SuccessModel.swift */; };
 		F03797422D18CD1A00391D5D /* SuccessViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03797412D18CD1900391D5D /* SuccessViewModel.swift */; };
 		F03797442D18CD2E00391D5D /* SuccessViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03797432D18CD2500391D5D /* SuccessViewController.swift */; };
+		F037978A2D19CE5300391D5D /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03797892D19CE4800391D5D /* WebViewController.swift */; };
 		F091F7E52D1384BF0060D731 /* CartItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F091F7E42D1384830060D731 /* CartItem.swift */; };
 		F091F7E72D1385390060D731 /* CartViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F091F7E62D1385380060D731 /* CartViewModel.swift */; };
 		F0BB219A2D0E3551009A2305 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = F0BB21992D0E3551009A2305 /* Localizable.xcstrings */; };
@@ -158,6 +159,7 @@
 		F037973F2D18CCFE00391D5D /* SuccessModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuccessModel.swift; sourceTree = "<group>"; };
 		F03797412D18CD1900391D5D /* SuccessViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuccessViewModel.swift; sourceTree = "<group>"; };
 		F03797432D18CD2500391D5D /* SuccessViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuccessViewController.swift; sourceTree = "<group>"; };
+		F03797892D19CE4800391D5D /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
 		F091F7E42D1384830060D731 /* CartItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartItem.swift; sourceTree = "<group>"; };
 		F091F7E62D1385380060D731 /* CartViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartViewModel.swift; sourceTree = "<group>"; };
 		F0BB21992D0E3551009A2305 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
@@ -472,6 +474,7 @@
 		F03796C72D189E6E00391D5D /* PaymentSelection */ = {
 			isa = PBXGroup;
 			children = (
+				F03797892D19CE4800391D5D /* WebViewController.swift */,
 				F03796CC2D189FEE00391D5D /* PaymentCell.swift */,
 				F03796CA2D189FDC00391D5D /* PaymentSelectionViewModel.swift */,
 				F03796C82D189E8C00391D5D /* PaymentSelectionViewController.swift */,
@@ -746,6 +749,7 @@
 				F0BB21A62D0F29B7009A2305 /* CartViewController.swift in Sources */,
 				0CFCB7442A7802440009A829 /* NftDetailInput.swift in Sources */,
 				F0BB21AA2D0F2F6A009A2305 /* TabBarFactory.swift in Sources */,
+				F037978A2D19CE5300391D5D /* WebViewController.swift in Sources */,
 				0C79EE632A76DD1900EE90EA /* RequestConstants.swift in Sources */,
 				26250E542D107E53005F5BE3 /* Users.swift in Sources */,
 			);

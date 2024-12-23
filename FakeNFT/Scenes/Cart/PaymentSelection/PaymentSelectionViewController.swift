@@ -7,6 +7,7 @@ final class PaymentSelectionViewController: UIViewController {
     private let viewModel = PaymentSelectionViewModel()
     private let cartViewModel: CartViewModel
     private var subscriptions = Set<AnyCancellable>()
+    private let agreementURL = URL(string: "https://yandex.ru/legal/practicum_termsofuse")
     
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout().then {
@@ -167,9 +168,15 @@ final class PaymentSelectionViewController: UIViewController {
     }
     
     @objc private func agreementLinkTapped() {
-        if let url = URL(string: "https://en.wikipedia.org/wiki/End-user_license_agreement") {
-            UIApplication.shared.open(url)
-        }
+        guard let url = agreementURL else { return }
+        navigationItem.backBarButtonItem = UIBarButtonItem(
+            title: String(localizable: .agreementsGoBackTitle),
+            style: .plain,
+            target: nil,
+            action: nil
+        )
+        let webVC = WebViewController(url: url)
+        navigationController?.pushViewController(webVC, animated: true)
     }
     
     private func showSuccessScreen() {
