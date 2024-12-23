@@ -8,6 +8,12 @@ class EditProfileViewController: UIViewController {
     private let viewModel: EditProfileViewModelProtocol
     
     // MARK: - UI components
+    
+    private lazy var activityIndicator = UIActivityIndicatorView(style: .medium).then {
+        $0.color = .yBlack
+        $0.hidesWhenStopped = true
+    }
+    
     private lazy var avatarImageView = UIImageView().then {
         $0.backgroundColor = .yBlack
         $0.layer.cornerRadius = 35
@@ -152,6 +158,7 @@ class EditProfileViewController: UIViewController {
         formStackView.addArrangedSubview(websiteTextField)
         
         contentView.addSubview(formStackView)
+        view.addSubview(activityIndicator)
     }
     
     private func setupConstraints() {
@@ -196,6 +203,10 @@ class EditProfileViewController: UIViewController {
         websiteTextField.snp.makeConstraints { make in
             make.height.equalTo(44)
             make.width.equalTo(formStackView.snp.width)
+        }
+        
+        activityIndicator.snp.makeConstraints { make in
+            make.center.equalTo(contentView)
         }
     }
     
@@ -311,23 +322,24 @@ class EditProfileViewController: UIViewController {
         viewModel.updateUserDescription(bioTextView.text)
         viewModel.updateUserWebsite(websiteTextField.text ?? "")
         
-        viewModel.saveProfileData { [weak self] result in
-            switch result {
-            case .success(let updatedProfile):
-                self?.viewModel.onProfileUpdated?(updatedProfile)
-                Logger.log("Профиль успешно обновлен: \(updatedProfile)")
-                DispatchQueue.main.async {
+        activityIndicator.startAnimating()
+        self.viewModel.saveProfileData { [weak self] result in
+            DispatchQueue.main.async {
+
+                self?.activityIndicator.stopAnimating()
+                
+                switch result {
+                case .success(let updatedProfile):
+                    self?.viewModel.onProfileUpdated?(updatedProfile)
+                    Logger.log("Профиль успешно обновлен: \(updatedProfile)")
                     self?.dismiss(animated: true, completion: nil)
-                }
-            case .failure(let error):
-                Logger.log("Ошибка при обновлении профиля: \(error)", level: .error)
-                DispatchQueue.main.async {
+                case .failure(let error):
+                    Logger.log("Ошибка при обновлении профиля: \(error)", level: .error)
                     self?.dismiss(animated: true, completion: nil)
                 }
             }
         }
-    }
-}
+    }}
 
 extension EditProfileViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {

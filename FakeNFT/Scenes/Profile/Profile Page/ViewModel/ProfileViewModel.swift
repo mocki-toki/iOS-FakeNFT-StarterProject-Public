@@ -45,9 +45,9 @@ final class ProfileViewModel: ProfileViewViewModelType {
             switch result {
             case .success(let profile):
                 self?.userProfile = profile
-                print("Profile loaded: \(profile)")
+                Logger.log("Profile loaded: \(profile)")
             case .failure(let error):
-                print("Error loading profile: \(error)")
+                Logger.log("Error loading profile: \(error)", level: .error)
             }
         }
     }

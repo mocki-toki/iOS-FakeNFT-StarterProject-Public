@@ -70,7 +70,7 @@ class WebViewController: UIViewController, WKNavigationDelegate {
     private func loadPage() {
         viewModel.loadUrl { [weak self] url in
             guard let self = self, let url = url else {
-                print("Ошибка: Невозможно загрузить URL")
+                Logger.log("Ошибка: Невозможно загрузить URL")
                 return
             }
             let request = URLRequest(url: url)
@@ -110,6 +110,7 @@ class WebViewController: UIViewController, WKNavigationDelegate {
         if let urlError = error as? URLError, urlError.code == .cannotFindHost {
             activityIndicator.stopAnimating()
             showAlert(for: urlError)
+            Logger.log("Error \(urlError.localizedDescription)", level: .error)
         }
     }
     
@@ -117,6 +118,7 @@ class WebViewController: UIViewController, WKNavigationDelegate {
         if let urlError = error as? URLError, urlError.code == .cannotFindHost {
             activityIndicator.stopAnimating()
             showAlert(for: urlError)
+            Logger.log("Error \(urlError.localizedDescription)", level: .error)
         }
     }
 }
