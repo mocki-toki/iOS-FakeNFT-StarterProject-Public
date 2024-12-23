@@ -76,10 +76,15 @@ final class NftTableViewCell: UITableViewCell {
             likeButton.setLike(isLiked)
         }
     }
+    
     private var isInCart = false {
         didSet {
             cartButton.setInCart(isInCart)
         }
+    }
+    
+    private let containerView = UIView().then {
+        $0.backgroundColor = .clear
     }
 
     private var onLikeButtonTapped: (() -> Void)?
@@ -121,6 +126,10 @@ final class NftTableViewCell: UITableViewCell {
 
     func setPrice(_ price: String) {
         self.price = price
+    }
+    
+    func setPriceCaption(_ caption: String) {
+        self.priceCaptionLabel.text = caption
     }
 
     func setRating(_ rating: Int) {
@@ -266,16 +275,19 @@ final class NftTableViewCell: UITableViewCell {
         priceLabel.font = .bold17
         cartButton.setInCart(isInCart)
 
-        [imgView, likeButton, ratingView, nameLabel, priceCaptionLabel, priceLabel, cartButton]
+        contentView.addSubview(containerView)
+        containerView.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(16)
+        }
+        
+        [imgView, ratingView, nameLabel, priceCaptionLabel, priceLabel, cartButton]
             .forEach {
-                contentView.addSubview($0)
+                containerView.addSubview($0)
             }
 
         imgView.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-            make.leading.equalToSuperview()
-            make.bottom.equalToSuperview()
-            make.width.equalTo(contentView.snp.height)
+            make.top.leading.bottom.equalToSuperview()
+            make.width.equalTo(containerView.snp.height)
         }
 
         nameLabel.snp.makeConstraints { make in
