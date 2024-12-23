@@ -229,6 +229,13 @@
 			path = ViewModel;
 			sourceTree = "<group>";
 		};
+		0108BF3A2D19FFD800595C80 /* Decomposition */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Decomposition;
+			sourceTree = "<group>";
+		};
 		012773B02D1641AB005B656F /* View */ = {
 			isa = PBXGroup;
 			children = (
@@ -362,6 +369,7 @@
 		3F68068A29CBBAF100B4F915 = {
 			isa = PBXGroup;
 			children = (
+				0108BF3A2D19FFD800595C80 /* Decomposition */,
 				C1433DA72D0FFC7F00DAEE08 /* .swiftlint.yml */,
 				3F68069529CBBAF100B4F915 /* FakeNFT */,
 				3F6806AC29CBBAF200B4F915 /* FakeNFTTests */,
