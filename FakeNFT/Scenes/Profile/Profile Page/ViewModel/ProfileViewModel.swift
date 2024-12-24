@@ -51,6 +51,8 @@ final class ProfileViewModel: ProfileViewViewModelType {
                 case .success(let profile):
                     self?.userProfile = profile
                     Logger.log("Profile loaded: \(profile)")
+                    Logger.log("Favorites NFT: \(profile.likes.count)")
+                    Logger.log("NFT: \(profile.nfts.count)")
                 case .failure(let error):
                     Logger.log("Error loading profile: \(error)", level: .error)
                 }
@@ -72,19 +74,20 @@ final class ProfileViewModel: ProfileViewViewModelType {
     // MARK: - Private Methods
     private func updateProfileData() {
         DispatchQueue.main.async {
+            self.tableItems = self.generateTableItems()
             self.onProfileDataUpdated?()
         }
     }
     
     private func generateTableItems() -> [ProfileTableItem] {
         return [
-            ProfileTableItem(title: "Мои NFT",
-                             count: userProfile?.likes.count ?? 0,
-                             destination: MyNftViewController()),
-            ProfileTableItem(title: "Избранные NFT",
+            ProfileTableItem(title: String(localizable: .profileLinksMyNfts),
                              count: userProfile?.nfts.count ?? 0,
+                             destination: MyNftViewController()),
+            ProfileTableItem(title: String(localizable: .profileLinksFavorites),
+                             count: userProfile?.likes.count ?? 0,
                              destination: FavoritesViewController()),
-            ProfileTableItem(title: "О разработчике",
+            ProfileTableItem(title: String(localizable: .profileLinksDeveloper),
                              count: nil,
                              destination: WebViewController(viewModel: WebViewModel(urlString: "practicum.yandex.ru")))
         ]

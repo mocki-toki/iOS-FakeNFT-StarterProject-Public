@@ -62,7 +62,6 @@ final class ProfileViewController: UIViewController {
         $0.tintColor = UIColor.closeButton
     }
     
-    
     // MARK: - UITableView
     private lazy var tableView = UITableView().then {
         $0.delegate = self

@@ -8,7 +8,6 @@ class EditProfileViewController: UIViewController {
     private let viewModel: EditProfileViewModelProtocol
     
     // MARK: - UI components
-    
     private lazy var activityIndicator = UIActivityIndicatorView(style: .medium).then {
         $0.color = .yBlack
         $0.hidesWhenStopped = true
@@ -53,12 +52,12 @@ class EditProfileViewController: UIViewController {
         $0.addTarget(self, action: #selector(nameTextFieldDidChange(_:)), for: .editingChanged)
     }
     
-    private lazy var bioLabel = UILabel().then {
+    private lazy var descriptionLabel = UILabel().then {
         $0.text = "Описание"
         $0.font = UIFont.bold22
     }
     
-    private lazy var bioTextView = UITextView().then {
+    private lazy var descriptionTextView = UITextView().then {
         $0.backgroundColor = .yLightGrey
         $0.layer.cornerRadius = 12
         $0.layer.masksToBounds = true
@@ -152,8 +151,8 @@ class EditProfileViewController: UIViewController {
         
         formStackView.addArrangedSubview(nameLabel)
         formStackView.addArrangedSubview(nameTextField)
-        formStackView.addArrangedSubview(bioLabel)
-        formStackView.addArrangedSubview(bioTextView)
+        formStackView.addArrangedSubview(descriptionLabel)
+        formStackView.addArrangedSubview(descriptionTextView)
         formStackView.addArrangedSubview(websiteLabel)
         formStackView.addArrangedSubview(websiteTextField)
         
@@ -195,7 +194,7 @@ class EditProfileViewController: UIViewController {
             make.width.equalTo(formStackView.snp.width)
         }
         
-        bioTextView.snp.makeConstraints { make in
+        descriptionTextView.snp.makeConstraints { make in
             make.height.greaterThanOrEqualTo(132)
             make.width.equalTo(formStackView.snp.width)
         }
@@ -215,7 +214,7 @@ class EditProfileViewController: UIViewController {
     private func setupInitialValues() {
         let profile = viewModel.userProfile
         nameTextField.text = profile.name
-        bioTextView.text = profile.description
+        descriptionTextView.text = profile.description
         websiteTextField.text = profile.website
         
         if let avatarURL = URL(string: profile.avatar) {
@@ -271,7 +270,7 @@ class EditProfileViewController: UIViewController {
         avatarImageView.isUserInteractionEnabled = false
         changePhotoButton.isUserInteractionEnabled = false
         nameTextField.isUserInteractionEnabled = false
-        bioTextView.isUserInteractionEnabled = false
+        descriptionTextView.isUserInteractionEnabled = false
         websiteTextField.isUserInteractionEnabled = false
     }
 
@@ -279,8 +278,21 @@ class EditProfileViewController: UIViewController {
         avatarImageView.isUserInteractionEnabled = true
         changePhotoButton.isUserInteractionEnabled = true
         nameTextField.isUserInteractionEnabled = true
-        bioTextView.isUserInteractionEnabled = true
+        descriptionTextView.isUserInteractionEnabled = true
         websiteTextField.isUserInteractionEnabled = true
+    }
+    
+    private func showErrorAlert(message: String) {
+        let buttons = [
+            AlertPresenter.Button(
+                title: "OK", action: nil, style: .default, isPreferred: true)
+        ]
+        AlertPresenter.presentAlert(
+            on: self,
+            title: "Ошибка",
+            message: message,
+            buttons: buttons
+        )
     }
     
     // MARK: - Actions
@@ -336,10 +348,9 @@ class EditProfileViewController: UIViewController {
     
     @objc private func exitButtonDidTap() {
         disableUI()
-        Logger.log("disableUI", level: .debug)
         
         viewModel.updateUserName(nameTextField.text ?? "")
-        viewModel.updateUserDescription(bioTextView.text)
+        viewModel.updateUserDescription(descriptionTextView.text)
         viewModel.updateUserWebsite(websiteTextField.text ?? "")
         
         DispatchQueue.main.async {
@@ -358,6 +369,7 @@ class EditProfileViewController: UIViewController {
                     self?.dismiss(animated: true, completion: nil)
                 case .failure(let error):
                     Logger.log("Ошибка при обновлении профиля: \(error)", level: .error)
+                    self?.showErrorAlert(message: "Не удалось обновить профиль. Пожалуйста, попробуйте позже.")
                     self?.dismiss(animated: true, completion: nil)
                 }
             }
