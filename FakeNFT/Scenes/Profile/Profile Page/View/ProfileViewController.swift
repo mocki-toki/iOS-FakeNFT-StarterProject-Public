@@ -67,6 +67,7 @@ final class ProfileViewController: UIViewController {
         $0.delegate = self
         $0.dataSource = self
         $0.separatorStyle = .none
+        $0.backgroundColor = .yWhite
         $0.register(ProfileLinkTableViewCell.self, forCellReuseIdentifier: "ProfileCell")
     }
     

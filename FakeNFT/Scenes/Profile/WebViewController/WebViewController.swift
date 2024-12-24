@@ -6,7 +6,7 @@ import Then
 class WebViewController: UIViewController, WKNavigationDelegate {
     // MARK: - Properties
     private var viewModel: WebViewModel
-    private var webView: WKWebView!
+    private weak var webView: WKWebView!
     
     // MARK: - UI Components
     private lazy var activityIndicator = UIActivityIndicatorView(style: .medium).then {

@@ -31,6 +31,7 @@ class ProfileLinkTableViewCell: UITableViewCell {
     
     // MARK: - UI Setup
     private func setupUI() {
+        contentView.backgroundColor = .yWhite
         contentView.addSubview(arrowImageView)
         contentView.addSubview(titleLabel)
         contentView.addSubview(amountNftLabel)
