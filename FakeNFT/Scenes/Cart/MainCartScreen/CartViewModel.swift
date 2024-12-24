@@ -96,4 +96,10 @@ final class CartViewModel {
     private func loadSortOption() -> String? {
         return UserDefaults.standard.string(forKey: sortOptionKey) ?? String(localizable: .sortNftName)
     }
+    
+    func clearCart() {
+        Logger.log("Clearing all items in the cart")
+        cartItems.removeAll()
+        onCartUpdated?()
+    }
 }
