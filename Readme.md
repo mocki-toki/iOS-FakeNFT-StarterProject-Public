@@ -1,3 +1,10 @@
+# Примечания для ревьюреров
+
+### Решение ошибки Cannot infer contextual base in reference to member
+Наша команда использует пакет https://github.com/liamnichols/xcstrings-tool. Он заводится только если сделать полную чистку проекта и только после этого собрать, также дав траст пакету в списке крит ошибок. 
+
+<br><br><br><br><br><br><br><br><br><br><br><br>
+
 # ТЗ мобильного приложения FakeNFT
 
 # Ссылки
