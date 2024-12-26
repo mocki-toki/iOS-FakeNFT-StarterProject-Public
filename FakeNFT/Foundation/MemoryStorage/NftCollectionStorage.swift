@@ -7,10 +7,11 @@ protocol NftCollectionStorage: AnyObject {
 
 final class NftCollectionStorageImpl: NftCollectionStorage {
     private var storage: [NftCollection]?
-    private let syncQueue = DispatchQueue(label: "sync-nft-collection-queue")
+    private let syncQueue = DispatchQueue(
+        label: "sync-nft-collection-queue", attributes: .concurrent)
 
     func saveCollections(_ collections: [NftCollection]) {
-        syncQueue.async { [weak self] in
+        syncQueue.async(flags: .barrier) { [weak self] in
             self?.storage = collections
         }
     }
