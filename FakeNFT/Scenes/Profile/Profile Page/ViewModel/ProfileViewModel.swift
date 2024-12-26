@@ -80,7 +80,7 @@ final class ProfileViewModel: ProfileViewViewModelType {
         return [
             ProfileTableItem(title: String(localizable: .profileLinksMyNfts),
                              count: userProfile?.nfts.count ?? 0,
-                             destination: MyNftViewController()),
+                             destination: MyNftViewController(viewModel: MyNFTModel())),
             ProfileTableItem(title: String(localizable: .profileLinksFavorites),
                              count: userProfile?.likes.count ?? 0,
                              destination: FavoritesViewController()),
