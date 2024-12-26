@@ -254,8 +254,12 @@ extension ProfileViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let viewModel = viewModel,
-              let cell = tableView.dequeueReusableCell(withIdentifier: "ProfileCell",
-                                                       for: indexPath) as? ProfileLinkTableViewCell else { return UITableViewCell() }
+              let cell = tableView.dequeueReusableCell(
+                withIdentifier: "ProfileCell",
+                for: indexPath
+              ) as? ProfileLinkTableViewCell else {
+            return UITableViewCell()
+        }
         cell.selectionStyle = .none
         let item = viewModel.tableItems[indexPath.row]
         cell.configure(with: item.title, amount: item.count)

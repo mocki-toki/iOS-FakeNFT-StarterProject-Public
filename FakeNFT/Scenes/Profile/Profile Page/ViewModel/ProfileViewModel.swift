@@ -59,16 +59,13 @@ final class ProfileViewModel: ProfileViewViewModelType {
             }
         }
     }
-    func updateMyNftCount(_ count: [String]) {
-        if let profile = userProfile {
-            userProfile = profile.updateMyNftCount(count)
-        }
-    }
     
+    func updateMyNftCount(_ count: [String]) {
+        userProfile = userProfile.map { $0.updateMyNftCount(count) }
+    }
+
     func updateFavoriteNftCount(_ count: [String]) {
-        if let profile = userProfile {
-            userProfile = profile.updateFavoriteNftCount(count)
-        }
+        userProfile = userProfile.map { $0.updateFavoriteNftCount(count) }
     }
     
     // MARK: - Private Methods

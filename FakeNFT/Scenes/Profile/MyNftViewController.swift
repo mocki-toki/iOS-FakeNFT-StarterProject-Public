@@ -1,6 +1,6 @@
 import UIKit
 
-class MyNftViewController: UIViewController {
+final class MyNftViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 

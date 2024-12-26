@@ -2,7 +2,7 @@ import UIKit
 import SnapKit
 import Then
 
-class ProfileLinkTableViewCell: UITableViewCell {
+final class ProfileLinkTableViewCell: UITableViewCell {
     // MARK: - Properties
     private lazy var arrowImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
@@ -25,6 +25,7 @@ class ProfileLinkTableViewCell: UITableViewCell {
         setupUI()
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

@@ -3,7 +3,7 @@ import Then
 import SnapKit
 import Kingfisher
 
-class EditProfileViewController: UIViewController {
+final class EditProfileViewController: UIViewController {
     // MARK: - Properties
     private let viewModel: EditProfileViewModelProtocol
     
@@ -107,6 +107,7 @@ class EditProfileViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -153,12 +154,9 @@ class EditProfileViewController: UIViewController {
         contentView.addSubview(avatarImageView)
         contentView.addSubview(changePhotoButton)
         
-        formStackView.addArrangedSubview(nameLabel)
-        formStackView.addArrangedSubview(nameTextField)
-        formStackView.addArrangedSubview(descriptionLabel)
-        formStackView.addArrangedSubview(descriptionTextView)
-        formStackView.addArrangedSubview(websiteLabel)
-        formStackView.addArrangedSubview(websiteTextField)
+        [nameLabel, nameTextField, descriptionLabel,
+        descriptionTextView, websiteLabel, websiteTextField]
+        .forEach { formStackView.addArrangedSubview($0) }
         
         contentView.addSubview(formStackView)
         view.addSubview(activityIndicator)
@@ -166,7 +164,7 @@ class EditProfileViewController: UIViewController {
     
     private func setupConstraints() {
         scrollView.snp.makeConstraints { make in
-            make.top.left.right.bottom.equalTo(view)
+            make.top.left.right.bottom.equalToSuperview()
         }
         
         contentView.snp.makeConstraints { make in
@@ -271,19 +269,13 @@ class EditProfileViewController: UIViewController {
     }
     
     private func disableUI() {
-        avatarImageView.isUserInteractionEnabled = false
-        changePhotoButton.isUserInteractionEnabled = false
-        nameTextField.isUserInteractionEnabled = false
-        descriptionTextView.isUserInteractionEnabled = false
-        websiteTextField.isUserInteractionEnabled = false
+        [avatarImageView, changePhotoButton, nameTextField,
+         descriptionTextView, websiteTextField].forEach { $0.isUserInteractionEnabled = false }
     }
 
     private func enableUI() {
-        avatarImageView.isUserInteractionEnabled = true
-        changePhotoButton.isUserInteractionEnabled = true
-        nameTextField.isUserInteractionEnabled = true
-        descriptionTextView.isUserInteractionEnabled = true
-        websiteTextField.isUserInteractionEnabled = true
+        [avatarImageView, changePhotoButton, nameTextField,
+         descriptionTextView, websiteTextField].forEach { $0.isUserInteractionEnabled = true }
     }
     
     private func showErrorAlert(message: String) {
@@ -301,8 +293,8 @@ class EditProfileViewController: UIViewController {
     
     // MARK: - Actions
     @objc private func keyboardWillShow(_ notification: Notification) {
-        guard let userInfo = notification.userInfo else { return }
-        guard let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
+        guard let userInfo = notification.userInfo,
+        let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
         
         scrollView.contentInset.bottom = keyboardFrame.height
     }
@@ -360,7 +352,7 @@ class EditProfileViewController: UIViewController {
         DispatchQueue.main.async {
             self.activityIndicator.startAnimating()
         }
-        self.viewModel.saveProfileData { [weak self] result in
+        viewModel.saveProfileData { [weak self] result in
             DispatchQueue.main.async {
                 self?.activityIndicator.stopAnimating()
                 self?.enableUI()
@@ -370,12 +362,11 @@ class EditProfileViewController: UIViewController {
                 case .success(let updatedProfile):
                     self?.viewModel.onProfileUpdated?(updatedProfile)
                     Logger.log("Профиль успешно обновлен: \(updatedProfile)")
-                    self?.dismiss(animated: true, completion: nil)
                 case .failure(let error):
                     Logger.log("Ошибка при обновлении профиля: \(error)", level: .error)
                     self?.showErrorAlert(message: "Не удалось обновить профиль. Пожалуйста, попробуйте позже.")
-                    self?.dismiss(animated: true, completion: nil)
                 }
+                self?.dismiss(animated: true, completion: nil)
             }
         }
     }}

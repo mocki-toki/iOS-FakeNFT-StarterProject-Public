@@ -21,7 +21,7 @@ struct UpdateProfileDto: Dto {
         case avatar
     }
     
-    func asDictionary() -> [String : String] {
+    func asDictionary() -> [String: String] {
         [
             CodingKeys.name.rawValue: name,
             CodingKeys.description.rawValue: description,

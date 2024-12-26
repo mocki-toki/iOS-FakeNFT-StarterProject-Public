@@ -20,7 +20,7 @@ struct Profile: Codable, Equatable {
     }
     
     func updateUserName(_ name: String) -> Profile {
-        return Profile(
+        Profile(
             name: name,
             avatar: self.avatar,
             description: self.description,
@@ -32,7 +32,7 @@ struct Profile: Codable, Equatable {
     }
     
     func updateAvatar(_ avatar: String) -> Profile {
-        return Profile(
+        Profile(
             name: self.name,
             avatar: avatar,
             description: self.description,
@@ -44,7 +44,7 @@ struct Profile: Codable, Equatable {
     }
     
     func updateUserDescription(_ description: String) -> Profile {
-        return Profile(
+        Profile(
             name: self.name,
             avatar: self.avatar,
             description: description,
@@ -56,7 +56,7 @@ struct Profile: Codable, Equatable {
     }
     
     func updateUserWebsite(_ website: String) -> Profile {
-        return Profile(
+        Profile(
             name: self.name,
             avatar: self.avatar,
             description: self.description,
@@ -68,7 +68,7 @@ struct Profile: Codable, Equatable {
     }
     
     func updateMyNftCount(_ count: [String]) -> Profile {
-        return Profile(
+        Profile(
             name: self.name,
             avatar: self.avatar,
             description: self.description,
@@ -80,7 +80,7 @@ struct Profile: Codable, Equatable {
     }
     
     func updateFavoriteNftCount(_ count: [String]) -> Profile {
-        return Profile(
+        Profile(
             name: self.name,
             avatar: self.avatar,
             description: self.description,
