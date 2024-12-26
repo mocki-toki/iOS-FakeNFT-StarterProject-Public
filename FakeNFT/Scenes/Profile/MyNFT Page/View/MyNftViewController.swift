@@ -103,6 +103,22 @@ final class MyNftViewController: UIViewController {
     private func updateView() {
     }
     
+    func applySort(option: String) {
+        switch option {
+        case "По цене":
+            // Сортировка по имени
+            print("Сортируем по цене")
+        case "По рейтингу":
+            // Сортировка по дате
+            print("Сортируем по рейтингу")
+        case "По названию":
+            // Сортировка по цене
+            print("Сортируем по названию")
+        default:
+            break
+        }
+    }
+    
     // MARK: - Actions
     
     @objc private func backwardButtonDidTap() {
@@ -111,6 +127,20 @@ final class MyNftViewController: UIViewController {
     
     @objc private func sortButtonDidTap() {
         Logger.log("tap sort button")
+        
+        let sortOptions = [String(localizable: .sortPrice),
+                           String(localizable: .sortRating),
+                           String(localizable: .sortNftName)]
+        
+        AlertPresenter.presentSortOptions(
+            on: self,
+            title: String(localizable: .sortAlert),
+            cancelActionTitle: String(localizable: .sortClose),
+            options: sortOptions) { selectedOption in
+                // Обработка выбранной опции
+                Logger.log("Выбранный вариант сортировки: \(selectedOption)")
+                self.applySort(option: selectedOption)
+            }
     }
 }
 
@@ -121,7 +151,6 @@ extension MyNftViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         return cell
     }
