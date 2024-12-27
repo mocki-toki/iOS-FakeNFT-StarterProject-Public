@@ -68,38 +68,6 @@ final class MyNftViewController: UIViewController {
         
         setupNavigationBar()
         
-        let nftsMok = [Nft(createdAt: "2023-07-01T23:14:47.494Z[GMT]",
-                           name: "Jody Rivers",
-                           images: ["https://code.s3.yandex.net/Mobile/iOS/NFT/Beige/Lark/1.png",
-                                    "https://code.s3.yandex.net/Mobile/iOS/NFT/Beige/Lark/2.png",
-                                    "https://code.s3.yandex.net/Mobile/iOS/NFT/Beige/Lark/3.png"],
-                           rating: 4,
-                           description: "posse honestatis lobortis tritani scelerisque inimicus",
-                           price: 49.64,
-                           author: "https://dazzling_meninsky.fakenfts.org/",
-                           id: "ca34d35a-4507-47d9-9312-5ea7053994c0"),
-                            Nft(createdAt: "2023-07-01T23:14:47.494Z[GMT]",
-                                              name: "JMattie McDaniel",
-                                              images: ["https://code.s3.yandex.net/Mobile/iOS/NFT/Beige/Lark/1.png",
-                                                       "https://code.s3.yandex.net/Mobile/iOS/NFT/Beige/Lark/2.png",
-                                                       "https://code.s3.yandex.net/Mobile/iOS/NFT/Beige/Lark/3.png"],
-                                              rating: 3,
-                                              description: "posse honestatis lobortis tritani scelerisque inimicus",
-                                              price: 19.64,
-                                              author: "https://objective_yalow.fakenfts.org/",
-                                              id: "ca34d35a-4507-47d9-9312-5ea7053994c0"),
-                       Nft(createdAt: "2023-07-01T23:14:47.494Z[GMT]",
-                                         name: "Atie McDaniel",
-                                         images: ["https://code.s3.yandex.net/Mobile/iOS/NFT/Beige/Lark/1.png",
-                                                  "https://code.s3.yandex.net/Mobile/iOS/NFT/Beige/Lark/2.png",
-                                                  "https://code.s3.yandex.net/Mobile/iOS/NFT/Beige/Lark/3.png"],
-                                         rating: 1,
-                                         description: "posse honestatis lobortis tritani scelerisque inimicus",
-                                         price: 9.64,
-                                         author: "https://obj_ytriow.fakenfts.org/",
-                                         id: "ca34d35a-4507-47d9-9312-5ea7053994c0")]
-        viewModel.addNFTs(nftsMok)
-        
         viewModel.applySavedSort()
     }
     
@@ -192,7 +160,7 @@ extension MyNftViewController: UITableViewDataSource, UITableViewDelegate {
             Logger.log("Ошибка при создании ячейки")
             return UITableViewCell()
         }
-        
+        Logger.log("Создана ячейка NFT \(nft.name)")
         cell.setText(nft.name)
         cell.setAuthor("от \(nft.authorName)")
         cell.setPrice(nft.formattedPrice())

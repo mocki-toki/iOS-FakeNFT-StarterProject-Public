@@ -30,18 +30,35 @@ final class MyNFTViewModel: MyNFTViewModelProtocol {
     }
     
     // MARK: - Private Properties
+    private let nftService: MyNFTServiceProtocol
     
     // MARK: - Initializer
     
-    init() {
-        // Загружаем сохранённый параметр сортировки при инициализации
+    init(nftService: MyNFTServiceProtocol) {
+        self.nftService = nftService
+        loadNFTs()
+
         if let savedSortOption = UserDefaults.standard.string(forKey: "selectedSortOption") {
             self.currentSortOption = savedSortOption
         } else {
             self.currentSortOption = "По цене"
         }
     }
+    
     // MARK: - Public Methods
+    func loadNFTs() {
+        onLoadingStatusChanged?(true)
+        nftService.fetchNFTs { [weak self] result in
+            self?.onLoadingStatusChanged?(false)
+            switch result {
+            case .success(let nfts):
+                self?.nfts = nfts
+                Logger.log("Загружены NFT \(nfts.count) шт")
+            case .failure(let error):
+                Logger.log("Failed to load NFTs: \(error)", level: .error)
+            }
+        }
+    }
     
     func getNFT(at index: Int) -> Nft? {
         guard index >= 0 && index < nfts.count else { return nil }
@@ -53,7 +70,6 @@ final class MyNFTViewModel: MyNFTViewModelProtocol {
                 completion(nil)
                 return
             }
-            // Используем Kingfisher для загрузки изображения
             KingfisherManager.shared.retrieveImage(with: url) { result in
                 switch result {
                 case .success(let value):
@@ -88,13 +104,13 @@ final class MyNFTViewModel: MyNFTViewModelProtocol {
         
         switch option {
         case "По цене":
-            print("Сортируем по цене")
+            Logger.log("Сортируем по цене")
             sortByPrice()
         case "По рейтингу":
-            print("Сортируем по рейтингу")
+            Logger.log("Сортируем по рейтингу")
             sortByRating()
         case "По названию":
-            print("Сортируем по названию")
+            Logger.log("Сортируем по названию")
             sortByName()
         default:
             Logger.log("Неизвестный параметр сортировки: \(option)", level: .warning)
