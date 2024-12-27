@@ -7,6 +7,7 @@ final class MyNftViewController: UIViewController {
     // MARK: - Properties
     
     private var viewModel: MyNFTViewModelProtocol
+    private var isLiked: Bool = false
     
     // MARK: - UI components
     
@@ -37,12 +38,11 @@ final class MyNftViewController: UIViewController {
     // MARK: - UITableView
     
     private lazy var tableView = UITableView().then {
-        //        $0.delegate = self
+        $0.delegate = self
         $0.dataSource = self
         $0.separatorStyle = .none
         $0.backgroundColor = .yWhite
-        $0.register(ProfileLinkTableViewCell.self, forCellReuseIdentifier: "cell")
-        //        $0.register(MyNFTTableViewCell.self, forCellReuseIdentifier: MyNFTTableViewCell.reuseIdentifier)
+        $0.register(NftTableViewCell.self, forCellReuseIdentifier: "NftTableViewCell")
     }
     
     // MARK: - Initializers
@@ -92,7 +92,7 @@ final class MyNftViewController: UIViewController {
     private func setupConstraints() {
         tableView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
-            make.leading.trailing.bottom.equalToSuperview()
+            make.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
         }
         
         stubLabel.snp.makeConstraints { make in
@@ -145,13 +145,39 @@ final class MyNftViewController: UIViewController {
 }
 
 // MARK: - UITableViewDataSource
-extension MyNftViewController: UITableViewDataSource {
+extension MyNftViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 5
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "NftTableViewCell",
+                                                       for: indexPath) as? NftTableViewCell else {
+                    return UITableViewCell()
+                }
+//        // Конфигурируем ячейку с нужными данными
+//        let nft = Nft
+        cell.setText("Test test")
+//        cell.setImage(.stabcart)
+        cell.setAuthor("Test Test")
+        cell.setPrice("1.28 ETH")
+        cell.setRating(4)
+        cell.setLike(false)
+        cell.setInCart(false)
+        
+        cell.configure(
+           with: .myNft,
+            onLike: { [weak self] in
+                guard let self = self else { return }
+                self.isLiked.toggle()
+                cell.setLike(self.isLiked)
+//                print("Like button tapped for \(nft.name)")
+                // Обновить модель данных
+            },
+           onCart: {})
         return cell
+    }
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 140
     }
 }

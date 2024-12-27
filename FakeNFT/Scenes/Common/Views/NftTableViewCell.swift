@@ -24,7 +24,7 @@ final class NftTableViewCell: UITableViewCell {
     private let priceCaptionLabel = UILabel().then {
         $0.font = .regular13
         $0.textColor = .yBlack
-        $0.text = String(localizable: .catalogOpenNft)
+        $0.text = "Цена"
     }
 
     private let priceLabel = UILabel().then {
@@ -81,6 +81,10 @@ final class NftTableViewCell: UITableViewCell {
             cartButton.setInCart(isInCart)
         }
     }
+    
+    private let containerView = UIView().then {
+        $0.backgroundColor = .clear
+    }
 
     private var onLikeButtonTapped: (() -> Void)?
     private var onCartButtonTapped: (() -> Void)?
@@ -90,6 +94,7 @@ final class NftTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupActionHandlers()
+        backgroundColor = .yWhite
     }
 
     required init?(coder: NSCoder) {
@@ -212,19 +217,23 @@ final class NftTableViewCell: UITableViewCell {
     private func setupMyNftView() {
         priceLabel.font = .bold17
 
-        [
-            imgView, likeButton,
+        contentView.addSubview(containerView)
+        containerView.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(16)
+        }
+        
+        [imgView, likeButton,
             nameLabel, ratingView, authorLabel,
             priceCaptionLabel, priceLabel
         ].forEach {
-            contentView.addSubview($0)
+            containerView.addSubview($0)
         }
 
         imgView.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.leading.equalToSuperview()
             make.bottom.equalToSuperview()
-            make.width.equalTo(contentView.snp.height)
+            make.width.equalTo(containerView.snp.height)
         }
 
         likeButton.snp.makeConstraints { make in
