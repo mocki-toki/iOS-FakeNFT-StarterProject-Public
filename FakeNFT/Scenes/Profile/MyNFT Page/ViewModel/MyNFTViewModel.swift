@@ -7,14 +7,6 @@ final class MyNFTViewModel: MyNFTViewModelProtocol {
                        String(localizable: .sortRating),
                        String(localizable: .sortNftName)]
     
-    private var currentSortOption: String? {
-        didSet {
-            if let option = currentSortOption {
-                UserDefaults.standard.set(option, forKey: "selectedSortOption")
-            }
-        }
-    }
-    
     var onNFTsUpdated: (() -> Void)?
     var onLoadingStatusChanged: ((Bool) -> Void)?
     
@@ -23,20 +15,22 @@ final class MyNFTViewModel: MyNFTViewModelProtocol {
             onNFTsUpdated?()
         }
     }
-                       
-    func addNFTs(_ newNFTs: [Nft]) {
-        self.nfts.append(contentsOf: newNFTs)
-        onNFTsUpdated?()
-    }
     
     // MARK: - Private Properties
     private let nftService: MyNFTServiceProtocol
+    
+    private var currentSortOption: String? {
+        didSet {
+            if let option = currentSortOption {
+                UserDefaults.standard.set(option, forKey: "selectedSortOption")
+            }
+        }
+    }
     
     // MARK: - Initializer
     
     init(nftService: MyNFTServiceProtocol) {
         self.nftService = nftService
-        loadNFTs()
 
         if let savedSortOption = UserDefaults.standard.string(forKey: "selectedSortOption") {
             self.currentSortOption = savedSortOption
@@ -46,8 +40,10 @@ final class MyNFTViewModel: MyNFTViewModelProtocol {
     }
     
     // MARK: - Public Methods
+    
     func loadNFTs() {
         onLoadingStatusChanged?(true)
+
         nftService.fetchNFTs { [weak self] result in
             self?.onLoadingStatusChanged?(false)
             switch result {

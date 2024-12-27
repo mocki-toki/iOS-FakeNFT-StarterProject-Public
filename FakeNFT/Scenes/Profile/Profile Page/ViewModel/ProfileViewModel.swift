@@ -78,15 +78,25 @@ final class ProfileViewModel: ProfileViewViewModelType {
     
     private func generateTableItems() -> [ProfileTableItem] {
         return [
-            ProfileTableItem(title: String(localizable: .profileLinksMyNfts),
-                             count: userProfile?.nfts.count ?? 0,
-                             destination: MyNftViewController(viewModel: MyNFTViewModel(nftService: MyNFTService()))),
-            ProfileTableItem(title: String(localizable: .profileLinksFavorites),
-                             count: userProfile?.likes.count ?? 0,
-                             destination: FavoritesViewController()),
-            ProfileTableItem(title: String(localizable: .profileLinksDeveloper),
-                             count: nil,
-                             destination: WebViewController(viewModel: WebViewModel(urlString: "practicum.yandex.ru")))
+            ProfileTableItem(
+                title: String(localizable: .profileLinksMyNfts),
+                count: userProfile?.nfts.count ?? 0,
+                destinationProvider: {
+                    MyNftViewController(viewModel: MyNFTViewModel(nftService: MyNFTService()))
+                }
+            ),
+            ProfileTableItem(
+                title: String(localizable: .profileLinksFavorites),
+                count: userProfile?.likes.count ?? 0,
+                destinationProvider: { FavoritesViewController() }
+            ),
+            ProfileTableItem(
+                title: String(localizable: .profileLinksDeveloper),
+                count: nil,
+                destinationProvider: {
+                    WebViewController(viewModel: WebViewModel(urlString: "practicum.yandex.ru"))
+                }
+            )
         ]
     }
 }

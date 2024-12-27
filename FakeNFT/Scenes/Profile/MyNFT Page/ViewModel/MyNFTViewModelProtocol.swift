@@ -7,8 +7,7 @@ protocol MyNFTViewModelProtocol {
     var onLoadingStatusChanged: ((Bool) -> Void)? { get set }
     
     var nfts: [Nft] { get set}
-    func addNFTs(_ newNFTs: [Nft])
-    
+    func loadNFTs()
     func numberOfNFTs() -> Int
     func getNFT(at index: Int) -> Nft?
     func loadImage(for nft: Nft, completion: @escaping (UIImage?) -> Void)

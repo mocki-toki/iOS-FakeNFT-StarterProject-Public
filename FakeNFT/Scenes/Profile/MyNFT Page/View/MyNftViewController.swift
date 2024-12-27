@@ -11,6 +11,11 @@ final class MyNftViewController: UIViewController {
     
     // MARK: - UI components
     
+    private lazy var activityIndicator = UIActivityIndicatorView(style: .medium).then {
+        $0.hidesWhenStopped = true
+        $0.color = .gray
+    }
+    
     private lazy var stubLabel = UILabel().then {
         $0.font = UIFont.bold17
         $0.text = "У Вас ещё нет NFT"
@@ -67,8 +72,8 @@ final class MyNftViewController: UIViewController {
         setupConstraints()
         
         setupNavigationBar()
-        
-        viewModel.applySavedSort()
+
+        viewModel.loadNFTs()
     }
     
     // MARK: - Navigation
@@ -82,15 +87,17 @@ final class MyNftViewController: UIViewController {
     
     // MARK: - Bind
     private func bindViewModel() {
-        viewModel.onNFTsUpdated = { [weak self] in
-            self?.updateView()
-        }
         viewModel.onLoadingStatusChanged = { [weak self] isLoading in
-            if isLoading {
-                Logger.log("loading...")
-            } else {
-                Logger.log("done")
-                self?.updateView()
+            DispatchQueue.main.async {
+                if isLoading {
+                    self?.activityIndicator.startAnimating()
+                    Logger.log("Loading data...")
+                } else {
+                    self?.activityIndicator.stopAnimating()
+                    self?.updateView()
+                    self?.viewModel.applySavedSort()
+                    Logger.log("Data loaded")
+                }
             }
         }
     }
@@ -98,11 +105,16 @@ final class MyNftViewController: UIViewController {
     // MARK: - UI Setup
     
     private func setupViews() {
+        view.addSubview(activityIndicator)
         view.addSubview(tableView)
         view.addSubview(stubLabel)
     }
     
     private func setupConstraints() {
+        activityIndicator.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+        
         tableView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
             make.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
@@ -114,15 +126,18 @@ final class MyNftViewController: UIViewController {
     }
     
     private func updateView() {
-        if viewModel.numberOfNFTs() == 0 {
-            tableView.isHidden = true
-            stubLabel.isHidden = false
-            self.navigationItem.rightBarButtonItem = nil
-        } else {
-            tableView.isHidden = false
-            stubLabel.isHidden = true
+        DispatchQueue.main.async {
+            if self.viewModel.numberOfNFTs() == 0 {
+                self.tableView.isHidden = true
+                self.stubLabel.isHidden = false
+                self.navigationItem.rightBarButtonItem = nil
+            } else {
+                self.tableView.isHidden = false
+                self.stubLabel.isHidden = true
+                self.navigationItem.rightBarButtonItem = self.sortButton
+            }
+            self.tableView.reloadData()
         }
-        tableView.reloadData()
     }
     
     // MARK: - Actions
@@ -143,6 +158,7 @@ final class MyNftViewController: UIViewController {
             options: sortOptions) { selectedOption in
                 Logger.log("Выбранный вариант сортировки: \(selectedOption)")
                 self.viewModel.applySort(option: selectedOption)
+                self.tableView.reloadData()
             }
     }
 }
@@ -165,7 +181,7 @@ extension MyNftViewController: UITableViewDataSource, UITableViewDelegate {
         cell.setAuthor("от \(nft.authorName)")
         cell.setPrice(nft.formattedPrice())
         cell.setRating(nft.rating)
-
+        
         viewModel.loadImage(for: nft) { image in
             DispatchQueue.main.async {
                 if let image = image {
