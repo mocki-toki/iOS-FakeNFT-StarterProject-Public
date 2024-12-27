@@ -67,6 +67,38 @@ final class MyNftViewController: UIViewController {
         setupConstraints()
         
         setupNavigationBar()
+        
+        let nftsMok = [Nft(createdAt: "2023-07-01T23:14:47.494Z[GMT]",
+                           name: "Jody Rivers",
+                           images: ["https://code.s3.yandex.net/Mobile/iOS/NFT/Beige/Lark/1.png",
+                                    "https://code.s3.yandex.net/Mobile/iOS/NFT/Beige/Lark/2.png",
+                                    "https://code.s3.yandex.net/Mobile/iOS/NFT/Beige/Lark/3.png"],
+                           rating: 4,
+                           description: "posse honestatis lobortis tritani scelerisque inimicus",
+                           price: 49.64,
+                           author: "https://dazzling_meninsky.fakenfts.org/",
+                           id: "ca34d35a-4507-47d9-9312-5ea7053994c0"),
+                            Nft(createdAt: "2023-07-01T23:14:47.494Z[GMT]",
+                                              name: "JMattie McDaniel",
+                                              images: ["https://code.s3.yandex.net/Mobile/iOS/NFT/Beige/Lark/1.png",
+                                                       "https://code.s3.yandex.net/Mobile/iOS/NFT/Beige/Lark/2.png",
+                                                       "https://code.s3.yandex.net/Mobile/iOS/NFT/Beige/Lark/3.png"],
+                                              rating: 3,
+                                              description: "posse honestatis lobortis tritani scelerisque inimicus",
+                                              price: 19.64,
+                                              author: "https://objective_yalow.fakenfts.org/",
+                                              id: "ca34d35a-4507-47d9-9312-5ea7053994c0"),
+                       Nft(createdAt: "2023-07-01T23:14:47.494Z[GMT]",
+                                         name: "Atie McDaniel",
+                                         images: ["https://code.s3.yandex.net/Mobile/iOS/NFT/Beige/Lark/1.png",
+                                                  "https://code.s3.yandex.net/Mobile/iOS/NFT/Beige/Lark/2.png",
+                                                  "https://code.s3.yandex.net/Mobile/iOS/NFT/Beige/Lark/3.png"],
+                                         rating: 1,
+                                         description: "posse honestatis lobortis tritani scelerisque inimicus",
+                                         price: 9.64,
+                                         author: "https://obj_ytriow.fakenfts.org/",
+                                         id: "ca34d35a-4507-47d9-9312-5ea7053994c0")]
+        viewModel.addNFTs(nftsMok)
     }
     
     // MARK: - Navigation
@@ -78,8 +110,19 @@ final class MyNftViewController: UIViewController {
         navigationController?.navigationBar.tintColor = .yBlack
     }
     
-    // MARK: - Private Methods
+    // MARK: - Bind
     private func bindViewModel() {
+        viewModel.onNFTsUpdated = { [weak self] in
+            self?.updateView()
+        }
+        viewModel.onLoadingStatusChanged = { [weak self] isLoading in
+            if isLoading {
+                Logger.log("loading...")
+            } else {
+                Logger.log("done")
+                self?.updateView()
+            }
+        }
     }
     
     // MARK: - UI Setup
@@ -101,22 +144,15 @@ final class MyNftViewController: UIViewController {
     }
     
     private func updateView() {
-    }
-    
-    func applySort(option: String) {
-        switch option {
-        case "По цене":
-            // Сортировка по имени
-            print("Сортируем по цене")
-        case "По рейтингу":
-            // Сортировка по дате
-            print("Сортируем по рейтингу")
-        case "По названию":
-            // Сортировка по цене
-            print("Сортируем по названию")
-        default:
-            break
+        if viewModel.numberOfNFTs() == 0 {
+            tableView.isHidden = true
+            stubLabel.isHidden = false
+            self.navigationItem.rightBarButtonItem = nil
+        } else {
+            tableView.isHidden = false
+            stubLabel.isHidden = true
         }
+        tableView.reloadData()
     }
     
     // MARK: - Actions
@@ -128,18 +164,15 @@ final class MyNftViewController: UIViewController {
     @objc private func sortButtonDidTap() {
         Logger.log("tap sort button")
         
-        let sortOptions = [String(localizable: .sortPrice),
-                           String(localizable: .sortRating),
-                           String(localizable: .sortNftName)]
+        let sortOptions = viewModel.sortOptions
         
         AlertPresenter.presentSortOptions(
             on: self,
             title: String(localizable: .sortAlert),
             cancelActionTitle: String(localizable: .sortClose),
             options: sortOptions) { selectedOption in
-                // Обработка выбранной опции
                 Logger.log("Выбранный вариант сортировки: \(selectedOption)")
-                self.applySort(option: selectedOption)
+                self.viewModel.applySort(option: selectedOption)
             }
     }
 }
@@ -147,34 +180,30 @@ final class MyNftViewController: UIViewController {
 // MARK: - UITableViewDataSource
 extension MyNftViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 5
+        return viewModel.numberOfNFTs()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "NftTableViewCell",
-                                                       for: indexPath) as? NftTableViewCell else {
-                    return UITableViewCell()
-                }
-//        // Конфигурируем ячейку с нужными данными
-//        let nft = Nft
-        cell.setText("Test test")
-//        cell.setImage(.stabcart)
-        cell.setAuthor("Test Test")
-        cell.setPrice("1.28 ETH")
-        cell.setRating(4)
-        cell.setLike(false)
-        cell.setInCart(false)
+                                                       for: indexPath) as? NftTableViewCell,
+              let nft = viewModel.getNFT(at: indexPath.row) else {
+            return UITableViewCell()
+        }
+        
+        cell.setText(nft.name)
+        cell.setAuthor("от \(nft.authorName)")
+        cell.setPrice(nft.formattedPrice())
+        cell.setRating(nft.rating)
         
         cell.configure(
-           with: .myNft,
+            with: .myNft,
             onLike: { [weak self] in
                 guard let self = self else { return }
                 self.isLiked.toggle()
                 cell.setLike(self.isLiked)
-//                print("Like button tapped for \(nft.name)")
-                // Обновить модель данных
+                print("Like button tapped for \(nft.name)")
             },
-           onCart: {})
+            onCart: {})
         return cell
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

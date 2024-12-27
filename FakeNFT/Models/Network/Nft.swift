@@ -9,4 +9,12 @@ struct Nft: Decodable {
     var price: Float
     var author: String
     let id: String
+    
+    var authorName: String {
+        URL(string: author)?.host?.split(separator: ".").first.map(String.init) ?? "John Doe"
+    }
+    
+    func formattedPrice() -> String {
+        return String(format: "%.2f ETH", price).replacingOccurrences(of: ".", with: ",")
+    }
 }
