@@ -91,6 +91,7 @@ final class MyNftViewController: UIViewController {
             DispatchQueue.main.async {
                 if isLoading {
                     self?.activityIndicator.startAnimating()
+                    self?.tableView.isHidden = true
                     Logger.log("Loading data...")
                 } else {
                     self?.activityIndicator.stopAnimating()
@@ -199,6 +200,7 @@ extension MyNftViewController: UITableViewDataSource, UITableViewDelegate {
                 print("Like button tapped for \(nft.name)")
             },
             onCart: {})
+        cell.selectionStyle = .none
         return cell
     }
     

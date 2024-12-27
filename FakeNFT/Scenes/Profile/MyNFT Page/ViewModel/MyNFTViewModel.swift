@@ -31,7 +31,7 @@ final class MyNFTViewModel: MyNFTViewModelProtocol {
     
     init(nftService: MyNFTServiceProtocol) {
         self.nftService = nftService
-
+        
         if let savedSortOption = UserDefaults.standard.string(forKey: "selectedSortOption") {
             self.currentSortOption = savedSortOption
         } else {
@@ -43,7 +43,7 @@ final class MyNFTViewModel: MyNFTViewModelProtocol {
     
     func loadNFTs() {
         onLoadingStatusChanged?(true)
-
+        
         nftService.fetchNFTs { [weak self] result in
             self?.onLoadingStatusChanged?(false)
             switch result {
@@ -62,20 +62,20 @@ final class MyNFTViewModel: MyNFTViewModelProtocol {
     }
     
     func loadImage(for nft: Nft, completion: @escaping (UIImage?) -> Void) {
-            guard let url = nft.imageUrl() else {
+        guard let url = nft.imageUrl() else {
+            completion(nil)
+            return
+        }
+        KingfisherManager.shared.retrieveImage(with: url) { result in
+            switch result {
+            case .success(let value):
+                completion(value.image)
+            case .failure:
+                Logger.log("Загрузка картинки не удалась")
                 completion(nil)
-                return
-            }
-            KingfisherManager.shared.retrieveImage(with: url) { result in
-                switch result {
-                case .success(let value):
-                    completion(value.image)
-                case .failure:
-                    Logger.log("Загрузка картинки не удалась")
-                    completion(nil)
-                }
             }
         }
+    }
     
     func numberOfNFTs() -> Int {
         return nfts.count
