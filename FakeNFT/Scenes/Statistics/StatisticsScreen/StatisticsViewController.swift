@@ -62,6 +62,7 @@ final class StatisticsViewController: UIViewController {
     private func setupUI() {
         setupNavigationBar()
         tableView.dataSource = self
+        tableView.delegate = self
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
             make.top.equalTo(108)
@@ -87,6 +88,7 @@ final class StatisticsViewController: UIViewController {
         }
     }
     
+    // MARK: - Methods
     private func showErrorAlert(message: String, retryAction: @escaping () -> Void) {
         let alert = UIAlertController(
             title: String(localizable: .alertError),
@@ -98,6 +100,22 @@ final class StatisticsViewController: UIViewController {
         })
         alert.addAction(UIAlertAction(title: String(localizable: .alertCancel), style: .cancel, handler: nil))
         present(alert, animated: true, completion: nil)
+    }
+    
+    private func openUserProfile(for userId: String) {
+        navigationItem.backButtonTitle = ""
+        
+        guard let user = viewModel.users.first(where: { $0.id == userId }) else {
+            print("User not found")
+            return
+        }
+        
+        let userCardViewModel = UserCardViewModel(
+            userId: userId,
+            userService: servicesAssembly.userService,
+            website: user.website)
+        let userCardViewController = UserCardViewController(servicesAssembly: servicesAssembly, viewModel: userCardViewModel)
+        navigationController?.pushViewController(userCardViewController, animated: true)
     }
 }
 
@@ -115,5 +133,12 @@ extension StatisticsViewController: UITableViewDataSource {
         let user = viewModel.users[indexPath.row]
         cell.configure(with: user, rank: indexPath.row + 1)
         return cell
+    }
+}
+
+extension StatisticsViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let selectedUser = viewModel.users[indexPath.row]
+        openUserProfile(for: selectedUser.id)
     }
 }
