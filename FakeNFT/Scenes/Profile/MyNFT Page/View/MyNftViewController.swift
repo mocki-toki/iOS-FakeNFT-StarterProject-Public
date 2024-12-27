@@ -80,7 +80,6 @@ final class MyNftViewController: UIViewController {
     
     private func setupNavigationBar() {
         title = "Мои NFT"
-        navigationItem.rightBarButtonItem = sortButton
         navigationItem.leftBarButtonItem = backwardButton
         navigationController?.navigationBar.tintColor = .yBlack
     }
