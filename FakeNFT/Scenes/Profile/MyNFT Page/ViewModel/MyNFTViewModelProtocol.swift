@@ -11,6 +11,7 @@ protocol MyNFTViewModelProtocol {
     
     func numberOfNFTs() -> Int
     func getNFT(at index: Int) -> Nft?
+    func loadImage(for nft: Nft, completion: @escaping (UIImage?) -> Void)
     
     func sortByPrice()
     func sortByRating()

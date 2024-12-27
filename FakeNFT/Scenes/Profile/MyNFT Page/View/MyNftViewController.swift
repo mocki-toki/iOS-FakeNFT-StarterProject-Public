@@ -189,6 +189,7 @@ extension MyNftViewController: UITableViewDataSource, UITableViewDelegate {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "NftTableViewCell",
                                                        for: indexPath) as? NftTableViewCell,
               let nft = viewModel.getNFT(at: indexPath.row) else {
+            Logger.log("Ошибка при создании ячейки")
             return UITableViewCell()
         }
         
@@ -196,6 +197,14 @@ extension MyNftViewController: UITableViewDataSource, UITableViewDelegate {
         cell.setAuthor("от \(nft.authorName)")
         cell.setPrice(nft.formattedPrice())
         cell.setRating(nft.rating)
+
+        viewModel.loadImage(for: nft) { image in
+            DispatchQueue.main.async {
+                if let image = image {
+                    cell.setImage(image)
+                }
+            }
+        }
         
         cell.configure(
             with: .myNft,
@@ -208,6 +217,7 @@ extension MyNftViewController: UITableViewDataSource, UITableViewDelegate {
             onCart: {})
         return cell
     }
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 140
     }

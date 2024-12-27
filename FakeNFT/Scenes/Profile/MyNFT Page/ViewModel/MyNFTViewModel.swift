@@ -1,4 +1,5 @@
 import UIKit
+import Kingfisher
 
 final class MyNFTViewModel: MyNFTViewModelProtocol {
     // MARK: - Public Properties
@@ -46,6 +47,23 @@ final class MyNFTViewModel: MyNFTViewModelProtocol {
         guard index >= 0 && index < nfts.count else { return nil }
         return nfts[index]
     }
+    
+    func loadImage(for nft: Nft, completion: @escaping (UIImage?) -> Void) {
+            guard let url = nft.imageUrl() else {
+                completion(nil)
+                return
+            }
+            // Используем Kingfisher для загрузки изображения
+            KingfisherManager.shared.retrieveImage(with: url) { result in
+                switch result {
+                case .success(let value):
+                    completion(value.image)
+                case .failure:
+                    Logger.log("Загрузка картинки не удалась")
+                    completion(nil)
+                }
+            }
+        }
     
     func numberOfNFTs() -> Int {
         return nfts.count
