@@ -16,5 +16,7 @@ protocol MyNFTViewModelProtocol {
     func sortByRating()
     func sortByName()
     
+    // MARK: - Sorting Methods
     func applySort(option: String)
+    func applySavedSort()
 }

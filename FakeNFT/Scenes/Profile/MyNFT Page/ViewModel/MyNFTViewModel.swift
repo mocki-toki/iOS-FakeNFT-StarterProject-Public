@@ -6,6 +6,14 @@ final class MyNFTViewModel: MyNFTViewModelProtocol {
                        String(localizable: .sortRating),
                        String(localizable: .sortNftName)]
     
+    private var currentSortOption: String? {
+        didSet {
+            if let option = currentSortOption {
+                UserDefaults.standard.set(option, forKey: "selectedSortOption")
+            }
+        }
+    }
+    
     var onNFTsUpdated: (() -> Void)?
     var onLoadingStatusChanged: ((Bool) -> Void)?
     
@@ -22,8 +30,16 @@ final class MyNFTViewModel: MyNFTViewModelProtocol {
     
     // MARK: - Private Properties
     
-    // MARK: - Initializers
-  
+    // MARK: - Initializer
+    
+    init() {
+        // Загружаем сохранённый параметр сортировки при инициализации
+        if let savedSortOption = UserDefaults.standard.string(forKey: "selectedSortOption") {
+            self.currentSortOption = savedSortOption
+        } else {
+            self.currentSortOption = "По цене"
+        }
+    }
     // MARK: - Public Methods
     
     func getNFT(at index: Int) -> Nft? {
@@ -50,6 +66,8 @@ final class MyNFTViewModel: MyNFTViewModelProtocol {
     }
     
     func applySort(option: String) {
+        self.currentSortOption = option
+        
         switch option {
         case "По цене":
             print("Сортируем по цене")
@@ -64,5 +82,11 @@ final class MyNFTViewModel: MyNFTViewModelProtocol {
             Logger.log("Неизвестный параметр сортировки: \(option)", level: .warning)
         }
         onNFTsUpdated?()
+    }
+    
+    func applySavedSort() {
+        if let savedSortOption = currentSortOption {
+            applySort(option: savedSortOption)
+        }
     }
 }

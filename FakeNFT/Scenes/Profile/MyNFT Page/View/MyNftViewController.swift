@@ -99,6 +99,8 @@ final class MyNftViewController: UIViewController {
                                          author: "https://obj_ytriow.fakenfts.org/",
                                          id: "ca34d35a-4507-47d9-9312-5ea7053994c0")]
         viewModel.addNFTs(nftsMok)
+        
+        viewModel.applySavedSort()
     }
     
     // MARK: - Navigation
