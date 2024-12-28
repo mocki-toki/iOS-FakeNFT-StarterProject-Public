@@ -75,6 +75,7 @@ final class UserCardViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .yWhiteUniversal
         setupUI()
         bindViewModel()
     }
