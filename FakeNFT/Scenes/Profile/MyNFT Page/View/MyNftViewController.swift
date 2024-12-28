@@ -7,7 +7,6 @@ final class MyNftViewController: UIViewController {
     // MARK: - Properties
     
     private var viewModel: MyNFTViewModelProtocol
-    private var isLiked: Bool = false
     
     // MARK: - UI components
     
@@ -183,7 +182,7 @@ extension MyNftViewController: UITableViewDataSource, UITableViewDelegate {
         cell.setRating(nft.rating)
         
         viewModel.loadImage(for: nft) { image in
-            DispatchQueue.main.async {
+            DispatchQueue.main.async { 
                 if let image = image {
                     cell.setImage(image)
                 }
@@ -194,8 +193,8 @@ extension MyNftViewController: UITableViewDataSource, UITableViewDelegate {
             with: .myNft,
             onLike: { [weak self] in
                 guard let self = self else { return }
-                self.isLiked.toggle()
-                cell.setLike(self.isLiked)
+                viewModel.isLiked.toggle()
+                cell.setLike(viewModel.isLiked)
                 print("Like button tapped for \(nft.name)")
             },
             onCart: {})

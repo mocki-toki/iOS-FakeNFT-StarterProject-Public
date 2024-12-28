@@ -9,7 +9,7 @@ final class MyNFTViewModel: MyNFTViewModelProtocol {
     
     var onNFTsUpdated: (() -> Void)?
     var onLoadingStatusChanged: ((Bool) -> Void)?
-    
+    var isLiked: Bool = false
     var nfts: [Nft] = [] {
         didSet {
             onNFTsUpdated?()
@@ -50,6 +50,9 @@ final class MyNFTViewModel: MyNFTViewModelProtocol {
             case .success(let nfts):
                 self?.nfts = nfts
                 Logger.log("Загружены NFT \(nfts.count) шт")
+                DispatchQueue.main.async {
+                    self?.onNFTsUpdated?()
+                }
             case .failure(let error):
                 Logger.log("Failed to load NFTs: \(error)", level: .error)
             }
@@ -69,10 +72,14 @@ final class MyNFTViewModel: MyNFTViewModelProtocol {
         KingfisherManager.shared.retrieveImage(with: url) { result in
             switch result {
             case .success(let value):
-                completion(value.image)
+                DispatchQueue.main.async {
+                    completion(value.image)
+                }
             case .failure:
                 Logger.log("Загрузка картинки не удалась")
-                completion(nil)
+                DispatchQueue.main.async {
+                    completion(nil)
+                }
             }
         }
     }

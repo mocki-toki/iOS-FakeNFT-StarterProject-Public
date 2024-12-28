@@ -5,7 +5,7 @@ protocol MyNFTViewModelProtocol {
     var onNFTsUpdated: (() -> Void)? { get set }
     
     var onLoadingStatusChanged: ((Bool) -> Void)? { get set }
-    
+    var isLiked: Bool { get set }
     var nfts: [Nft] { get set}
     func loadNFTs()
     func numberOfNFTs() -> Int
