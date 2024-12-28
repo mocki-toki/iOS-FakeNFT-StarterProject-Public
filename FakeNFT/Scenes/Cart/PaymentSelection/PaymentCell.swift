@@ -1,6 +1,7 @@
 import UIKit
 import SnapKit
 import Then
+import Kingfisher
 
 final class PaymentCell: UICollectionViewCell {
     static let identifier = "PaymentCell"
@@ -35,7 +36,28 @@ final class PaymentCell: UICollectionViewCell {
     
     func configure(with method: PaymentMethod) {
         Logger.log("Configuring PaymentCell with \(method.title)", level: .debug)
-        iconImageView.image = UIImage(named: method.image)
+        let placeholder = UIImage(named: "CurrencyPlaceholder")
+        
+        if let url = method.imageUrl {
+            iconImageView.kf.setImage(
+                with: url,
+                placeholder: placeholder,
+                options: [
+                    .transition(.fade(0.2)),
+                    .cacheOriginalImage
+                ]
+            ) { result in
+                switch result {
+                case .success(let value):
+                    Logger.log("Image loaded successfully: \(value.source.url?.absoluteString ?? "Unknown URL")")
+                case .failure(let error):
+                    Logger.log("Failed to load image: \(error.localizedDescription)", level: .error)
+                }
+            }
+        } else {
+            iconImageView.image = placeholder
+        }
+        
         titleLabel.text = method.title
         subtitleLabel.text = method.name
     }

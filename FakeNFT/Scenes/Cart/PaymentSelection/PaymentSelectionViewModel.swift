@@ -4,35 +4,74 @@ import Combine
 struct PaymentMethod {
     let title: String
     let name: String
-    let image: String
+    let imageUrl: URL?
     let id: String
 }
 
 final class PaymentSelectionViewModel {
+    private let currenciesService: CurrenciesService
+    private var timeoutWorkItem: DispatchWorkItem?
+    
     @Published private(set) var paymentMethods: [PaymentMethod] = []
     @Published var selectedMethod: PaymentMethod?
+    @Published var isLoading: Bool = false
     @Published var paymentResult: PaymentResult?
+    @Published var fetchPaymentMethodsResult: FetchPaymentMethodsResult?
+    @Published var shouldCloseScreen: Bool = false
     
     enum PaymentResult {
         case success
         case failure
     }
     
-    init() {
+    enum FetchPaymentMethodsResult {
+        case success
+        case failure
+    }
+    
+    init(currenciesService: CurrenciesService) {
+        self.currenciesService = currenciesService
         loadPaymentMethods()
     }
     
-    private func loadPaymentMethods() {
-        paymentMethods = [
-            PaymentMethod(title: "ApeCoin", name: "APE", image: "ApeCoin (APE)", id: "ape"),
-            PaymentMethod(title: "Bitcoin", name: "BTC", image: "Bitcoin (BTC)", id: "btc"),
-            PaymentMethod(title: "Cardano", name: "ADA", image: "Cardano (ADA)", id: "ada"),
-            PaymentMethod(title: "Dogecoin", name: "DOGE", image: "Dogecoin (DOGE)", id: "doge"),
-            PaymentMethod(title: "Ethereum", name: "ETH", image: "Ethereum (ETH)", id: "eth"),
-            PaymentMethod(title: "Shiba Inu", name: "SHIB", image: "Shiba Inu (SHIB)", id: "shib"),
-            PaymentMethod(title: "Solana", name: "SOL", image: "Solana (SOL)", id: "sol"),
-            PaymentMethod(title: "Tether", name: "USDT", image: "Tether (USDT)", id: "usdt")
-        ]
+    func processOpeningCartView() {
+        shouldCloseScreen = true
+    }
+    
+    func loadPaymentMethods() {
+        isLoading = true
+        fetchPaymentMethodsResult = nil
+        
+        timeoutWorkItem = DispatchWorkItem { [weak self] in
+            guard let self = self else { return }
+            if self.isLoading {
+                self.isLoading = false
+                self.fetchPaymentMethodsResult = .failure
+                Logger.log("Request timed out after 4 seconds")
+            }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10, execute: timeoutWorkItem!)
+        
+        currenciesService.fetchCurrencies { [weak self] result in
+            guard let self = self else { return }
+            self.timeoutWorkItem?.cancel()
+            self.isLoading = false
+            switch result {
+            case .success(let currencies):
+                self.paymentMethods = currencies.map { currency in
+                    PaymentMethod(
+                        title: currency.title,
+                        name: currency.name,
+                        imageUrl: URL(string: currency.image),
+                        id: currency.id
+                    )
+                }
+                self.fetchPaymentMethodsResult = .success
+            case .failure(let error):
+                self.fetchPaymentMethodsResult = .failure
+                Logger.log("Failed to fetch currencies: \(error)")
+            }
+        }
     }
     
     func selectPaymentMethod(at index: Int) {

@@ -4,7 +4,7 @@ import SnapKit
 import Then
 
 final class PaymentSelectionViewController: UIViewController {
-    private let viewModel = PaymentSelectionViewModel()
+    private let viewModel: PaymentSelectionViewModel
     private let cartViewModel: CartViewModel
     private var subscriptions = Set<AnyCancellable>()
     private let agreementURL = URL(string: "https://yandex.ru/legal/practicum_termsofuse")
@@ -86,8 +86,14 @@ final class PaymentSelectionViewController: UIViewController {
             $0.addTarget(self, action: #selector(payButtonTapped), for: .touchUpInside)
         }
     
-    init(cartViewModel: CartViewModel) {
+    private lazy var loader: UIActivityIndicatorView = UIActivityIndicatorView(style: .large).then {
+        $0.hidesWhenStopped = true
+        $0.color = .yBlack
+    }
+    
+    init(cartViewModel: CartViewModel, currenciesService: CurrenciesService) {
         self.cartViewModel = cartViewModel
+        self.viewModel = PaymentSelectionViewModel(currenciesService: currenciesService)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -106,6 +112,7 @@ final class PaymentSelectionViewController: UIViewController {
         view.backgroundColor = .white
         view.addSubview(collectionView)
         view.addSubview(bottomContainerView)
+        view.addSubview(loader)
         
         collectionView.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview()
@@ -114,6 +121,10 @@ final class PaymentSelectionViewController: UIViewController {
         
         bottomContainerView.snp.makeConstraints { make in
             make.leading.trailing.bottom.equalToSuperview()
+        }
+        
+        loader.snp.makeConstraints { make in
+            make.center.equalToSuperview()
         }
     }
     
@@ -154,6 +165,35 @@ final class PaymentSelectionViewController: UIViewController {
             .receive(on: RunLoop.main)
             .sink { [weak self] selectedMethod in
                 self?.updatePayButtonState(isEnabled: selectedMethod != nil)
+            }
+            .store(in: &subscriptions)
+        
+        viewModel.$isLoading
+            .receive(on: RunLoop.main)
+            .sink { [weak self] isLoading in
+                guard let self = self else { return }
+                if isLoading {
+                    self.loader.startAnimating()
+                } else {
+                    self.loader.stopAnimating()
+                }
+            }
+            .store(in: &subscriptions)
+        
+        viewModel.$fetchPaymentMethodsResult
+            .receive(on: RunLoop.main)
+            .sink { [weak self] result in
+                guard let result = result else { return }
+                self?.handleFetchPaymentMethodsResult(result)
+            }
+            .store(in: &subscriptions)
+        
+        viewModel.$shouldCloseScreen
+            .receive(on: RunLoop.main)
+            .sink { [weak self] shouldClose in
+                if shouldClose {
+                    self?.navigationController?.popViewController(animated: true)
+                }
             }
             .store(in: &subscriptions)
     }
@@ -208,6 +248,37 @@ final class PaymentSelectionViewController: UIViewController {
                         title: String(localizable: .errorRepeat),
                         action: { [weak self] in
                             self?.viewModel.processPayment()
+                        },
+                        style: .default,
+                        isPreferred: true
+                    )
+                ]
+            )
+        }
+    }
+    
+    private func handleFetchPaymentMethodsResult(_ result: PaymentSelectionViewModel.FetchPaymentMethodsResult) {
+        switch result {
+        case .success:
+            Logger.log("Payment methods were received")
+        case .failure:
+            AlertPresenter.presentAlert(
+                on: self,
+                title: String(localizable: .errorNetwork),
+                message: nil,
+                buttons: [
+                    AlertPresenter.Button(
+                        title: String(localizable: .errorCancel),
+                        action: { [weak self] in
+                            self?.viewModel.processOpeningCartView()
+                        },
+                        style: .default,
+                        isPreferred: false
+                    ),
+                    AlertPresenter.Button(
+                        title: String(localizable: .errorRepeat),
+                        action: { [weak self] in
+                            self?.viewModel.loadPaymentMethods()
                         },
                         style: .default,
                         isPreferred: true
