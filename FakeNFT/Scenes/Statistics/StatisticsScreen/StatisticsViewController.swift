@@ -28,6 +28,12 @@ final class StatisticsViewController: UIViewController {
     }
     
     // MARK: - Lifecycle
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tabBarController?.tabBar.isHidden = false
+        tabBarController?.tabBar.backgroundColor = .yWhiteUniversal
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -104,6 +110,7 @@ final class StatisticsViewController: UIViewController {
     
     private func openUserProfile(for userId: String) {
         navigationItem.backButtonTitle = ""
+        self.hidesBottomBarWhenPushed = true
         
         guard let user = viewModel.users.first(where: { $0.id == userId }) else {
             print("User not found")
