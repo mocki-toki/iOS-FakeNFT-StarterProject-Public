@@ -1,3 +1,5 @@
+import Foundation
+
 public struct NftDetailInput {
-    let id: String
+    let id: UUID
 }

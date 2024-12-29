@@ -14,12 +14,12 @@ enum CollectionListSortType {
 protocol CollectionListViewModel {
     var stateDidChanged: ((CollectionListState) -> Void)? { get set }
     func fetchCollections()
-    func didSelectCollection(id collectionId: UUID)
     func sortCollections(by type: CollectionListSortType)
 }
 
 final class CollectionListViewModelImpl: CollectionListViewModel {
     private let nftCollectionService: NftCollectionService
+
     private var state = CollectionListState.initial {
         didSet {
             stateDidChanged?(state)
@@ -42,10 +42,6 @@ final class CollectionListViewModelImpl: CollectionListViewModel {
                 self?.state = .failed(error)
             }
         }
-    }
-
-    func didSelectCollection(id collectionId: UUID) {
-        // TODO: Implement
     }
 
     func sortCollections(by type: CollectionListSortType) {

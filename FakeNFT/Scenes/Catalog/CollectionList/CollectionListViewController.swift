@@ -8,6 +8,7 @@ protocol CollectionListView: AnyObject, ErrorView, LoadingView {
 final class CollectionListViewController: UIViewController {
     // MARK: - Properties
     private var viewModel: CollectionListViewModel
+    private let detailsAssembly: CollectionDetailsAssembly
 
     private lazy var tableView = UITableView().then {
         $0.register(CollectionListTableCell.self)
@@ -30,8 +31,9 @@ final class CollectionListViewController: UIViewController {
 
     // MARK: - Lifecycle
 
-    init(viewModel: CollectionListViewModel) {
+    init(viewModel: CollectionListViewModel, detailsAssembly: CollectionDetailsAssembly) {
         self.viewModel = viewModel
+        self.detailsAssembly = detailsAssembly
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -99,7 +101,7 @@ final class CollectionListViewController: UIViewController {
     @objc private func sortButtonTapped() {
         let sortOptions = [
             CollectionListSortType.name: String(localizable: .sortNftName),
-            CollectionListSortType.nftsCount: String(localizable: .sortNftCount)
+            CollectionListSortType.nftsCount: String(localizable: .sortNftCount),
         ]
 
         AlertPresenter.presentSortOptions(
@@ -108,7 +110,9 @@ final class CollectionListViewController: UIViewController {
             cancelActionTitle: String(localizable: .sortClose),
             options: sortOptions.map { $1 },
             selectionHandler: { [weak self] optionText in
-                guard let option = sortOptions.first(where: { $1 == optionText })?.key else { return }
+                guard let option = sortOptions.first(where: { $1 == optionText })?.key else {
+                    return
+                }
                 self?.viewModel.sortCollections(by: option)
             }
         )
@@ -144,8 +148,12 @@ extension CollectionListViewController: UITableViewDataSource {
 extension CollectionListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cellModel = cellModels[indexPath.row]
-        viewModel.didSelectCollection(id: cellModel.id)
-        tableView.deselectRow(at: indexPath, animated: true)
+        tableView.deselectRow(at: indexPath, animated: false)
+
+        let input = CollectionDetailsInput(id: cellModel.id)
+        let collectionDetailsViewController = detailsAssembly.build(with: input)
+        collectionDetailsViewController.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(collectionDetailsViewController, animated: true)
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

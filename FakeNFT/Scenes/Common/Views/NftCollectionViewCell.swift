@@ -1,16 +1,16 @@
 import UIKit
 
-final class NftTableViewCell: UITableViewCell {
+final class NftCollectionViewCell: UICollectionViewCell {
     // MARK: - Properties
     private let baseCell = NftBaseCell()
 
     private var onLikeButtonTapped: (() -> Void)?
     private var onCartButtonTapped: (() -> Void)?
 
-    // MARK: - Lifecycle
+    // MARK: - Initialization
 
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         setupBaseCell()
     }
 
