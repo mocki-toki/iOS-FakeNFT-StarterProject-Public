@@ -1,19 +1,19 @@
 {
   "sourceLanguage" : "ru",
   "strings" : {
-    "Catalog.openNft" : {
+    "CatalogDetails.author" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Open NFT"
+            "value" : "Collection author:"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Открыть Nft"
+            "value" : "Автор коллекции:"
           }
         }
       }
