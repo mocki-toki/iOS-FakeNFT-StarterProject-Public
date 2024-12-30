@@ -2,6 +2,10 @@ import Kingfisher
 import SafariServices
 import UIKit
 
+protocol CollectionDetailsView: AnyObject, ErrorView, LoadingView {
+    func displayCollectionDetails(_ collectionDetails: CollectionDetailsModel)
+}
+
 final class CollectionDetailsViewController: UIViewController {
     // MARK: - Properties
     private var viewModel: CollectionDetailsViewModel
@@ -64,10 +68,6 @@ final class CollectionDetailsViewController: UIViewController {
 
     lazy var activityIndicator = UIActivityIndicatorView()
 
-    private var collectionDetails: CollectionDetailsModel?
-    private var nfts: [Nft] = []
-    private var nftStates: [UUID: NftState] = [:]
-
     // MARK: - Lifecycle
 
     init(viewModel: CollectionDetailsViewModel) {
@@ -77,15 +77,6 @@ final class CollectionDetailsViewController: UIViewController {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    func configure(with model: CollectionDetailsModel) {
-        coverImageView.kf.setImage(with: model.coverUrl)
-        nameLabel.text = model.name
-        authorLabel.text = model.author
-        descriptionLabel.text = model.description
-
-        setupLayout()
     }
 
     override func viewDidLoad() {
@@ -117,7 +108,7 @@ final class CollectionDetailsViewController: UIViewController {
 
         [
             activityIndicator, coverImageView, nameLabel, authorCaptionLabel, authorLabel,
-            descriptionLabel, nftCollectionView,
+            descriptionLabel, nftCollectionView
         ].forEach { item in
             contentView.addSubview(item)
         }
@@ -166,7 +157,7 @@ final class CollectionDetailsViewController: UIViewController {
         let itemsPerRow = 3
         let itemHeight: CGFloat = 192
         let spacing: CGFloat = 16
-        let numberOfItems = nfts.count
+        let numberOfItems = viewModel.cellModels.count
         let rows = ceil(CGFloat(numberOfItems) / CGFloat(itemsPerRow))
         return rows * itemHeight + (rows - 1) * spacing
     }
@@ -197,26 +188,15 @@ final class CollectionDetailsViewController: UIViewController {
     private func setupBindings() {
         setupCollectionDetailsBinding()
         setupNftsBinding()
-        setupNftStatesBinding()
+        setupNftAdditionalsBinding()
     }
 
     private func setupCollectionDetailsBinding() {
         viewModel.stateDidChanged = { [weak self] state in
             self?.hideLoading()
             switch state {
-            case .data(let collectionDetails, let authorSiteUrl):
-                self?.collectionDetails = CollectionDetailsModel(
-                    id: collectionDetails.id,
-                    coverUrl: collectionDetails.cover,
-                    name: collectionDetails.name,
-                    author: collectionDetails.author,
-                    authorSiteUrl: authorSiteUrl,
-                    description: collectionDetails.description
-                )
-
-                if let collectionDetails = self?.collectionDetails {
-                    self?.configure(with: collectionDetails)
-                }
+            case .data(let collectionDetailsModel):
+                self?.displayCollectionDetails(collectionDetailsModel)
             case .failed(let error):
                 let errorModel = ErrorModel(
                     message: error.localizedDescription,
@@ -235,13 +215,12 @@ final class CollectionDetailsViewController: UIViewController {
             switch state {
             case .initial, .loading:
                 self?.showNftsLoading()
-            case .data(let nfts):
+            case .data:
                 self?.hideNftsLoading()
-                self?.nfts = nfts
-                print("Number of NFTs received: \(nfts.count)")
                 self?.updateCollectionViewHeight()
                 DispatchQueue.main.async {
                     self?.nftCollectionView.reloadData()
+                    self?.setupLayout()
                 }
             case .failed(let error):
                 self?.hideNftsLoading()
@@ -255,10 +234,29 @@ final class CollectionDetailsViewController: UIViewController {
         }
     }
 
-    private func setupNftStatesBinding() {
-        viewModel.nftStateDidChanged = { [weak self] nftStates in
-            self?.nftStates = nftStates
-            self?.nftCollectionView.reloadData()
+    private func setupNftAdditionalsBinding() {
+        viewModel.stateOfNftAdditionalsDidChanged = { [weak self] state in
+            switch state {
+            case .initial, .loading:
+                self?.showNftsLoading()
+                self?.nftCollectionView.alpha = 0.5
+            case .data:
+                self?.hideNftsLoading()
+                self?.updateCollectionViewHeight()
+                self?.nftCollectionView.alpha = 1
+                DispatchQueue.main.async {
+                    self?.nftCollectionView.reloadData()
+                }
+            case .failed(let error):
+                self?.hideNftsLoading()
+                let errorModel = ErrorModel(
+                    message: error.localizedDescription,
+                    actionText: String(localizable: .errorRepeat),
+                    action: { self?.viewModel.fetchCollectionDetails() }
+                )
+                self?.showError(errorModel)
+                self?.nftCollectionView.alpha = 1
+            }
         }
     }
 
@@ -303,7 +301,7 @@ final class CollectionDetailsViewController: UIViewController {
     }
 
     @objc private func authorLabelTapped() {
-        guard let url = collectionDetails?.authorSiteUrl else {
+        guard let url = viewModel.detailsModel?.authorSiteUrl else {
             print("Invalid URL")
             return
         }
@@ -312,16 +310,31 @@ final class CollectionDetailsViewController: UIViewController {
     }
 }
 
+// MARK: - CollectionDetailsView
+
+extension CollectionDetailsViewController: CollectionDetailsView {
+    func displayCollectionDetails(_ collectionDetails: CollectionDetailsModel) {
+        coverImageView.kf.setImage(with: collectionDetails.coverUrl)
+        nameLabel.text = collectionDetails.name
+        authorLabel.text = collectionDetails.author
+        descriptionLabel.text = collectionDetails.description
+
+        setupLayout()
+    }
+}
+
 // MARK: - UICollectionViewDataSource
 
 extension CollectionDetailsViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int)
-        -> Int {
-        return nfts.count
+        -> Int
+    {
+        return viewModel.cellModels.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath)
-        -> UICollectionViewCell {
+        -> UICollectionViewCell
+    {
         guard
             let cell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: "NftCollectionViewCell", for: indexPath)
@@ -329,24 +342,24 @@ extension CollectionDetailsViewController: UICollectionViewDataSource {
         else {
             return UICollectionViewCell()
         }
-        let nft = nfts[indexPath.item]
+        let nft = viewModel.cellModels[indexPath.item]
         cell.configure(
             with: .collection,
             onLike: {
-                self.viewModel.toggleLikeNft(nft)
+                self.viewModel.toggleLikeNft(byId: nft.id)
             },
             onCart: {
-                self.viewModel.toggleCartNft(nft)
+                self.viewModel.toggleCartNft(byId: nft.id)
             }
         )
 
-        if let url = nft.images.first {
-            cell.setImage(url)
-        }
+        cell.setImage(nft.coverUrl)
 
         cell.setRating(nft.rating)
         cell.setPrice("\(nft.price) ETH")
         cell.setText(nft.name)
+
+        let nftStates = viewModel.cellAdditionalModels
         cell.setLike(nftStates[nft.id]?.isLiked ?? false)
         cell.setInCart(nftStates[nft.id]?.isInCart ?? false)
         return cell

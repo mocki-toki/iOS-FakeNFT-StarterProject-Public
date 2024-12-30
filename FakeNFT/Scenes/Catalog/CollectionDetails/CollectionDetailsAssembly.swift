@@ -12,7 +12,10 @@ final class CollectionDetailsAssembly {
             input: input,
             nftCollectionService: servicesAssembly.nftCollectionService,
             nftService: servicesAssembly.nftService,
-            nftStateStorage: servicesAssembly.nftStateStorage
+            orderService: servicesAssembly.orderService,
+            orderPutService: servicesAssembly.orderPutService,
+            profileService: servicesAssembly.profileService,
+            profilePutService: servicesAssembly.profilePutService
         )
         let viewController = CollectionDetailsViewController(viewModel: viewModel)
         return viewController
