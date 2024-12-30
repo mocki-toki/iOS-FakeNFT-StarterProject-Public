@@ -1,8 +1,7 @@
 import Kingfisher
 import UIKit
 
-protocol CollectionListView: AnyObject, ErrorView, LoadingView {
-    func displayCells(_ cellModels: [CollectionListTableCellModel])
+extension CollectionListViewController: ErrorView, LoadingView {
 }
 
 final class CollectionListViewController: UIViewController {
@@ -26,8 +25,6 @@ final class CollectionListViewController: UIViewController {
     )
 
     lazy var activityIndicator = UIActivityIndicatorView()
-
-    private var cellModels: [CollectionListTableCellModel] = []
 
     // MARK: - Lifecycle
 
@@ -75,14 +72,8 @@ final class CollectionListViewController: UIViewController {
         viewModel.stateDidChanged = { [weak self] state in
             self?.hideLoading()
             switch state {
-            case .data(let collections):
-                self?.displayCells(
-                    collections.map {
-                        CollectionListTableCellModel(
-                            id: $0.id,
-                            coverUrl: $0.cover, name: $0.name, count: $0.nfts.count
-                        )
-                    })
+            case .data(_):
+                self?.tableView.reloadData()
             case .failed(let error):
                 let errorModel = ErrorModel(
                     message: error.localizedDescription,
@@ -118,26 +109,18 @@ final class CollectionListViewController: UIViewController {
         )
     }
 }
-// MARK: - CollectionListView
-
-extension CollectionListViewController: CollectionListView {
-    func displayCells(_ cellModels: [CollectionListTableCellModel]) {
-        self.cellModels = cellModels
-        tableView.reloadData()
-    }
-}
 
 // MARK: - UITableViewDataSource
 
 extension CollectionListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        cellModels.count
+        viewModel.cellModels.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: CollectionListTableCell = tableView.dequeueReusableCell()
         cell.selectionStyle = .none
-        let cellModel = cellModels[indexPath.row]
+        let cellModel = viewModel.cellModels[indexPath.row]
         cell.configure(with: cellModel)
         return cell
     }
@@ -147,7 +130,7 @@ extension CollectionListViewController: UITableViewDataSource {
 
 extension CollectionListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let cellModel = cellModels[indexPath.row]
+        let cellModel = viewModel.cellModels[indexPath.row]
         tableView.deselectRow(at: indexPath, animated: false)
 
         let input = CollectionDetailsInput(id: cellModel.id)
