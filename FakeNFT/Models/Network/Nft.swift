@@ -7,9 +7,9 @@ struct Nft: Decodable {
     var rating: Int
     var description: String
     var price: Float
-    var author: String
+    var author: URL
     let id: UUID
-    
+
     enum CodingKeys: String, CodingKey {
         case createdAt, name, images, rating, description, price, author, id
     }
@@ -20,9 +20,7 @@ struct Nft: Decodable {
 
         let cleanedDateString = createdAtString.replacingOccurrences(of: "[GMT]", with: "")
 
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-
+        let formatter = DateFormatter.defaultDateFormatterWithFractionalSeconds
         guard let date = formatter.date(from: cleanedDateString) else {
             throw DecodingError.dataCorruptedError(
                 forKey: .createdAt, in: container,
@@ -34,7 +32,7 @@ struct Nft: Decodable {
         self.rating = try container.decode(Int.self, forKey: .rating)
         self.description = try container.decode(String.self, forKey: .description)
         self.price = try container.decode(Float.self, forKey: .price)
-        self.author = try container.decode(String.self, forKey: .author)
+        self.author = try container.decode(URL.self, forKey: .author)
         self.id = try container.decode(UUID.self, forKey: .id)
     }
 }

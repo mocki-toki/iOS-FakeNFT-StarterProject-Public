@@ -19,9 +19,7 @@ struct NftCollection: Decodable {
 
         let cleanedDateString = createdAtString.replacingOccurrences(of: "[GMT]", with: "")
 
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-
+        let formatter = DateFormatter.defaultDateFormatterWithFractionalSeconds
         guard let date = formatter.date(from: cleanedDateString) else {
             throw DecodingError.dataCorruptedError(
                 forKey: .createdAt, in: container,

@@ -5,5 +5,5 @@ struct CollectionDetailsTableCellModel {
     let coverUrl: URL
     let rating: Int
     let name: String
-    let price: Int
+    let price: Float
 }
