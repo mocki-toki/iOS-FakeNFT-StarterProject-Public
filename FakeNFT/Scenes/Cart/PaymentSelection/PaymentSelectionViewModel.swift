@@ -47,7 +47,7 @@ final class PaymentSelectionViewModel {
             if self.isLoading {
                 self.isLoading = false
                 self.fetchPaymentMethodsResult = .failure
-                Logger.log("Request timed out after 4 seconds")
+                Logger.log("Request timed out after 10 seconds")
             }
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 10, execute: timeoutWorkItem!)

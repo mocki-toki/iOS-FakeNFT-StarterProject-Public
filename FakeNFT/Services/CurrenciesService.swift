@@ -6,7 +6,7 @@ protocol CurrenciesService {
     func fetchCurrencies(completion: @escaping CurrenciesCompletion)
 }
 
-final class CurrenciesServiceImplementation: CurrenciesService {
+final class CurrenciesServiceImpl: CurrenciesService {
     private let networkClient: NetworkClient
     
     init(networkClient: NetworkClient) {

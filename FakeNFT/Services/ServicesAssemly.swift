@@ -18,8 +18,16 @@ final class ServicesAssembly {
     }
     
     var currenciesService: CurrenciesService {
-        CurrenciesServiceImplementation(
+        CurrenciesServiceImpl(
             networkClient: networkClient
         )
+    }
+    
+    var orderService: OrderService {
+        OrderServiceImpl(networkClient: networkClient)
+    }
+
+    var orderPutService: OrderPutService {
+        OrderPutServiceImpl(networkClient: networkClient)
     }
 }
