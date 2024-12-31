@@ -3,7 +3,7 @@ import Foundation
 enum CollectionListState {
     case initial, loading
     case failed(Error)
-    case data([NftCollection])
+    case data([CollectionListTableCellModel])
 }
 
 enum CollectionListSortType {
@@ -13,13 +13,14 @@ enum CollectionListSortType {
 
 protocol CollectionListViewModel {
     var stateDidChanged: ((CollectionListState) -> Void)? { get set }
+    var cellModels: [CollectionListTableCellModel] { get }
     func fetchCollections()
-    func didSelectCollection(id collectionId: UUID)
     func sortCollections(by type: CollectionListSortType)
 }
 
 final class CollectionListViewModelImpl: CollectionListViewModel {
     private let nftCollectionService: NftCollectionService
+
     private var state = CollectionListState.initial {
         didSet {
             stateDidChanged?(state)
@@ -27,6 +28,14 @@ final class CollectionListViewModelImpl: CollectionListViewModel {
     }
 
     var stateDidChanged: ((CollectionListState) -> Void)?
+
+    var cellModels: [CollectionListTableCellModel] {
+        if case .data(let collections) = state {
+            return collections
+        } else {
+            return []
+        }
+    }
 
     init(nftCollectionService: NftCollectionService) {
         self.nftCollectionService = nftCollectionService
@@ -37,15 +46,15 @@ final class CollectionListViewModelImpl: CollectionListViewModel {
         nftCollectionService.loadCollections { [weak self] result in
             switch result {
             case .success(let collections):
-                self?.state = .data(collections)
+                self?.state = .data(
+                    collections.map {
+                        CollectionListTableCellModel(
+                            id: $0.id, coverUrl: $0.cover, name: $0.name, count: $0.nfts.count)
+                    })
             case .failure(let error):
                 self?.state = .failed(error)
             }
         }
-    }
-
-    func didSelectCollection(id collectionId: UUID) {
-        // TODO: Implement
     }
 
     func sortCollections(by type: CollectionListSortType) {
@@ -55,7 +64,7 @@ final class CollectionListViewModelImpl: CollectionListViewModel {
         case .name:
             collections.sort { $0.name < $1.name }
         case .nftsCount:
-            collections.sort { $0.nfts.count > $1.nfts.count }
+            collections.sort { $0.count > $1.count }
         }
 
         state = .data(collections)

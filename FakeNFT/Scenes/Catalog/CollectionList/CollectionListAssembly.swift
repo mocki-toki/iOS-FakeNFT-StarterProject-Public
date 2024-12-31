@@ -8,10 +8,10 @@ final class CollectionListAssembly {
     }
 
     public func build() -> CollectionListViewController {
-        let viewModel = CollectionListViewModelImpl(
-            nftCollectionService: servicesAssembler.nftCollectionService
-        )
-        let viewController = CollectionListViewController(viewModel: viewModel)
+        let detailsAssembly = CollectionDetailsAssembly(servicesAssembly: servicesAssembler)
+
+        let viewModel = CollectionListViewModelImpl(nftCollectionService: servicesAssembler.nftCollectionService)
+        let viewController = CollectionListViewController(viewModel: viewModel, detailsAssembly: detailsAssembly)
         return viewController
     }
 }

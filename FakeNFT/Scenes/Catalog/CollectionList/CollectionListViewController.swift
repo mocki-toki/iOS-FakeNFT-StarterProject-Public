@@ -1,13 +1,13 @@
 import Kingfisher
 import UIKit
 
-protocol CollectionListView: AnyObject, ErrorView, LoadingView {
-    func displayCells(_ cellModels: [CollectionListTableCellModel])
+extension CollectionListViewController: ErrorView, LoadingView {
 }
 
 final class CollectionListViewController: UIViewController {
     // MARK: - Properties
     private var viewModel: CollectionListViewModel
+    private let detailsAssembly: CollectionDetailsAssembly
 
     private lazy var tableView = UITableView().then {
         $0.register(CollectionListTableCell.self)
@@ -26,12 +26,11 @@ final class CollectionListViewController: UIViewController {
 
     lazy var activityIndicator = UIActivityIndicatorView()
 
-    private var cellModels: [CollectionListTableCellModel] = []
-
     // MARK: - Lifecycle
 
-    init(viewModel: CollectionListViewModel) {
+    init(viewModel: CollectionListViewModel, detailsAssembly: CollectionDetailsAssembly) {
         self.viewModel = viewModel
+        self.detailsAssembly = detailsAssembly
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -73,14 +72,8 @@ final class CollectionListViewController: UIViewController {
         viewModel.stateDidChanged = { [weak self] state in
             self?.hideLoading()
             switch state {
-            case .data(let collections):
-                self?.displayCells(
-                    collections.map {
-                        CollectionListTableCellModel(
-                            id: $0.id,
-                            coverUrl: $0.cover, name: $0.name, count: $0.nfts.count
-                        )
-                    })
+            case .data(_):
+                self?.tableView.reloadData()
             case .failed(let error):
                 let errorModel = ErrorModel(
                     message: error.localizedDescription,
@@ -99,7 +92,7 @@ final class CollectionListViewController: UIViewController {
     @objc private func sortButtonTapped() {
         let sortOptions = [
             CollectionListSortType.name: String(localizable: .sortNftName),
-            CollectionListSortType.nftsCount: String(localizable: .sortNftCount)
+            CollectionListSortType.nftsCount: String(localizable: .sortNftCount),
         ]
 
         AlertPresenter.presentSortOptions(
@@ -108,18 +101,12 @@ final class CollectionListViewController: UIViewController {
             cancelActionTitle: String(localizable: .sortClose),
             options: sortOptions.map { $1 },
             selectionHandler: { [weak self] optionText in
-                guard let option = sortOptions.first(where: { $1 == optionText })?.key else { return }
+                guard let option = sortOptions.first(where: { $1 == optionText })?.key else {
+                    return
+                }
                 self?.viewModel.sortCollections(by: option)
             }
         )
-    }
-}
-// MARK: - CollectionListView
-
-extension CollectionListViewController: CollectionListView {
-    func displayCells(_ cellModels: [CollectionListTableCellModel]) {
-        self.cellModels = cellModels
-        tableView.reloadData()
     }
 }
 
@@ -127,13 +114,13 @@ extension CollectionListViewController: CollectionListView {
 
 extension CollectionListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        cellModels.count
+        viewModel.cellModels.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: CollectionListTableCell = tableView.dequeueReusableCell()
         cell.selectionStyle = .none
-        let cellModel = cellModels[indexPath.row]
+        let cellModel = viewModel.cellModels[indexPath.row]
         cell.configure(with: cellModel)
         return cell
     }
@@ -143,9 +130,13 @@ extension CollectionListViewController: UITableViewDataSource {
 
 extension CollectionListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let cellModel = cellModels[indexPath.row]
-        viewModel.didSelectCollection(id: cellModel.id)
-        tableView.deselectRow(at: indexPath, animated: true)
+        let cellModel = viewModel.cellModels[indexPath.row]
+        tableView.deselectRow(at: indexPath, animated: false)
+
+        let input = CollectionDetailsInput(id: cellModel.id)
+        let collectionDetailsViewController = detailsAssembly.build(with: input)
+        collectionDetailsViewController.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(collectionDetailsViewController, animated: true)
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

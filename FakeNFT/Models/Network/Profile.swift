@@ -2,10 +2,10 @@ import Foundation
 
 struct Profile: Codable {
     var name: String
-    var avatar: String
+    var avatar: URL
     var description: String
-    var website: String
-    var nfts: [String]
-    var likes: [String]
-    let id: String
+    var website: URL
+    var nfts: [UUID]
+    var likes: [UUID]
+    let id: UUID
 }
