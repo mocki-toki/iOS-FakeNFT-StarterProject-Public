@@ -4,12 +4,16 @@ final class CartViewModel {
     // MARK: - Private Properties
     private var cartItems: [CartItem] = []
     private let sortOptionKey = "SelectedSortOption"
+    private let cartService: CartServiceProtocol
+    private(set) var isLoading = false
     
     // MARK: - Public Properties
     var onCartUpdated: (() -> Void)?
+    var onLoadingStateChanged: (() -> Void)?
+    var onErrorOccurred: ((String) -> Void)?
     
     var totalCost: Double {
-        cartItems.reduce(0) { $0 + ($1.isInCart ? $1.price : 0) }
+        cartItems.reduce(0) { $0 + $1.price }
     }
     
     var isCartEmpty: Bool {
@@ -17,7 +21,7 @@ final class CartViewModel {
     }
     
     var totalItems: Int {
-        cartItems.filter { $0.isInCart }.count
+        cartItems.count
     }
     
     var formattedTotalItems: String {
@@ -29,9 +33,9 @@ final class CartViewModel {
     }
     
     // MARK: - Initializer
-    init(items: [CartItem]) {
-        self.cartItems = items
-        Logger.log("CartViewModel initialized with \(items.count) items")
+    init(cartService: CartServiceProtocol) {
+        self.cartService = cartService
+        Logger.log("CartViewModel initialized")
         applySavedSortOption()
     }
     
@@ -42,14 +46,6 @@ final class CartViewModel {
     
     func item(at index: Int) -> CartItem {
         cartItems[index]
-    }
-    
-    func toggleCartState(for index: Int) {
-        cartItems[index].isInCart.toggle()
-        Logger.log(
-            "Toggled cart state for item: \(cartItems[index].name). Now in cart: \(cartItems[index].isInCart)",
-            level: .debug)
-        onCartUpdated?()
     }
     
     func sortItems(by option: String) {
@@ -84,6 +80,32 @@ final class CartViewModel {
             onCartUpdated?()
         } else {
             Logger.log("Attempted to remove non-existing item: \(item.name)", level: .error)
+        }
+    }
+    
+    func loadNfts(with ids: [UUID]) {
+        isLoading = true
+        onLoadingStateChanged?()
+        
+        cartService.loadNfts(with: ids) { [weak self] result in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                self.isLoading = false
+                self.onLoadingStateChanged?()
+                
+                switch result {
+                case .success(let items):
+                    self.cartItems = items
+                    self.onCartUpdated?()
+                case .failure(let error):
+                    if let cartError = error as? CartServiceError {
+                        let errorMessages = cartError.errors.map { $0.localizedDescription }.joined(separator: "\n")
+                        self.onErrorOccurred?("Failed to load items:\n\(errorMessages)")
+                    } else {
+                        self.onErrorOccurred?("Failed to load items: \(error.localizedDescription)")
+                    }
+                }
+            }
         }
     }
     

@@ -10,6 +10,8 @@ final class ServicesAssembly {
         self.nftStorage = nftStorage
     }
     
+    lazy var cartService: CartServiceProtocol = CartService(nftService: nftService)
+    
     var nftService: NftService {
         NftServiceImpl(
             networkClient: networkClient,
