@@ -41,12 +41,7 @@ final class CartViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupLoader()
-        // TODO it will be change soon, now it's just test data
-        let nftIds = [
-            UUID(uuidString: "5093c01d-e79e-4281-96f1-76db5880ba70")!,
-            UUID(uuidString: "c14cf3bc-7470-4eec-8a42-5eaa65f4053c")!
-        ]
-        viewModel.loadNfts(with: nftIds)
+        viewModel.loadOrderAndNfts()
     }
     
     // MARK: - Private Methods

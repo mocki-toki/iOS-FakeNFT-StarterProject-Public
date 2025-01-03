@@ -12,7 +12,9 @@ final class TabBarFactory {
             UINavigationController(
                 rootViewController: CartViewController(
                     servicesAssembly: servicesAssembly,
-                    viewModel: CartViewModel(cartService: servicesAssembly.cartService)
+                    viewModel: CartViewModel(
+                        cartService: servicesAssembly.cartService,
+                        orderService: servicesAssembly.orderService)
                 )
             ).configured(with: String(localizable: .tabCart), image: UIImage.inactiveCart, tag: 2),
             

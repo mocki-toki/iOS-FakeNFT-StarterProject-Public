@@ -5,6 +5,7 @@ final class CartViewModel {
     private var cartItems: [CartItem] = []
     private let sortOptionKey = "SelectedSortOption"
     private let cartService: CartServiceProtocol
+    private let orderService: OrderService
     private(set) var isLoading = false
     
     // MARK: - Public Properties
@@ -33,8 +34,9 @@ final class CartViewModel {
     }
     
     // MARK: - Initializer
-    init(cartService: CartServiceProtocol) {
+    init(cartService: CartServiceProtocol, orderService: OrderService) {
         self.cartService = cartService
+        self.orderService = orderService
         Logger.log("CartViewModel initialized")
         applySavedSortOption()
     }
@@ -80,6 +82,25 @@ final class CartViewModel {
             onCartUpdated?()
         } else {
             Logger.log("Attempted to remove non-existing item: \(item.name)", level: .error)
+        }
+    }
+    
+    func loadOrderAndNfts() {
+        isLoading = true
+        onLoadingStateChanged?()
+        
+        orderService.loadOrder { [weak self] result in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let nftIds):
+                    self.loadNfts(with: nftIds)
+                case .failure(let error):
+                    self.isLoading = false
+                    self.onLoadingStateChanged?()
+                    self.onErrorOccurred?("Failed to load order: \(error.localizedDescription)")
+                }
+            }
         }
     }
     
