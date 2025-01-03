@@ -153,14 +153,6 @@ final class PaymentSelectionViewController: UIViewController {
             }
             .store(in: &subscriptions)
         
-        viewModel.$paymentResult
-            .receive(on: RunLoop.main)
-            .sink { [weak self] result in
-                guard let result = result else { return }
-                self?.handlePaymentResult(result)
-            }
-            .store(in: &subscriptions)
-        
         viewModel.$selectedMethod
             .receive(on: RunLoop.main)
             .sink { [weak self] selectedMethod in
@@ -185,6 +177,14 @@ final class PaymentSelectionViewController: UIViewController {
             .sink { [weak self] result in
                 guard let result = result else { return }
                 self?.handleFetchPaymentMethodsResult(result)
+            }
+            .store(in: &subscriptions)
+        
+        viewModel.$setCurrencyResult
+            .receive(on: RunLoop.main)
+            .sink { [weak self] result in
+                guard let result = result else { return }
+                self?.handleSetCurrencyResult(result)
             }
             .store(in: &subscriptions)
         
@@ -228,35 +228,6 @@ final class PaymentSelectionViewController: UIViewController {
         present(successVC, animated: true, completion: nil)
     }
     
-    private func handlePaymentResult(_ result: PaymentSelectionViewModel.PaymentResult) {
-        switch result {
-        case .success:
-            showSuccessScreen()
-        case .failure:
-            AlertPresenter.presentAlert(
-                on: self,
-                title: String(localizable: .paymentFail),
-                message: nil,
-                buttons: [
-                    AlertPresenter.Button(
-                        title: String(localizable: .errorCancel),
-                        action: nil,
-                        style: .default,
-                        isPreferred: false
-                    ),
-                    AlertPresenter.Button(
-                        title: String(localizable: .errorRepeat),
-                        action: { [weak self] in
-                            self?.viewModel.processPayment()
-                        },
-                        style: .default,
-                        isPreferred: true
-                    )
-                ]
-            )
-        }
-    }
-    
     private func handleFetchPaymentMethodsResult(_ result: PaymentSelectionViewModel.FetchPaymentMethodsResult) {
         switch result {
         case .success:
@@ -279,6 +250,36 @@ final class PaymentSelectionViewController: UIViewController {
                         title: String(localizable: .errorRepeat),
                         action: { [weak self] in
                             self?.viewModel.loadPaymentMethods()
+                        },
+                        style: .default,
+                        isPreferred: true
+                    )
+                ]
+            )
+        }
+    }
+    
+    private func handleSetCurrencyResult(_ result: PaymentSelectionViewModel.SetCurrencyResult) {
+        switch result {
+        case .success:
+            Logger.log("Currency has been set for the order")
+            showSuccessScreen()
+        case .failure:
+            AlertPresenter.presentAlert(
+                on: self,
+                title: String(localizable: .paymentFail),
+                message: nil,
+                buttons: [
+                    AlertPresenter.Button(
+                        title: String(localizable: .errorCancel),
+                        action: nil,
+                        style: .default,
+                        isPreferred: false
+                    ),
+                    AlertPresenter.Button(
+                        title: String(localizable: .errorRepeat),
+                        action: { [weak self] in
+                            self?.viewModel.processPayment()
                         },
                         style: .default,
                         isPreferred: true

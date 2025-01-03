@@ -15,11 +15,11 @@ final class PaymentSelectionViewModel {
     @Published private(set) var paymentMethods: [PaymentMethod] = []
     @Published var selectedMethod: PaymentMethod?
     @Published var isLoading: Bool = false
-    @Published var paymentResult: PaymentResult?
     @Published var fetchPaymentMethodsResult: FetchPaymentMethodsResult?
+    @Published var setCurrencyResult: SetCurrencyResult?
     @Published var shouldCloseScreen: Bool = false
     
-    enum PaymentResult {
+    enum SetCurrencyResult {
         case success
         case failure
     }
@@ -80,11 +80,26 @@ final class PaymentSelectionViewModel {
     }
     
     func processPayment() {
-        guard let selectedMethod = selectedMethod else { return }
-        if selectedMethod.id == "btc" {
-            paymentResult = .success
-        } else {
-            paymentResult = .failure
+        guard let selectedMethod = selectedMethod else {
+            Logger.log("No payment method selected", level: .error)
+            return
+        }
+        
+        isLoading = true
+        currenciesService.setCurrencyForTheOrder(id: selectedMethod.id) { [weak self] result in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                self.isLoading = false
+                
+                switch result {
+                case .success:
+                    Logger.log("Payment successful")
+                    self.setCurrencyResult = .success
+                case .failure(let error):
+                    Logger.log("Payment failed: \(error.localizedDescription)", level: .error)
+                    self.setCurrencyResult = .failure
+                }
+            }
         }
     }
 }
