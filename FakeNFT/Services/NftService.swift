@@ -4,6 +4,11 @@ typealias NftCompletion = (Result<Nft, Error>) -> Void
 
 protocol NftService {
     func loadNft(id: UUID, completion: @escaping NftCompletion)
+    func loadNfts(ids: [UUID], completion: @escaping (Result<[CartItem], Error>) -> Void)
+}
+
+struct NftServiceError: Error {
+    let errors: [Error]
 }
 
 final class NftServiceImpl: NftService {
@@ -33,6 +38,42 @@ final class NftServiceImpl: NftService {
             case .failure(let error):
                 Logger.log("Request failed for ID \(id). Error: \(error)", level: .error)
                 completion(.failure(error))
+            }
+        }
+    }
+    
+    func loadNfts(ids: [UUID], completion: @escaping (Result<[CartItem], Error>) -> Void) {
+        let dispatchGroup = DispatchGroup()
+        var cartItems: [CartItem] = []
+        var errors: [Error] = []
+        
+        for id in ids {
+            Logger.log("Processing NFT with ID: \(id)", level: .debug)
+            dispatchGroup.enter()
+            loadNft(id: id) { result in
+                defer { dispatchGroup.leave() }
+                switch result {
+                case .success(let nft):
+                    let imageURL = URL(string: nft.images.first ?? "")
+                    let cartItem = CartItem(
+                        id: nft.id,
+                        name: nft.name,
+                        price: Double(round(100 * nft.price) / 100),
+                        rating: nft.rating,
+                        imageURL: imageURL
+                    )
+                    cartItems.append(cartItem)
+                case .failure(let error):
+                    errors.append(error)
+                }
+            }
+        }
+        
+        dispatchGroup.notify(queue: .main) {
+            if !errors.isEmpty {
+                completion(.failure(NftServiceError(errors: errors)))
+            } else {
+                completion(.success(cartItems))
             }
         }
     }

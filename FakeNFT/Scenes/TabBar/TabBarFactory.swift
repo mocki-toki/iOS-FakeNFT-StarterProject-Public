@@ -13,7 +13,7 @@ final class TabBarFactory {
                 rootViewController: CartViewController(
                     servicesAssembly: servicesAssembly,
                     viewModel: CartViewModel(
-                        cartService: servicesAssembly.cartService,
+                        nftService: servicesAssembly.nftService,
                         orderService: servicesAssembly.orderService,
                         orderPutService: servicesAssembly.orderPutService)
                 )

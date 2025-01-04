@@ -4,7 +4,7 @@ final class CartViewModel {
     // MARK: - Private Properties
     private var cartItems: [CartItem] = []
     private let sortOptionKey = "SelectedSortOption"
-    private let cartService: CartServiceProtocol
+    private let nftService: NftService
     private let orderService: OrderService
     private let orderPutService: OrderPutService
     private(set) var isLoading = false
@@ -37,8 +37,8 @@ final class CartViewModel {
     }
     
     // MARK: - Initializer
-    init(cartService: CartServiceProtocol, orderService: OrderService, orderPutService: OrderPutService) {
-        self.cartService = cartService
+    init(nftService: NftService, orderService: OrderService, orderPutService: OrderPutService) {
+        self.nftService = nftService
         self.orderService = orderService
         self.orderPutService = orderPutService
         Logger.log("CartViewModel initialized")
@@ -144,7 +144,7 @@ final class CartViewModel {
         isLoading = true
         onLoadingStateChanged?()
         
-        cartService.loadNfts(with: ids) { [weak self] result in
+        nftService.loadNfts(ids: ids) { [weak self] result in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 self.isLoading = false
@@ -155,7 +155,7 @@ final class CartViewModel {
                     self.cartItems = items
                     self.onCartUpdated?()
                 case .failure(let error):
-                    if let cartError = error as? CartServiceError {
+                    if let cartError = error as? NftServiceError {
                         let errorMessages = cartError.errors.map { $0.localizedDescription }.joined(separator: "\n")
                         self.onErrorOccurred?("Failed to load items:\n\(errorMessages)")
                     } else {
