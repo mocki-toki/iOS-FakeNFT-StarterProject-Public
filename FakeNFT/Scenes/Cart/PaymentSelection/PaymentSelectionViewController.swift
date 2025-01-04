@@ -153,6 +153,15 @@ final class PaymentSelectionViewController: UIViewController {
             }
             .store(in: &subscriptions)
         
+        cartViewModel.$isCartClearedAfterPayment
+            .receive(on: RunLoop.main)
+            .sink { [weak self] isCleared in
+                if isCleared {
+                    self?.showSuccessScreen()
+                }
+            }
+            .store(in: &subscriptions)
+        
         viewModel.$selectedMethod
             .receive(on: RunLoop.main)
             .sink { [weak self] selectedMethod in
@@ -205,6 +214,7 @@ final class PaymentSelectionViewController: UIViewController {
     @objc private func payButtonTapped() {
         Logger.log("Pay button tapped")
         viewModel.processPayment()
+        cartViewModel.clearCartAfterPayment()
     }
     
     @objc private func agreementLinkTapped() {

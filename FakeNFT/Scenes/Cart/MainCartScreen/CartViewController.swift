@@ -283,6 +283,7 @@ final class CartViewController: UIViewController {
             cartViewModel: viewModel,
             currenciesService: currenciesService
         )
+        
         paymentVC.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(paymentVC, animated: true)
     }

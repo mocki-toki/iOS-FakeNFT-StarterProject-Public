@@ -6,7 +6,10 @@ final class CartViewModel {
     private let sortOptionKey = "SelectedSortOption"
     private let cartService: CartServiceProtocol
     private let orderService: OrderService
+    private let orderPutService: OrderPutService
     private(set) var isLoading = false
+    
+    @Published var isCartClearedAfterPayment: Bool = false
     
     // MARK: - Public Properties
     var onCartUpdated: (() -> Void)?
@@ -34,9 +37,10 @@ final class CartViewModel {
     }
     
     // MARK: - Initializer
-    init(cartService: CartServiceProtocol, orderService: OrderService) {
+    init(cartService: CartServiceProtocol, orderService: OrderService, orderPutService: OrderPutService) {
         self.cartService = cartService
         self.orderService = orderService
+        self.orderPutService = orderPutService
         Logger.log("CartViewModel initialized")
         applySavedSortOption()
     }
@@ -80,6 +84,7 @@ final class CartViewModel {
             Logger.log("Removing item: \(item.name) at index \(index)")
             cartItems.remove(at: index)
             onCartUpdated?()
+            updateOrderWithCurrentNFTs()
         } else {
             Logger.log("Attempted to remove non-existing item: \(item.name)", level: .error)
         }
@@ -99,6 +104,37 @@ final class CartViewModel {
                     self.isLoading = false
                     self.onLoadingStateChanged?()
                     self.onErrorOccurred?("Failed to load order: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+    
+    private func updateOrderWithCurrentNFTs() {
+        let nftIds = cartItems.map { $0.id }
+        orderPutService.sendOrderPutRequest(nftIds: nftIds) { result in
+            switch result {
+            case .success(let order):
+                Logger.log("Order updated successfully: \(order.id)")
+            case .failure(let error):
+                Logger.log("Failed to update order: \(error.localizedDescription)", level: .error)
+            }
+        }
+    }
+    
+    func clearCartAfterPayment() {
+        Logger.log("Clearing cart after successful payment")
+        
+        orderPutService.sendOrderPutRequest(nftIds: []) { [weak self] result in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    Logger.log("Cart cleared successfully")
+                    self.cartItems.removeAll()
+                    self.isCartClearedAfterPayment = true
+                    self.onCartUpdated?()
+                case .failure(let error):
+                    Logger.log("Failed to clear cart: \(error.localizedDescription)", level: .error)
                 }
             }
         }

@@ -9,16 +9,21 @@ struct OrderPutRequest: NetworkRequest {
 }
 
 struct OrderDto: Dto {
-    let nftIds: [UUID]
+    let nftIds: [UUID]?
     
     enum CodingKeys: String, CodingKey {
         case nfts = "nfts"
     }
     
     func asDictionary() -> [String: String] {
-        [
-            CodingKeys.nfts.rawValue: nftIds.map { $0.uuidString.lowercased() }.joined(
-                separator: ",")
-        ]
+        if let nftIds = nftIds, !nftIds.isEmpty {
+            return [
+                CodingKeys.nfts.rawValue: nftIds.map { $0.uuidString.lowercased() }.joined(separator: ",")
+            ]
+        } else {
+            return [
+                CodingKeys.nfts.rawValue: "null" // Используем строку "null" как строковое представление
+            ]
+        }
     }
 }

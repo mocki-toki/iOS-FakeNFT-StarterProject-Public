@@ -14,7 +14,8 @@ final class TabBarFactory {
                     servicesAssembly: servicesAssembly,
                     viewModel: CartViewModel(
                         cartService: servicesAssembly.cartService,
-                        orderService: servicesAssembly.orderService)
+                        orderService: servicesAssembly.orderService,
+                        orderPutService: servicesAssembly.orderPutService)
                 )
             ).configured(with: String(localizable: .tabCart), image: UIImage.inactiveCart, tag: 2),
             

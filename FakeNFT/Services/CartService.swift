@@ -29,6 +29,7 @@ final class CartService: CartServiceProtocol {
                 case .success(let nft):
                     let imageURL = URL(string: nft.images.first ?? "")
                     cartItems.append(CartItem(
+                        id: nft.id,
                         name: nft.name,
                         price: Double(round(100 * nft.price) / 100),
                         rating: nft.rating,
