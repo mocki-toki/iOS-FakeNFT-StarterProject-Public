@@ -22,7 +22,7 @@ struct OrderDto: Dto {
             ]
         } else {
             return [
-                CodingKeys.nfts.rawValue: "null" // Используем строку "null" как строковое представление
+                CodingKeys.nfts.rawValue: "null"
             ]
         }
     }
