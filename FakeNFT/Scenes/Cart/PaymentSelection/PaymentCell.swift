@@ -66,12 +66,12 @@ final class PaymentCell: UICollectionViewCell {
         didSet {
             Logger.log("Cell selection changed to \(isSelected)")
             contentView.layer.borderWidth = isSelected ? 1 : 0
-            contentView.layer.borderColor = isSelected ? UIColor.black.cgColor : UIColor.clear.cgColor
+            contentView.layer.borderColor = isSelected ? UIColor.yBlack.cgColor : UIColor.clear.cgColor
         }
     }
     
     private func setupUI() {
-        contentView.backgroundColor = UIColor(white: 0.95, alpha: 1)
+        contentView.backgroundColor = .yLightGrey
         contentView.layer.cornerRadius = 12
         contentView.layer.masksToBounds = true
         

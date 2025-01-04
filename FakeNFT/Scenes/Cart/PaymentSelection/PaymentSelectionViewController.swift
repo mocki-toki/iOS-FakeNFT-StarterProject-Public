@@ -25,14 +25,14 @@ final class PaymentSelectionViewController: UIViewController {
         }
         return UICollectionView(frame: .zero, collectionViewLayout: layout).then {
             $0.register(PaymentCell.self, forCellWithReuseIdentifier: PaymentCell.identifier)
-            $0.backgroundColor = .white
+            $0.backgroundColor = .yWhite
             $0.dataSource = self
             $0.delegate = self
         }
     }()
     
     private lazy var bottomContainerView: UIView = UIView().then {
-        $0.backgroundColor = UIColor(white: 0.95, alpha: 1)
+        $0.backgroundColor = .yLightGrey
         $0.layer.cornerRadius = 12
         $0.layer.masksToBounds = true
         $0.addSubview(agreementContainerView)
@@ -109,7 +109,7 @@ final class PaymentSelectionViewController: UIViewController {
     }
     
     private func setupUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = .yWhite
         view.addSubview(collectionView)
         view.addSubview(bottomContainerView)
         view.addSubview(loader)
@@ -136,7 +136,8 @@ final class PaymentSelectionViewController: UIViewController {
             target: self,
             action: #selector(backButtonTapped)
         )
-        navigationController?.navigationBar.tintColor = .black
+        navigationController?.navigationBar.tintColor = .yBlack
+        navigationItem.leftBarButtonItem?.tintColor = .yBlack
     }
     
     private func setupBindings() {

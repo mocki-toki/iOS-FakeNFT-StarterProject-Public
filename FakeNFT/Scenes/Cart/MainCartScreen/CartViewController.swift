@@ -88,6 +88,8 @@ final class CartViewController: UIViewController {
             $0.tintColor = .yBlack
         }
         navigationItem.rightBarButtonItem = hamburgerButton
+        navigationController?.navigationBar.barTintColor = .yBlack
+        navigationController?.navigationBar.tintColor = .yBlack
     }
     
     private func setupLoader() {
@@ -162,6 +164,7 @@ final class CartViewController: UIViewController {
             $0.setTitle(String(localizable: .cartToPay), for: .normal)
             $0.backgroundColor = .yBlack
             $0.tintColor = .yWhite
+            $0.setTitleColor(.yWhite, for: .normal)
             $0.titleLabel?.font = .bold17
             $0.layer.cornerRadius = 16
             $0.addTarget(self, action: #selector(handleCheckout), for: .touchUpInside)

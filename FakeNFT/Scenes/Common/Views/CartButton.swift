@@ -37,6 +37,8 @@ final class CartButton: UIButton {
     }
 
     private func updateAppearance() {
-        setImage(isInCart ? .removeFromCart : .addToCart, for: .normal)
+        let image = isInCart ? UIImage.removeFromCart : UIImage.addToCart
+        let tintedImage = image.withTintColor(.yBlack, renderingMode: .alwaysOriginal)
+        setImage(tintedImage, for: .normal)
     }
 }

@@ -152,7 +152,6 @@ final class NftTableViewCell: UITableViewCell {
     private func configureView(for type: NftTableViewCellType) {
         contentView.subviews.forEach { $0.removeFromSuperview() }
         
-        // Общие настройки
         imgView.image = image
         likeButton.setLike(isLiked)
         nameLabel.text = text
