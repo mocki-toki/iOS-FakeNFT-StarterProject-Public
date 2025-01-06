@@ -4,35 +4,74 @@ import Combine
 struct PaymentMethod {
     let title: String
     let name: String
-    let image: String
+    let imageUrl: URL?
     let id: String
 }
 
 final class PaymentSelectionViewModel {
+    private let currenciesService: CurrenciesService
+    private var timeoutWorkItem: DispatchWorkItem?
+    
     @Published private(set) var paymentMethods: [PaymentMethod] = []
     @Published var selectedMethod: PaymentMethod?
-    @Published var paymentResult: PaymentResult?
+    @Published var isLoading: Bool = false
+    @Published var fetchPaymentMethodsResult: FetchPaymentMethodsResult?
+    @Published var setCurrencyResult: SetCurrencyResult?
+    @Published var shouldCloseScreen: Bool = false
     
-    enum PaymentResult {
+    enum SetCurrencyResult {
         case success
         case failure
     }
     
-    init() {
+    enum FetchPaymentMethodsResult {
+        case success
+        case failure
+    }
+    
+    init(currenciesService: CurrenciesService) {
+        self.currenciesService = currenciesService
         loadPaymentMethods()
     }
     
-    private func loadPaymentMethods() {
-        paymentMethods = [
-            PaymentMethod(title: "ApeCoin", name: "APE", image: "ApeCoin (APE)", id: "ape"),
-            PaymentMethod(title: "Bitcoin", name: "BTC", image: "Bitcoin (BTC)", id: "btc"),
-            PaymentMethod(title: "Cardano", name: "ADA", image: "Cardano (ADA)", id: "ada"),
-            PaymentMethod(title: "Dogecoin", name: "DOGE", image: "Dogecoin (DOGE)", id: "doge"),
-            PaymentMethod(title: "Ethereum", name: "ETH", image: "Ethereum (ETH)", id: "eth"),
-            PaymentMethod(title: "Shiba Inu", name: "SHIB", image: "Shiba Inu (SHIB)", id: "shib"),
-            PaymentMethod(title: "Solana", name: "SOL", image: "Solana (SOL)", id: "sol"),
-            PaymentMethod(title: "Tether", name: "USDT", image: "Tether (USDT)", id: "usdt")
-        ]
+    func processOpeningCartView() {
+        shouldCloseScreen = true
+    }
+    
+    func loadPaymentMethods() {
+        isLoading = true
+        fetchPaymentMethodsResult = nil
+        
+        timeoutWorkItem = DispatchWorkItem { [weak self] in
+            guard let self = self else { return }
+            if self.isLoading {
+                self.isLoading = false
+                self.fetchPaymentMethodsResult = .failure
+                Logger.log("Request timed out after 10 seconds")
+            }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10, execute: timeoutWorkItem!)
+        
+        currenciesService.fetchCurrencies { [weak self] result in
+            guard let self = self else { return }
+            self.timeoutWorkItem?.cancel()
+            self.isLoading = false
+            switch result {
+            case .success(let currencies):
+                self.paymentMethods = currencies.map { currency in
+                    PaymentMethod(
+                        title: currency.title,
+                        name: currency.name,
+                        imageUrl: URL(string: currency.image),
+                        id: currency.id
+                    )
+                }
+                self.fetchPaymentMethodsResult = .success
+            case .failure(let error):
+                self.fetchPaymentMethodsResult = .failure
+                Logger.log("Failed to fetch currencies: \(error)")
+            }
+        }
     }
     
     func selectPaymentMethod(at index: Int) {
@@ -41,11 +80,26 @@ final class PaymentSelectionViewModel {
     }
     
     func processPayment() {
-        guard let selectedMethod = selectedMethod else { return }
-        if selectedMethod.id == "btc" {
-            paymentResult = .success
-        } else {
-            paymentResult = .failure
+        guard let selectedMethod = selectedMethod else {
+            Logger.log("No payment method selected", level: .error)
+            return
+        }
+        
+        isLoading = true
+        currenciesService.setCurrencyForTheOrder(id: selectedMethod.id) { [weak self] result in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                self.isLoading = false
+                
+                switch result {
+                case .success:
+                    Logger.log("Payment successful")
+                    self.setCurrencyResult = .success
+                case .failure(let error):
+                    Logger.log("Payment failed: \(error.localizedDescription)", level: .error)
+                    self.setCurrencyResult = .failure
+                }
+            }
         }
     }
 }

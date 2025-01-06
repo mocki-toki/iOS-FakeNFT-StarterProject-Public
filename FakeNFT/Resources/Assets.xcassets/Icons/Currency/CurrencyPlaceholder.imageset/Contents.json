@@ -1,17 +1,15 @@
 {
   "images" : [
     {
-      "filename" : "Bitcoin (BTC)@1x.png",
+      "filename" : "dollar.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Bitcoin (BTC)@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Bitcoin (BTC)@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

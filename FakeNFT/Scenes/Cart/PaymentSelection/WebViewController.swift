@@ -23,11 +23,16 @@ final class WebViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        setupNavigationBar()
         loadURL()
     }
     
+    private func setupNavigationBar() {
+        navigationController?.navigationBar.tintColor = .yBlackUniversal
+    }
+    
     private func setupUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = .yBlackUniversal
         view.addSubview(webView)
         view.addSubview(activityIndicator)
         

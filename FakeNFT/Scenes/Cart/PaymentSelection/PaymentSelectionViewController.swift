@@ -4,7 +4,7 @@ import SnapKit
 import Then
 
 final class PaymentSelectionViewController: UIViewController {
-    private let viewModel = PaymentSelectionViewModel()
+    private let viewModel: PaymentSelectionViewModel
     private let cartViewModel: CartViewModel
     private var subscriptions = Set<AnyCancellable>()
     private let agreementURL = URL(string: "https://yandex.ru/legal/practicum_termsofuse")
@@ -25,14 +25,14 @@ final class PaymentSelectionViewController: UIViewController {
         }
         return UICollectionView(frame: .zero, collectionViewLayout: layout).then {
             $0.register(PaymentCell.self, forCellWithReuseIdentifier: PaymentCell.identifier)
-            $0.backgroundColor = .white
+            $0.backgroundColor = .yWhite
             $0.dataSource = self
             $0.delegate = self
         }
     }()
     
     private lazy var bottomContainerView: UIView = UIView().then {
-        $0.backgroundColor = UIColor(white: 0.95, alpha: 1)
+        $0.backgroundColor = .yLightGrey
         $0.layer.cornerRadius = 12
         $0.layer.masksToBounds = true
         $0.addSubview(agreementContainerView)
@@ -86,8 +86,14 @@ final class PaymentSelectionViewController: UIViewController {
             $0.addTarget(self, action: #selector(payButtonTapped), for: .touchUpInside)
         }
     
-    init(cartViewModel: CartViewModel) {
+    private lazy var loader: UIActivityIndicatorView = UIActivityIndicatorView(style: .large).then {
+        $0.hidesWhenStopped = true
+        $0.color = .yBlack
+    }
+    
+    init(cartViewModel: CartViewModel, currenciesService: CurrenciesService) {
         self.cartViewModel = cartViewModel
+        self.viewModel = PaymentSelectionViewModel(currenciesService: currenciesService)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -103,9 +109,10 @@ final class PaymentSelectionViewController: UIViewController {
     }
     
     private func setupUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = .yWhite
         view.addSubview(collectionView)
         view.addSubview(bottomContainerView)
+        view.addSubview(loader)
         
         collectionView.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview()
@@ -114,6 +121,10 @@ final class PaymentSelectionViewController: UIViewController {
         
         bottomContainerView.snp.makeConstraints { make in
             make.leading.trailing.bottom.equalToSuperview()
+        }
+        
+        loader.snp.makeConstraints { make in
+            make.center.equalToSuperview()
         }
     }
     
@@ -125,7 +136,8 @@ final class PaymentSelectionViewController: UIViewController {
             target: self,
             action: #selector(backButtonTapped)
         )
-        navigationController?.navigationBar.tintColor = .black
+        navigationController?.navigationBar.tintColor = .yBlack
+        navigationItem.leftBarButtonItem?.tintColor = .yBlack
     }
     
     private func setupBindings() {
@@ -142,11 +154,12 @@ final class PaymentSelectionViewController: UIViewController {
             }
             .store(in: &subscriptions)
         
-        viewModel.$paymentResult
+        cartViewModel.$isCartClearedAfterPayment
             .receive(on: RunLoop.main)
-            .sink { [weak self] result in
-                guard let result = result else { return }
-                self?.handlePaymentResult(result)
+            .sink { [weak self] isCleared in
+                if isCleared {
+                    self?.showSuccessScreen()
+                }
             }
             .store(in: &subscriptions)
         
@@ -154,6 +167,43 @@ final class PaymentSelectionViewController: UIViewController {
             .receive(on: RunLoop.main)
             .sink { [weak self] selectedMethod in
                 self?.updatePayButtonState(isEnabled: selectedMethod != nil)
+            }
+            .store(in: &subscriptions)
+        
+        viewModel.$isLoading
+            .receive(on: RunLoop.main)
+            .sink { [weak self] isLoading in
+                guard let self = self else { return }
+                if isLoading {
+                    self.loader.startAnimating()
+                } else {
+                    self.loader.stopAnimating()
+                }
+            }
+            .store(in: &subscriptions)
+        
+        viewModel.$fetchPaymentMethodsResult
+            .receive(on: RunLoop.main)
+            .sink { [weak self] result in
+                guard let result = result else { return }
+                self?.handleFetchPaymentMethodsResult(result)
+            }
+            .store(in: &subscriptions)
+        
+        viewModel.$setCurrencyResult
+            .receive(on: RunLoop.main)
+            .sink { [weak self] result in
+                guard let result = result else { return }
+                self?.handleSetCurrencyResult(result)
+            }
+            .store(in: &subscriptions)
+        
+        viewModel.$shouldCloseScreen
+            .receive(on: RunLoop.main)
+            .sink { [weak self] shouldClose in
+                if shouldClose {
+                    self?.navigationController?.popViewController(animated: true)
+                }
             }
             .store(in: &subscriptions)
     }
@@ -165,6 +215,7 @@ final class PaymentSelectionViewController: UIViewController {
     @objc private func payButtonTapped() {
         Logger.log("Pay button tapped")
         viewModel.processPayment()
+        cartViewModel.clearCartAfterPayment()
     }
     
     @objc private func agreementLinkTapped() {
@@ -188,9 +239,41 @@ final class PaymentSelectionViewController: UIViewController {
         present(successVC, animated: true, completion: nil)
     }
     
-    private func handlePaymentResult(_ result: PaymentSelectionViewModel.PaymentResult) {
+    private func handleFetchPaymentMethodsResult(_ result: PaymentSelectionViewModel.FetchPaymentMethodsResult) {
         switch result {
         case .success:
+            Logger.log("Payment methods were received")
+        case .failure:
+            AlertPresenter.presentAlert(
+                on: self,
+                title: String(localizable: .errorNetwork),
+                message: nil,
+                buttons: [
+                    AlertPresenter.Button(
+                        title: String(localizable: .errorCancel),
+                        action: { [weak self] in
+                            self?.viewModel.processOpeningCartView()
+                        },
+                        style: .default,
+                        isPreferred: false
+                    ),
+                    AlertPresenter.Button(
+                        title: String(localizable: .errorRepeat),
+                        action: { [weak self] in
+                            self?.viewModel.loadPaymentMethods()
+                        },
+                        style: .default,
+                        isPreferred: true
+                    )
+                ]
+            )
+        }
+    }
+    
+    private func handleSetCurrencyResult(_ result: PaymentSelectionViewModel.SetCurrencyResult) {
+        switch result {
+        case .success:
+            Logger.log("Currency has been set for the order")
             showSuccessScreen()
         case .failure:
             AlertPresenter.presentAlert(

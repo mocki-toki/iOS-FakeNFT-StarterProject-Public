@@ -12,6 +12,7 @@ final class CartViewController: UIViewController {
     private let footerContent = UIView()
     private let emptyStateLabel = UILabel()
     private let viewModel: CartViewModel
+    private let loader = UIActivityIndicatorView(style: .large)
     
     // MARK: - Public Properties
     let servicesAssembly: ServicesAssembly
@@ -37,6 +38,12 @@ final class CartViewController: UIViewController {
         setupNavigationBar()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupLoader()
+        viewModel.loadOrderAndNfts()
+    }
+    
     // MARK: - Private Methods
     private func setupView() {
         view.backgroundColor = .yWhite
@@ -56,11 +63,20 @@ final class CartViewController: UIViewController {
     }
     
     private func updateUI(for isCartEmpty: Bool) {
-        Logger.log(isCartEmpty ? "Cart is empty" : "Cart has items")
-        emptyStateLabel.isHidden = !isCartEmpty
-        tableView.isHidden = isCartEmpty
-        footerView.isHidden = isCartEmpty
-        navigationController?.navigationBar.isHidden = isCartEmpty
+        if viewModel.isLoading {
+            showLoader()
+            emptyStateLabel.isHidden = true
+            tableView.isHidden = true
+            footerView.isHidden = true
+            navigationController?.navigationBar.isHidden = true
+        } else {
+            hideLoader()
+            emptyStateLabel.isHidden = !isCartEmpty
+            tableView.isHidden = isCartEmpty
+            footerView.isHidden = isCartEmpty
+            navigationController?.navigationBar.isHidden = isCartEmpty
+            Logger.log(isCartEmpty ? "Cart is empty" : "Cart has items")
+        }
     }
     
     private func setupNavigationBar() {
@@ -72,6 +88,24 @@ final class CartViewController: UIViewController {
             $0.tintColor = .yBlack
         }
         navigationItem.rightBarButtonItem = hamburgerButton
+        navigationController?.navigationBar.barTintColor = .yBlack
+        navigationController?.navigationBar.tintColor = .yBlack
+    }
+    
+    private func setupLoader() {
+        view.addSubview(loader)
+        loader.hidesWhenStopped = true
+        loader.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+    }
+    
+    private func showLoader() {
+        loader.startAnimating()
+    }
+    
+    private func hideLoader() {
+        loader.stopAnimating()
     }
     
     private func setupEmptyStateLabel() {
@@ -129,8 +163,9 @@ final class CartViewController: UIViewController {
             $0.setTitle(String(localizable: .cartToPay), for: .normal)
             $0.backgroundColor = .yBlack
             $0.tintColor = .yWhite
+            $0.setTitleColor(.yWhite, for: .normal)
             $0.titleLabel?.font = .bold17
-            $0.layer.cornerRadius = 8
+            $0.layer.cornerRadius = 16
             $0.addTarget(self, action: #selector(handleCheckout), for: .touchUpInside)
         }
     }
@@ -180,6 +215,29 @@ final class CartViewController: UIViewController {
             self.updateFooter()
             self.updateUI(for: self.viewModel.isCartEmpty)
         }
+        
+        viewModel.onLoadingStateChanged = { [weak self] in
+            guard let self = self else { return }
+            if self.viewModel.isLoading {
+                self.showLoader()
+            } else {
+                self.hideLoader()
+                Logger.log("Cart updated: \(self.viewModel.numberOfItems()) items, total \(self.viewModel.formattedTotalCost)")
+                self.tableView.reloadData()
+                self.updateFooter()
+            }
+            self.updateUI(for: self.viewModel.isCartEmpty)
+        }
+        
+        viewModel.onErrorOccurred = { [weak self] errorMessage in
+            self?.showError(message: errorMessage)
+        }
+    }
+    
+    private func showError(message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
     }
     
     private func updateFooter() {
@@ -189,25 +247,45 @@ final class CartViewController: UIViewController {
     
     private func presentDeleteConfirmation(for item: CartItem) {
         Logger.log("User initiated deletion for item: \(item.name)")
-        let viewModel = DeleteConfirmationViewModel(
-            nftImage: item.image,
-            message: String(localizable: .cartDeleteConfirmation),
-            onConfirm: { [weak self] in
-                self?.viewModel.removeItem(item)
-                Logger.log("User confirmed deletion for item: \(item.name)", level: .debug)
-            },
-            onCancel: {
-                Logger.log("User canceled deletion for item: \(item.name)", level: .debug)
+        if let imageURL = item.imageURL {
+            ImageLoader.loadImage(from: imageURL) { result in
+                DispatchQueue.main.async {
+                    let image: UIImage
+                    switch result {
+                    case .success(let loadedImage):
+                        image = loadedImage
+                    case .failure:
+                        image = UIImage(named: "placeholder")!
+                    }
+                    
+                    let viewModel = DeleteConfirmationViewModel(
+                        nftImage: image,
+                        message: String(localizable: .cartDeleteConfirmation),
+                        onConfirm: { [weak self] in
+                            self?.viewModel.removeItem(item)
+                            Logger.log("User confirmed deletion for item: \(item.name)", level: .debug)
+                        },
+                        onCancel: {
+                            Logger.log("User canceled deletion for item: \(item.name)", level: .debug)
+                        }
+                    )
+                    let confirmationVC = DeleteConfirmationViewController(viewModel: viewModel)
+                    confirmationVC.modalPresentationStyle = .overFullScreen
+                    self.present(confirmationVC, animated: true, completion: nil)
+                }
             }
-        )
-        let confirmationVC = DeleteConfirmationViewController(viewModel: viewModel)
-        confirmationVC.modalPresentationStyle = .overFullScreen
-        present(confirmationVC, animated: true, completion: nil)
+        }
     }
     
     @objc private func handleCheckout() {
         Logger.log("Checkout initiated with \(viewModel.numberOfItems()) items totaling \(viewModel.formattedTotalCost)")
-        let paymentVC = PaymentSelectionViewController(cartViewModel: viewModel)
+        
+        let currenciesService = servicesAssembly.currenciesService
+        let paymentVC = PaymentSelectionViewController(
+            cartViewModel: viewModel,
+            currenciesService: currenciesService
+        )
+        
         paymentVC.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(paymentVC, animated: true)
     }
@@ -246,6 +324,7 @@ extension CartViewController: UITableViewDataSource, UITableViewDelegate {
         
         let item = viewModel.item(at: indexPath.row)
         Logger.log("Configuring cell for item: \(item.name) at index \(indexPath.row)", level: .debug)
+        
         cell.configure(
             with: .cart,
             onLike: {},
@@ -258,12 +337,23 @@ extension CartViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func setValuesToCell(_ cell: NftTableViewCell, _ item: CartItem) {
+        let formattedPrice = String(format: "%.2f", item.price)
+        
         cell.setText(item.name)
-        cell.setImage(item.image)
-        cell.setPrice("\(item.price) ETH")
+        cell.setPrice("\(formattedPrice) ETH")
         cell.setRating(item.rating)
-        cell.setInCart(item.isInCart)
         cell.setPriceCaption(String(localizable: .cartPrice))
+        
+        ImageLoader.loadImage(from: item.imageURL) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let image):
+                    cell.setImage(image)
+                case .failure:
+                    cell.setImage(UIImage(named: "PlaceholderForItem")!)
+                }
+            }
+        }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

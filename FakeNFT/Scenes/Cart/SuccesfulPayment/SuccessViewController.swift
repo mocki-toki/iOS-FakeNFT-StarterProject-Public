@@ -33,7 +33,7 @@ final class SuccessViewController: UIViewController {
     
     // MARK: - Private Methods
     private func setupUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = .yWhite
         view.addSubview(successImageView)
         view.addSubview(successLabel)
         view.addSubview(successButton)

@@ -1,9 +1,9 @@
 import UIKit
 
 struct CartItem {
+    let id: UUID
     let name: String
     let price: Double
     let rating: Int
-    let image: UIImage
-    var isInCart: Bool
+    let imageURL: URL?
 }
