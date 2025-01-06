@@ -6,6 +6,7 @@ final class TabBarController: UITabBarController {
     init(servicesAssembly: ServicesAssembly) {
         self.servicesAssembly = servicesAssembly
         super.init(nibName: nil, bundle: nil)
+        self.delegate = self
     }
     
     required init?(coder: NSCoder) {
@@ -13,7 +14,7 @@ final class TabBarController: UITabBarController {
     }
     
     override func viewDidLoad() {
-        super.viewDidLoad()       
+        super.viewDidLoad()
         configureTabBarAppearance()
         viewControllers = TabBarFactory.createControllers(servicesAssembly: servicesAssembly)
         view.backgroundColor = .yWhite
@@ -34,5 +35,15 @@ final class TabBarController: UITabBarController {
         ]
         UITabBarItem.appearance().setTitleTextAttributes(normalAttributes, for: .normal)
         UITabBarItem.appearance().setTitleTextAttributes(selectedAttributes, for: .selected)
+    }
+}
+
+extension TabBarController: UITabBarControllerDelegate {
+    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+        if let navigationController = viewController as? UINavigationController,
+           navigationController.viewControllers.first is CartViewController {
+            navigationController.popToRootViewController(animated: false)
+        }
+        return true
     }
 }

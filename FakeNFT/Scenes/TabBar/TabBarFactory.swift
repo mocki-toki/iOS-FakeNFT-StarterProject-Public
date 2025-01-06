@@ -9,8 +9,15 @@ final class TabBarFactory {
             UINavigationController(rootViewController: CatalogViewController(servicesAssembly: servicesAssembly))
                 .configured(with: String(localizable: .tabCatalog), image: UIImage.inactiveCatalog, tag: 1),
             
-            UINavigationController(rootViewController: CartViewController(servicesAssembly: servicesAssembly))
-                .configured(with: String(localizable: .tabCart), image: UIImage.inactiveCart, tag: 2),
+            UINavigationController(
+                rootViewController: CartViewController(
+                    servicesAssembly: servicesAssembly,
+                    viewModel: CartViewModel(
+                        nftService: servicesAssembly.nftService,
+                        orderService: servicesAssembly.orderService,
+                        orderPutService: servicesAssembly.orderPutService)
+                )
+            ).configured(with: String(localizable: .tabCart), image: UIImage.inactiveCart, tag: 2),
             
             UINavigationController(rootViewController: StatisticsViewController(servicesAssembly: servicesAssembly))
                 .configured(with: String(localizable: .tabStatistics), image: UIImage.inactiveStatistics, tag: 3)
