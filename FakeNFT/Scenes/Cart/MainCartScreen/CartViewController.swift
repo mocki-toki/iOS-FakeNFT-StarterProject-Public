@@ -94,6 +94,7 @@ final class CartViewController: UIViewController {
     
     private func setupLoader() {
         view.addSubview(loader)
+        loader.hidesWhenStopped = true
         loader.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
@@ -101,12 +102,10 @@ final class CartViewController: UIViewController {
     
     private func showLoader() {
         loader.startAnimating()
-        loader.isHidden = false
     }
     
     private func hideLoader() {
         loader.stopAnimating()
-        loader.isHidden = true
     }
     
     private func setupEmptyStateLabel() {
