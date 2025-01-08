@@ -88,6 +88,10 @@ final class UserCardViewController: UIViewController {
         view.backgroundColor = .yWhiteUniversal
         setupUI()
         bindViewModel()
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(stackViewTapped))
+        collectionStackView.isUserInteractionEnabled = true
+        collectionStackView.addGestureRecognizer(tapGesture)
     }
     
     // MARK: - Bindings
@@ -172,6 +176,18 @@ final class UserCardViewController: UIViewController {
         
         let webViewController = WebViewController(url: websiteURL)
         navigationController?.pushViewController(webViewController, animated: true)
+    }
+    
+    @objc private func stackViewTapped() {
+        guard let userId = viewModel.user?.id else { return }
+        let nftService = servicesAssembly.nftService
+        
+        let userCollectionViewModel = UserCollectionViewModel(userId: userId, nftService: nftService)
+        let collectionViewController = UserCollectionViewController(servicesAssembly: servicesAssembly, viewModel: userCollectionViewModel)
+        
+        navigationController?.pushViewController(collectionViewController, animated: true)
+        navigationItem.backButtonTitle = ""
+        self.hidesBottomBarWhenPushed = true
     }
     
     // MARK: - Methods
