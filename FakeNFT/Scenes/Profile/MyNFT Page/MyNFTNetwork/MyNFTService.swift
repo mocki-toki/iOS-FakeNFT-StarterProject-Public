@@ -74,6 +74,7 @@ final class MyNFTService: MyNFTServiceProtocol {
         }
         
         dispatchGroup.notify(queue: .main) {
+            nftItems.sort { $0.price < $1.price }
             completion(.success(nftItems))
         }
     }
