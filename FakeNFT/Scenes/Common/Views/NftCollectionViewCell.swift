@@ -1,6 +1,6 @@
 import UIKit
 
-final class NftCollectionViewCell: UICollectionViewCell {
+final class NftCollectionViewCell: UICollectionViewCell, ReuseIdentifying {
     // MARK: - Properties
     private let baseCell = NftBaseCell()
 
