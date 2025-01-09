@@ -5,7 +5,6 @@ protocol NftStorage: AnyObject {
     func getNft(with id: UUID) -> Nft?
 }
 
-// Пример простого класса, который сохраняет данные из сети
 final class NftStorageImpl: NftStorage {
     private var storage: [UUID: Nft] = [:]
 

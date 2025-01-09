@@ -9,19 +9,16 @@ protocol CollectionDetailsView: AnyObject, ErrorView, LoadingView {
 final class CollectionDetailsViewController: UIViewController {
     // MARK: - Properties
     private var viewModel: CollectionDetailsViewModel
+    private let detailsAssembly: NftDetailsAssembly
 
-    private lazy var scrollView: UIScrollView = {
-        let scrollView = UIScrollView()
-        scrollView.alwaysBounceVertical = true
-        scrollView.backgroundColor = .yWhite
-        return scrollView
-    }()
+    private lazy var scrollView = UIScrollView().then {
+        $0.alwaysBounceVertical = true
+        $0.backgroundColor = .yWhite
+    }
 
-    private lazy var contentView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .yWhite
-        return view
-    }()
+    private lazy var contentView = UIView().then {
+        $0.backgroundColor = .yWhite
+    }
 
     private lazy var nftCollectionView: UICollectionView = {
         let layout = createCompositionalLayout()
@@ -36,31 +33,31 @@ final class CollectionDetailsViewController: UIViewController {
         return collectionView
     }()
 
-    lazy var coverImageView = UIImageView().then {
+    private lazy var coverImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
         $0.layer.cornerRadius = 12
         $0.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
         $0.layer.masksToBounds = true
     }
 
-    lazy var nameLabel = UILabel().then {
+    private lazy var nameLabel = UILabel().then {
         $0.textColor = .textPrimary
         $0.font = .bold22
     }
 
-    lazy var authorCaptionLabel = UILabel().then {
+    private lazy var authorCaptionLabel = UILabel().then {
         $0.textColor = .textPrimary
         $0.font = .regular13
         $0.text = String(localizable: .catalogDetailsAuthor)
     }
 
-    lazy var authorLabel = UILabel().then {
+    private lazy var authorLabel = UILabel().then {
         $0.textColor = .primary
         $0.font = .regular15
         $0.isUserInteractionEnabled = true
     }
 
-    lazy var descriptionLabel = UILabel().then {
+    private lazy var descriptionLabel = UILabel().then {
         $0.textColor = .textPrimary
         $0.font = .regular13
         $0.numberOfLines = 0
@@ -70,8 +67,9 @@ final class CollectionDetailsViewController: UIViewController {
 
     // MARK: - Lifecycle
 
-    init(viewModel: CollectionDetailsViewModel) {
+    init(viewModel: CollectionDetailsViewModel, detailsAssembly: NftDetailsAssembly) {
         self.viewModel = viewModel
+        self.detailsAssembly = detailsAssembly
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -146,8 +144,8 @@ final class CollectionDetailsViewController: UIViewController {
 
         nftCollectionView.snp.makeConstraints { make in
             make.top.equalTo(descriptionLabel.snp.bottom).offset(24)
-            make.leading.equalToSuperview().offset(0)
-            make.trailing.equalToSuperview().offset(0)
+            make.leading.equalToSuperview().offset(16)
+            make.trailing.equalToSuperview().offset(-16)
             make.height.equalTo(calculateCollectionViewHeight())
             make.bottom.equalToSuperview().offset(-16)
         }
@@ -327,14 +325,12 @@ extension CollectionDetailsViewController: CollectionDetailsView {
 
 extension CollectionDetailsViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int)
-        -> Int
-    {
+        -> Int {
         return viewModel.cellModels.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath)
-        -> UICollectionViewCell
-    {
+        -> UICollectionViewCell {
         guard
             let cell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: "NftCollectionViewCell", for: indexPath)
@@ -370,10 +366,11 @@ extension CollectionDetailsViewController: UICollectionViewDataSource {
 
 extension CollectionDetailsViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        // TODO: Implement NFT details
+        let cellModel = viewModel.cellModels[indexPath.row]
+
+        let input = NftDetailsInput(nftId: cellModel.id, collectionId: cellModel.collectionId)
+        let nftDetailsViewController = detailsAssembly.build(with: input)
+        nftDetailsViewController.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(nftDetailsViewController, animated: true)
     }
 }
-
-// MARK: - ErrorView, LoadingView
-
-extension CollectionDetailsViewController: ErrorView, LoadingView {}
