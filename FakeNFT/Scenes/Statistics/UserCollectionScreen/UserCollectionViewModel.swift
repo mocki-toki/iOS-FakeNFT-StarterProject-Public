@@ -19,12 +19,12 @@ final class UserCollectionViewModel {
         
         nftService.loadUserDetails(userId: userId) { [weak self] (result: Result<Users, Error>) in
             DispatchQueue.main.async {
-                ProgressHUD.dismiss()
                 switch result {
                 case .success(let user):
                     let nftIds = user.nfts
                     self?.loadNftsByIds(nftIds)
                 case .failure(let error):
+                    ProgressHUD.dismiss()
                     self?.onErrorOccurred?("Error loading user details: \(error.localizedDescription)", {
                         self?.loadUserNfts()
                     })
@@ -52,6 +52,7 @@ final class UserCollectionViewModel {
         }
         
         group.notify(queue: .main) {
+            ProgressHUD.dismiss()
             if errors.isEmpty {
                 self.nfts = loadedNfts
                 self.onDataUpdated?()
