@@ -1,7 +1,6 @@
 import UIKit
 import SnapKit
 import Then
-import ProgressHUD
 
 final class MyNftViewController: UIViewController {
     // MARK: - Properties
@@ -17,7 +16,7 @@ final class MyNftViewController: UIViewController {
     
     private lazy var stubLabel = UILabel().then {
         $0.font = UIFont.bold17
-        $0.text = "У Вас ещё нет NFT"
+        $0.text = String(localizable: .myNFTStub) // У Вас ещё нет NFT
         $0.textColor = UIColor.textPrimary
         $0.textAlignment = .center
         $0.isHidden = true
@@ -79,7 +78,7 @@ final class MyNftViewController: UIViewController {
     // MARK: - Navigation
     
     private func setupNavigationBar() {
-        title = "Мои NFT"
+        title = String(localizable: .profileLinksMyNfts) // Мои NFT
         navigationItem.leftBarButtonItem = backwardButton
         navigationController?.navigationBar.tintColor = .yBlack
     }

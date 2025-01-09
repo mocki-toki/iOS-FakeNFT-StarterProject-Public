@@ -273,6 +273,30 @@
 			path = WebViewController;
 			sourceTree = "<group>";
 		};
+		014F66132D30930D00DDE941 /* Favorites Page */ = {
+			isa = PBXGroup;
+			children = (
+				014F66152D30933F00DDE941 /* ViewModel */,
+				014F66142D30933000DDE941 /* View */,
+			);
+			path = "Favorites Page";
+			sourceTree = "<group>";
+		};
+		014F66142D30933000DDE941 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				0108BE122D17A2C900595C80 /* FavoritesViewController.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		014F66152D30933F00DDE941 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
 		0170DE192D16404800D14A11 /* Profile Page */ = {
 			isa = PBXGroup;
 			children = (
@@ -596,10 +620,10 @@
 		F0BB21A02D0F2937009A2305 /* Profile */ = {
 			isa = PBXGroup;
 			children = (
+				014F66132D30930D00DDE941 /* Favorites Page */,
 				01C0F3E42D1CE30000D77566 /* MyNFT Page */,
 				012773F22D164DB0005B656F /* WebViewController */,
 				0108BE422D17B8E000595C80 /* ProfileNetwork */,
-				0108BE122D17A2C900595C80 /* FavoritesViewController.swift */,
 				012773F12D164D83005B656F /* EditProfile Page */,
 				0170DE192D16404800D14A11 /* Profile Page */,
 			);
