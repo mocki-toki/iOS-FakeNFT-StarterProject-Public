@@ -62,7 +62,8 @@
 		F02A70DF2D2DD82D00D897B7 /* OnboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02A70DE2D2DD82C00D897B7 /* OnboardingViewModel.swift */; };
 		F02A70E32D2DD87900D897B7 /* OnboardingPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02A70E22D2DD87800D897B7 /* OnboardingPageViewController.swift */; };
 		F02A714D2D2DF09200D897B7 /* OnboardingContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02A714C2D2DF09100D897B7 /* OnboardingContentViewController.swift */; };
-		F02A71FA2D2FC8B100D897B7 /* SceneViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02A71F92D2FC8AA00D897B7 /* SceneViewModel.swift */; };
+		F02A71FA2D2FC8B100D897B7 /* SplashViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02A71F92D2FC8AA00D897B7 /* SplashViewModel.swift */; };
+		F02A72512D30383900D897B7 /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02A72502D30383400D897B7 /* SplashViewController.swift */; };
 		F037964C2D161ECA00391D5D /* DeleteConfirmationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F037964B2D161EC400391D5D /* DeleteConfirmationViewController.swift */; };
 		F037964E2D161EE000391D5D /* DeleteConfirmationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F037964D2D161EDC00391D5D /* DeleteConfirmationViewModel.swift */; };
 		F03796942D17230100391D5D /* CurrenciesRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03796932D1722FA00391D5D /* CurrenciesRequest.swift */; };
@@ -165,7 +166,8 @@
 		F02A70DE2D2DD82C00D897B7 /* OnboardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModel.swift; sourceTree = "<group>"; };
 		F02A70E22D2DD87800D897B7 /* OnboardingPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPageViewController.swift; sourceTree = "<group>"; };
 		F02A714C2D2DF09100D897B7 /* OnboardingContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingContentViewController.swift; sourceTree = "<group>"; };
-		F02A71F92D2FC8AA00D897B7 /* SceneViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneViewModel.swift; sourceTree = "<group>"; };
+		F02A71F92D2FC8AA00D897B7 /* SplashViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewModel.swift; sourceTree = "<group>"; };
+		F02A72502D30383400D897B7 /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
 		F037964B2D161EC400391D5D /* DeleteConfirmationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteConfirmationViewController.swift; sourceTree = "<group>"; };
 		F037964D2D161EDC00391D5D /* DeleteConfirmationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteConfirmationViewModel.swift; sourceTree = "<group>"; };
 		F03796932D1722FA00391D5D /* CurrenciesRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrenciesRequest.swift; sourceTree = "<group>"; };
@@ -330,7 +332,6 @@
 				F0D9D5202D0DAFF7004307C7 /* Helpers */,
 				3F68069629CBBAF100B4F915 /* AppDelegate.swift */,
 				3F68069829CBBAF100B4F915 /* SceneDelegate.swift */,
-				F02A71F92D2FC8AA00D897B7 /* SceneViewModel.swift */,
 				E1CD40DA2A96BE9B00BE7FE8 /* Resources */,
 				3F478ECD29DB473000F6D39E /* DesignSystem */,
 				3F6806CE29CBBD1B00B4F915 /* Foundation */,
@@ -375,6 +376,7 @@
 		3F6806C729CBBC5B00B4F915 /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
+				F02A724D2D3037F700D897B7 /* Splash */,
 				F02A70D52D2DD48600D897B7 /* Onboarding */,
 				F0BB21A22D0F2944009A2305 /* Statistics */,
 				F0BB21A12D0F293E009A2305 /* Cart */,
@@ -494,6 +496,15 @@
 				F02A70DC2D2DD75B00D897B7 /* OnboardingSlide.swift */,
 			);
 			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		F02A724D2D3037F700D897B7 /* Splash */ = {
+			isa = PBXGroup;
+			children = (
+				F02A71F92D2FC8AA00D897B7 /* SplashViewModel.swift */,
+				F02A72502D30383400D897B7 /* SplashViewController.swift */,
+			);
+			path = Splash;
 			sourceTree = "<group>";
 		};
 		F037964A2D161E9000391D5D /* DeletingItemFromCart */ = {
@@ -770,7 +781,7 @@
 				C1E19B292D118FC200E9E0DE /* CartButton.swift in Sources */,
 				F03797EC2D22DAF700391D5D /* OrderPutService.swift in Sources */,
 				F0BB21A42D0F2993009A2305 /* StatisticsViewController.swift in Sources */,
-				F02A71FA2D2FC8B100D897B7 /* SceneViewModel.swift in Sources */,
+				F02A71FA2D2FC8B100D897B7 /* SplashViewModel.swift in Sources */,
 				558E39E72C68CE0A00FB86AC /* NftService.swift in Sources */,
 				3F68069729CBBAF100B4F915 /* AppDelegate.swift in Sources */,
 				F03797402D18CD0300391D5D /* SuccessModel.swift in Sources */,
@@ -786,6 +797,7 @@
 				3FC8C39129D2453B0081F015 /* ExamplePutRequest.swift in Sources */,
 				0CFCB7462A78064B0009A829 /* NftDetailCellModel.swift in Sources */,
 				C1E19B252D11890900E9E0DE /* NftTableViewCell.swift in Sources */,
+				F02A72512D30383900D897B7 /* SplashViewController.swift in Sources */,
 				0CFCB74B2A780EA80009A829 /* UIView+Constraints.swift in Sources */,
 				3F6806D729CBC50A00B4F915 /* CellsReusingUtils.swift in Sources */,
 				F03796962D17235700391D5D /* CurrenciesService.swift in Sources */,
