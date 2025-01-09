@@ -3,18 +3,19 @@ import SnapKit
 import Then
 
 final class OnboardingPageViewController: UIViewController {
+    // MARK: - Properties
+    
     private let viewModel = OnboardingViewModel()
     private var pageViewController: UIPageViewController!
     private let customPageControl = UIView()
     private var slideIndicators: [UIView] = []
-    
     private var currentPageIndex: Int = 0 {
-        didSet {
-            updatePageControl()
-        }
+        didSet { updatePageControl() }
     }
     
     var onboardingCompleted: (() -> Void)?
+    
+    // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,11 +45,7 @@ final class OnboardingPageViewController: UIViewController {
     }
     
     private func setupPageControl() {
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
-        stackView.spacing = 8
-        
+        let stackView = createPageControlStackView()
         view.addSubview(stackView)
         
         stackView.snp.makeConstraints { make in
@@ -94,9 +91,11 @@ final class OnboardingPageViewController: UIViewController {
     
     private func setupActions(for slideVC: OnboardingContentViewController, index: Int) {
         slideVC.closeButtonAction = { [weak self] in
+            Logger.log("Close button tapped on slide \(index)")
             self?.closeOnboarding()
         }
         slideVC.actionButtonAction = { [weak self] in
+            Logger.log("Action button tapped on slide")
             if index == self?.viewModel.numberOfSlides() ?? 0 - 1 {
                 self?.completeOnboarding()
             } else {
@@ -111,6 +110,16 @@ final class OnboardingPageViewController: UIViewController {
     
     private func completeOnboarding() {
         onboardingCompleted?()
+    }
+    
+    // MARK: - Helpers
+    
+    private func createPageControlStackView() -> UIStackView {
+        return UIStackView().then {
+            $0.axis = .horizontal
+            $0.distribution = .fillEqually
+            $0.spacing = 8
+        }
     }
 }
 

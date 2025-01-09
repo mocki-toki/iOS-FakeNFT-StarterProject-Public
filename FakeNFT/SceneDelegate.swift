@@ -1,39 +1,50 @@
 import UIKit
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+    // MARK: - Properties
+    
     var window: UIWindow?
     
-    let servicesAssembly = ServicesAssembly(
+    private let viewModel = SceneViewModel()
+    private let servicesAssembly = ServicesAssembly(
         networkClient: DefaultNetworkClient(),
         nftStorage: NftStorageImpl()
     )
     
-    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        guard let windowScene = (scene as? UIWindowScene) else { return }
-        let window = UIWindow(windowScene: windowScene)
-        self.window = window
-        
-        let isFirstLaunch = !UserDefaults.standard.bool(forKey: "hasSeenOnboarding")
-        
-        if isFirstLaunch {
-            let onboardingViewController = OnboardingPageViewController()
-            let navigationController = UINavigationController(rootViewController: onboardingViewController)
-            onboardingViewController.onboardingCompleted = {
-                UserDefaults.standard.set(true, forKey: "hasSeenOnboarding")
-                self.switchToTabBarController()
+    // MARK: - UIWindowSceneDelegate
+    
+    func scene(
+        _ scene: UIScene,
+        willConnectTo session: UISceneSession,
+        options connectionOptions: UIScene.ConnectionOptions) {
+            guard let windowScene = (scene as? UIWindowScene) else { return }
+            window = UIWindow(windowScene: windowScene)
+            
+            if viewModel.isFirstLaunch {
+                Logger.log("App launched for the first time, showing onboarding")
+                showOnboarding()
+            } else {
+                Logger.log("App launched, showing TabBar")
+                showTabBar()
             }
-            window.rootViewController = navigationController
-        } else {
-            switchToTabBarController()
+            
+            window?.makeKeyAndVisible()
         }
-        
-        window.makeKeyAndVisible()
-        self.window = window
+    
+    // MARK: - Private Methods
+    
+    private func showOnboarding() {
+        let onboardingViewController = OnboardingPageViewController()
+        let navigationController = UINavigationController(rootViewController: onboardingViewController)
+        onboardingViewController.onboardingCompleted = { [weak self] in
+            self?.viewModel.setHasSeenOnboarding()
+            self?.showTabBar()
+        }
+        window?.rootViewController = navigationController
     }
     
-    private func switchToTabBarController() {
+    private func showTabBar() {
         let tabBarController = TabBarController(servicesAssembly: servicesAssembly)
-        tabBarController.servicesAssembly = servicesAssembly
         window?.rootViewController = tabBarController
     }
 }

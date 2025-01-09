@@ -7,12 +7,11 @@ struct OnboardingSlideViewModel {
     let image: UIImage
     let isLastSlide: Bool
     let actionButtonTitle: String
-    
-    var closeAction: (() -> Void)?
-    var actionButtonAction: (() -> Void)?
 }
 
 final class OnboardingViewModel {
+    // MARK: - Properties
+    
     private let slides: [OnboardingSlide] = [
         OnboardingSlide(
             title: String.localizable(.onboardingSlide1Title),
@@ -30,6 +29,8 @@ final class OnboardingViewModel {
             image: UIImage(named: "Slide3")!
         )
     ]
+    
+    // MARK: - Public Methods
     
     func getSlideViewModel(for index: Int) -> OnboardingSlideViewModel? {
         guard index >= 0 && index < slides.count else { return nil }

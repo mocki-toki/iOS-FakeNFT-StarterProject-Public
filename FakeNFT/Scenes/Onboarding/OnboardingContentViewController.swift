@@ -3,6 +3,8 @@ import SnapKit
 import Then
 
 final class OnboardingContentViewController: UIViewController {
+    // MARK: - Properties
+    
     private let viewModel: OnboardingSlideViewModel
     
     // MARK: - UI Elements
@@ -33,10 +35,11 @@ final class OnboardingContentViewController: UIViewController {
         $0.numberOfLines = 0
     }
     
-    private let closeButton = UIButton().then {
+    private lazy var closeButton = UIButton().then {
         let image = UIImage(resource: .close).withRenderingMode(.alwaysTemplate)
         $0.setImage(image, for: .normal)
         $0.tintColor = .yWhiteUniversal
+        $0.addTarget(self, action: #selector(didTapCloseButton), for: .touchUpInside)
     }
     
     private lazy var actionButton: PrimaryButton = PrimaryButton(
@@ -46,7 +49,7 @@ final class OnboardingContentViewController: UIViewController {
             $0.addTarget(self, action: #selector(didTapActionButton), for: .touchUpInside)
         }
     
-    // MARK: - Properties
+    // MARK: - Actions
     
     var closeButtonAction: (() -> Void)?
     var actionButtonAction: (() -> Void)?
@@ -82,8 +85,6 @@ final class OnboardingContentViewController: UIViewController {
         view.addSubview(actionButton)
         
         setupConstraints()
-        
-        closeButton.addTarget(self, action: #selector(didTapCloseButton), for: .touchUpInside)
     }
     
     private func setupConstraints() {
@@ -122,18 +123,22 @@ final class OnboardingContentViewController: UIViewController {
         backgroundImageView.image = viewModel.image
         titleLabel.text = viewModel.title
         descriptionLabel.text = viewModel.description
-        closeButton.isHidden = viewModel.isLastSlide
-        actionButton.isHidden = !viewModel.isLastSlide
+        
+        let isLastSlide = viewModel.isLastSlide
+        closeButton.isHidden = isLastSlide
+        actionButton.isHidden = !isLastSlide
         actionButton.setTitle(viewModel.actionButtonTitle, for: .normal)
     }
     
     // MARK: - Actions
     
     @objc private func didTapCloseButton() {
+        Logger.log("Close button tapped")
         closeButtonAction?()
     }
     
     @objc private func didTapActionButton() {
+        Logger.log("Action button tapped")
         closeButtonAction?()
     }
 }
