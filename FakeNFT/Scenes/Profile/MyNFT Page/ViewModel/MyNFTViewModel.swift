@@ -1,11 +1,27 @@
 import UIKit
 import Kingfisher
 
+// MARK: - Enum SortOption
+enum SortOption: String, CaseIterable {
+    case price
+    case rating
+    case nftName
+    
+    var localized: String {
+        switch self {
+        case .price:
+            return String(localizable: .sortPrice)
+        case .rating:
+            return String(localizable: .sortRating)
+        case .nftName:
+            return String(localizable: .sortNftName)
+        }
+    }
+}
+
 final class MyNFTViewModel: MyNFTViewModelProtocol {
     // MARK: - Public Properties
-    let sortOptions = [String(localizable: .sortPrice),
-                       String(localizable: .sortRating),
-                       String(localizable: .sortNftName)]
+    let sortOptions: [String] = SortOption.allCases.map { $0.localized }
     
     var onNFTsUpdated: (() -> Void)?
     var onLoadingStatusChanged: ((Bool) -> Void)?
@@ -19,10 +35,10 @@ final class MyNFTViewModel: MyNFTViewModelProtocol {
     // MARK: - Private Properties
     private let nftService: MyNFTServiceProtocol
     
-    private var currentSortOption: String? {
+    private var currentSortOption: SortOption? {
         didSet {
             if let option = currentSortOption {
-                UserDefaults.standard.set(option, forKey: "selectedSortOption")
+                UserDefaults.standard.set(option.rawValue, forKey: "selectedSortOption")
             }
         }
     }
@@ -31,11 +47,12 @@ final class MyNFTViewModel: MyNFTViewModelProtocol {
     
     init(nftService: MyNFTServiceProtocol) {
         self.nftService = nftService
-        
-        if let savedSortOption = UserDefaults.standard.string(forKey: "selectedSortOption") {
-            self.currentSortOption = savedSortOption
+
+        if let savedSortOption = UserDefaults.standard.string(forKey: "selectedSortOption"),
+           let savedOption = SortOption(rawValue: savedSortOption) {
+            self.currentSortOption = savedOption
         } else {
-            self.currentSortOption = "По цене"
+            self.currentSortOption = .price
         }
     }
     
@@ -103,27 +120,31 @@ final class MyNFTViewModel: MyNFTViewModelProtocol {
     }
     
     func applySort(option: String) {
-        self.currentSortOption = option
+        guard let selectedOption = SortOption.allCases.first(where: { $0.localized == option }) else {
+            Logger.log("Неизвестный параметр сортировки: \(option)", level: .warning)
+            return
+        }
         
-        switch option {
-        case "По цене":
+        self.currentSortOption = selectedOption
+        
+        switch selectedOption {
+        case .price:
             Logger.log("Сортируем по цене")
             sortByPrice()
-        case "По рейтингу":
+        case .rating:
             Logger.log("Сортируем по рейтингу")
             sortByRating()
-        case "По названию":
+        case .nftName:
             Logger.log("Сортируем по названию")
             sortByName()
-        default:
-            Logger.log("Неизвестный параметр сортировки: \(option)", level: .warning)
         }
+        
         onNFTsUpdated?()
     }
     
     func applySavedSort() {
         if let savedSortOption = currentSortOption {
-            applySort(option: savedSortOption)
+            applySort(option: savedSortOption.localized)
         }
     }
 }

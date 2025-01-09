@@ -30,8 +30,8 @@ final class MyNFTService: MyNFTServiceProtocol {
     // MARK: - Private Methods
     private func handleResult<T>(
         _ result: Result<T, Error>,
-        completion: @escaping (Result<T, Error>
-        ) -> Void) {
+        completion: @escaping (Result<T, Error>) -> Void
+    ) {
         DispatchQueue.main.async {
             switch result {
             case .success(let success):

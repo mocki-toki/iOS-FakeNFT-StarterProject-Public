@@ -58,6 +58,7 @@ final class MyNftViewController: UIViewController {
         self.hidesBottomBarWhenPushed = true
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -154,10 +155,10 @@ final class MyNftViewController: UIViewController {
             on: self,
             title: String(localizable: .sortAlert),
             cancelActionTitle: String(localizable: .sortClose),
-            options: sortOptions) { selectedOption in
+            options: sortOptions) { [weak self] selectedOption in
                 Logger.log("Выбранный вариант сортировки: \(selectedOption)")
-                self.viewModel.applySort(option: selectedOption)
-                self.tableView.reloadData()
+                self?.viewModel.applySort(option: selectedOption)
+                self?.tableView.reloadData()
             }
     }
 }

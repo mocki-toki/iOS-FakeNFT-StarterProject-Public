@@ -12,11 +12,12 @@ protocol MyNFTViewModelProtocol {
     func getNFT(at index: Int) -> Nft?
     func loadImage(for nft: Nft, completion: @escaping (UIImage?) -> Void)
     
+    // MARK: - Sorting Methods
+    
     func sortByPrice()
     func sortByRating()
     func sortByName()
     
-    // MARK: - Sorting Methods
     func applySort(option: String)
     func applySavedSort()
 }

@@ -15,7 +15,7 @@ struct Nft: Decodable {
     }
     
     func formattedPrice() -> String {
-        return String(format: "%.2f ETH", price).replacingOccurrences(of: ".", with: ",")
+        String(format: "%.2f ETH", price).replacingOccurrences(of: ".", with: ",")
     }
     
     func imageUrl() -> URL? {
