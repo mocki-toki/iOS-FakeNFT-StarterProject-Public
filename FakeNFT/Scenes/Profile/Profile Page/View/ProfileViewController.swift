@@ -237,7 +237,9 @@ extension ProfileViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let viewModel = viewModel else { return }
         let selectedItem = viewModel.tableItems[indexPath.row]
-        navigationController?.pushViewController(selectedItem.destination, animated: true)
+        let viewController = selectedItem.destinationProvider()
+        
+        navigationController?.pushViewController(viewController, animated: true)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
