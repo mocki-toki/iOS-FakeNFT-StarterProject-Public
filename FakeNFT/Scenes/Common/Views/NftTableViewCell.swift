@@ -24,7 +24,7 @@ final class NftTableViewCell: UITableViewCell {
     private let priceCaptionLabel = UILabel().then {
         $0.font = .regular13
         $0.textColor = .yBlack
-        $0.text = "Цена"
+        $0.text = String(localizable: .cellPriceCaptionLabel)
     }
 
     private let priceLabel = UILabel().then {
