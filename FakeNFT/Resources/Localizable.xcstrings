@@ -222,6 +222,125 @@
         }
       }
     },
+    "Onboarding.slide1.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Join and discover a new world of unique NFTs for collectors"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Присоединяйтесь и откройте новый мир уникальных NFT для коллекционеров"
+          }
+        }
+      }
+    },
+    "Onboarding.slide1.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explore"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Исследуйте"
+          }
+        }
+      }
+    },
+    "Onboarding.slide2.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expand your collection with exclusive artworks created by neural networks!"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пополняйте свою коллекцию эксклюзивными картинками, созданными нейросетью!"
+          }
+        }
+      }
+    },
+    "Onboarding.slide2.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Collect"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Коллекционируйте"
+          }
+        }
+      }
+    },
+    "Onboarding.slide3.button" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What's inside?"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Что внутри?"
+          }
+        }
+      }
+    },
+    "Onboarding.slide3.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View statistics of others and show everyone that you have the most valuable collection"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Смотрите статистику других и покажите всем, что у вас самая ценная коллекция"
+          }
+        }
+      }
+    },
+    "Onboarding.slide3.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compete"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Состязайтесь"
+          }
+        }
+      }
+    },
     "Payment.agreementLink" : {
       "extractionState" : "manual",
       "localizations" : {
