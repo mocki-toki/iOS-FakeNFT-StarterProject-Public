@@ -10,19 +10,30 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
+        let window = UIWindow(windowScene: windowScene)
+        self.window = window
         
+        let isFirstLaunch = !UserDefaults.standard.bool(forKey: "hasSeenOnboarding")
+        
+        if isFirstLaunch {
+            let onboardingViewController = OnboardingPageViewController()
+            let navigationController = UINavigationController(rootViewController: onboardingViewController)
+            onboardingViewController.onboardingCompleted = {
+                UserDefaults.standard.set(true, forKey: "hasSeenOnboarding")
+                self.switchToTabBarController()
+            }
+            window.rootViewController = navigationController
+        } else {
+            switchToTabBarController()
+        }
+        
+        window.makeKeyAndVisible()
+        self.window = window
+    }
+    
+    private func switchToTabBarController() {
         let tabBarController = TabBarController(servicesAssembly: servicesAssembly)
         tabBarController.servicesAssembly = servicesAssembly
-        
-        let window = UIWindow(windowScene: windowScene)
-        
-        let onboardingViewController = OnboardingPageViewController()
-        let navigationController = UINavigationController(rootViewController: onboardingViewController)
-        
-//        window.rootViewController = tabBarController
-        window.rootViewController = navigationController
-        window.makeKeyAndVisible()
-        
-        self.window = window
+        window?.rootViewController = tabBarController
     }
 }

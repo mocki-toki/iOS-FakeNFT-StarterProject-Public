@@ -40,7 +40,7 @@ final class OnboardingViewModel {
             image: slide.image,
             isLastSlide: index == slides.count - 1,
             actionButtonTitle: index == slides.count - 1
-            ? String.localizable(.onboardingSlide3Button) // "Завершить"
+            ? String.localizable(.onboardingSlide3Button)
             : String.localizable(.onboardingSlide1Title)
         )
     }

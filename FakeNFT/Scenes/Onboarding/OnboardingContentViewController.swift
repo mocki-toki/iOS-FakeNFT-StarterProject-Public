@@ -134,6 +134,6 @@ final class OnboardingContentViewController: UIViewController {
     }
     
     @objc private func didTapActionButton() {
-        actionButtonAction?()
+        closeButtonAction?()
     }
 }

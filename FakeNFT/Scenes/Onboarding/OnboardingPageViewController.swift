@@ -14,6 +14,8 @@ final class OnboardingPageViewController: UIViewController {
         }
     }
     
+    var onboardingCompleted: (() -> Void)?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupPageViewController()
@@ -104,9 +106,11 @@ final class OnboardingPageViewController: UIViewController {
     }
     
     private func closeOnboarding() {
+        onboardingCompleted?()
     }
     
     private func completeOnboarding() {
+        onboardingCompleted?()
     }
 }
 
