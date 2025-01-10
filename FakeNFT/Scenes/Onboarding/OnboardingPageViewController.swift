@@ -91,7 +91,7 @@ final class OnboardingPageViewController: UIViewController {
     
     private func setupActions(for slideVC: OnboardingContentViewController, index: Int) {
         slideVC.closeButtonAction = { [weak self] in
-            Logger.log("Close button tapped on slide \(index)")
+            Logger.log("Close button tapped on slide \(index + 1)")
             self?.closeOnboarding()
         }
         slideVC.actionButtonAction = { [weak self] in

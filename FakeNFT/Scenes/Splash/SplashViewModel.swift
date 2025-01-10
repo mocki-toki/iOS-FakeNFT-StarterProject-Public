@@ -1,6 +1,6 @@
 import Foundation
 
-final class SceneViewModel {
+final class SplashViewModel {
     // MARK: - Properties
     
     private let userDefaults: UserDefaults
