@@ -154,6 +154,23 @@
         }
       }
     },
+    "Error.ok" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ok"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ок"
+          }
+        }
+      }
+    },
     "Error.repeat" : {
       "extractionState" : "manual",
       "localizations" : {

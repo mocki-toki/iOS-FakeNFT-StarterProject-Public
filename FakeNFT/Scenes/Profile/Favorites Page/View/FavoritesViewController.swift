@@ -142,11 +142,11 @@ final class FavoritesViewController: UIViewController {
     private func showErrorAlert(message: String) {
         AlertPresenter.presentAlert(
             on: self,
-            title: "Ошибка",
+            title: String(localizable: .errorTitle),
             message: message,
             buttons: [
                 AlertPresenter.Button(
-                    title: "OK",
+                    title: String(localizable: .errorOk),
                     action: nil,
                     style: .default,
                     isPreferred: true
@@ -216,24 +216,22 @@ extension FavoritesViewController: UICollectionViewDelegateFlowLayout {
         
         return CGSize(width: itemWidth, height: itemHeight)
     }
-    // отступы от краев экрана
+
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 20, left: 16, bottom: 20, right: 16)
+        return UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
     }
     
-    //  расстояние между строками (вертикальный отступ)
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 20
     }
     
-    // расстояние между ячейками в строке (горизонтальный отступ)
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 7 // Отступ между колонками
+        return 7
     }
 }
