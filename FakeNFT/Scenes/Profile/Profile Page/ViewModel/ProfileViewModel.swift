@@ -82,7 +82,9 @@ final class ProfileViewModel: ProfileViewViewModelType {
                 title: String(localizable: .profileLinksMyNfts),
                 count: userProfile?.nfts.count ?? 0,
                 destinationProvider: {
-                    MyNftViewController(viewModel: MyNFTViewModel(nftService: MyNFTService()))
+                    MyNftViewController(viewModel:
+                                            MyNFTViewModel(nftService: MyNFTService(),
+                                                           favouritesService: FavouritesService()))
                 }
             ),
             ProfileTableItem(

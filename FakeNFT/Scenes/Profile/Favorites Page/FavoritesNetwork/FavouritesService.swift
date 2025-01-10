@@ -2,7 +2,10 @@ import UIKit
 
 protocol FavouritesServiceProtocol {
     func fetchFavourites(completion: @escaping (Result<[Nft], Error>) -> Void)
-    func unlikeNFT(nftID: String, completion: @escaping (Bool) -> Void)
+    func likeNFT(nftID: String,
+                 completion: @escaping (Result<Bool, Error>) -> Void)
+    func unlikeNFT(nftID: String,
+                   completion: @escaping (Result<Bool, Error>) -> Void)
 }
 
 final class FavouritesService: FavouritesServiceProtocol {
@@ -29,45 +32,80 @@ final class FavouritesService: FavouritesServiceProtocol {
         }
     }
     
-    func unlikeNFT(nftID: String, completion: @escaping (Bool) -> Void) {
-        guard let profile = profile else {
-            completion(false)
+    // Метод для добавления NFT в избранное
+    func likeNFT(nftID: String, completion: @escaping (Result<Bool, Error>) -> Void) {
+        guard var profile = profile else {
+            completion(.failure(NSError(domain: "Profile not found", code: 404, userInfo: nil)))
+            return
+        }
+        
+        if !profile.likes.contains(nftID) {
+            profile.likes.append(nftID)
+            updateProfileLikes(profile.likes) { result in
+                switch result {
+                case .success:
+                    self.profile = profile
+                    completion(.success(true))
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
+        } else {
+            completion(.failure(NSError(domain: "NFT already liked", code: 409, userInfo: nil)))
+        }
+    }
+    
+    // Метод для удаления NFT из избранного
+    func unlikeNFT(nftID: String, completion: @escaping (Result<Bool, Error>) -> Void) {
+        guard var profile = profile else {
+            completion(.failure(NSError(domain: "Profile not found", code: 404, userInfo: nil)))
             return
         }
         
         if let index = profile.likes.firstIndex(of: nftID) {
-            var updatedLikes = profile.likes
-            updatedLikes.remove(at: index)
-            
-            let updatedProfile = profile.updateFavoriteNftCount(updatedLikes)
-            
-            var encodedLikes = updatedProfile.likes.map { String($0) }.joined(separator: ",")
-            if encodedLikes.isEmpty {
-                encodedLikes = "null"
-            }
-            
-            let updateDto = UpdateProfileDto(
-                name: updatedProfile.name,
-                description: updatedProfile.description,
-                website: updatedProfile.website,
-                avatar: updatedProfile.avatar,
-                likes: encodedLikes
-            )
-            
-            let request = UpdateProfileRequest(dto: updateDto)
-            
-            client.send(request: request, type: Profile.self) { result in
+            profile.likes.remove(at: index)
+            updateProfileLikes(profile.likes) { result in
                 switch result {
-                case .success(let updatedProfile):
-                    self.profile = updatedProfile
-                    completion(true)
+                case .success:
+                    self.profile = profile
+                    completion(.success(true))
                 case .failure(let error):
-                    print("Failed to update profile: \(error)")
-                    completion(false)
+                    completion(.failure(error))
                 }
             }
         } else {
-            completion(false)
+            completion(.failure(NSError(domain: "NFT not found in likes", code: 404, userInfo: nil)))
+        }
+    }
+    
+    private func updateProfileLikes(_ likes: [String], completion: @escaping (Result<Bool, Error>) -> Void) {
+        guard let profile = profile else {
+            return
+        }
+        
+        var encodedLikes = likes.joined(separator: ",")
+        if encodedLikes.isEmpty {
+            encodedLikes = "null"
+        }
+        
+        let updateDto = UpdateProfileDto(
+            name: profile.name,
+            description: profile.description,
+            website: profile.website,
+            avatar: profile.avatar,
+            likes: encodedLikes
+        )
+        
+        let request = UpdateProfileRequest(dto: updateDto)
+        
+        client.send(request: request, type: Profile.self) { result in
+            switch result {
+            case .success:
+                completion(.success(true))
+            case .failure(let error):
+                Logger.log("Error updating favourites: \(error)")
+                completion(.failure(error))
+            }
         }
     }
     

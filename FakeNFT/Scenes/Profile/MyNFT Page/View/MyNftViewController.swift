@@ -73,6 +73,7 @@ final class MyNftViewController: UIViewController {
         setupNavigationBar()
 
         viewModel.loadNFTs()
+        viewModel.loadLikedNFTs()
     }
     
     // MARK: - Navigation
@@ -189,12 +190,21 @@ extension MyNftViewController: UITableViewDataSource, UITableViewDelegate {
             }
         }
         
+        let isLiked = viewModel.isLiked(nft: nft)
+        cell.setLike(isLiked)
+        
         cell.configure(
             with: .myNft,
             onLike: { [weak self] in
                 guard let self = self else { return }
-                viewModel.isLiked.toggle()
-                cell.setLike(viewModel.isLiked)
+
+                self.viewModel.toggleLike(for: nft)
+                let isLiked = self.viewModel.isLiked(nft: nft)
+                if isLiked {
+                    cell.setLike(false)
+                } else {
+                    cell.setLike(true)
+                }
                 print("Like button tapped for \(nft.name)")
             },
             onCart: {})

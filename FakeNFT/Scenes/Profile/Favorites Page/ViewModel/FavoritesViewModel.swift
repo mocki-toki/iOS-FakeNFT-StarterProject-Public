@@ -52,12 +52,19 @@ final class FavouritesViewModel: FavouritesViewModelProtocol {
     func unlikeNFT(at index: Int) {
         guard index >= 0 && index < favouritesNfts.count else { return }
         let nft = favouritesNfts[index]
-        favouritesService.unlikeNFT(nftID: nft.id) { [weak self] success in
-            if success {
-                self?.favouritesNfts.remove(at: index)
-                Logger.log("Удалено из избранного \(nft.name) \(nft.id)")
-            } else {
-                Logger.log("Ошибка удаления из Избранного ID: \(nft.id)", level: .error)
+        
+        favouritesService.unlikeNFT(nftID: nft.id) { [weak self] result in
+            switch result {
+            case .success(let success):
+                if success {
+                    self?.favouritesNfts.remove(at: index)
+                    Logger.log("Удалено из избранного \(nft.name) \(nft.id)")
+                } else {
+                    Logger.log("Ошибка удаления из Избранного ID: \(nft.id)", level: .error)
+                    self?.onError?("Не удалось удалить NFT из избранного. Попробуйте снова.")
+                }
+            case .failure(let error):
+                Logger.log("Ошибка при удалении из избранного: \(error)", level: .error)
                 self?.onError?("Не удалось удалить NFT из избранного. Попробуйте снова.")
             }
         }
