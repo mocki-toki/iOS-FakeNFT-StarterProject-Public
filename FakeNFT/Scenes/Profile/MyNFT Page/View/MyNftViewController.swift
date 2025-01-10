@@ -181,6 +181,7 @@ extension MyNftViewController: UITableViewDataSource, UITableViewDelegate {
         cell.setAuthor("от \(nft.authorName)")
         cell.setPrice(nft.formattedPrice())
         cell.setRating(nft.rating)
+        cell.backgroundColor = .yWhite
         
         viewModel.loadImage(for: nft) { image in
             DispatchQueue.main.async { 
