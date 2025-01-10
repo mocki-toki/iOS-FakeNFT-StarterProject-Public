@@ -106,14 +106,16 @@ final class FavoritesViewController: UIViewController {
     // MARK: - UI Setup
     
     private func updateView() {
-        if viewModel.numberOfFavouritesNFTs() == 0 {
-            collectionView.isHidden = true
-            stubLabel.isHidden = false
-        } else {
-            collectionView.isHidden = false
-            stubLabel.isHidden = true
+        DispatchQueue.main.async {
+            if self.viewModel.numberOfFavouritesNFTs() == 0 {
+                self.collectionView.isHidden = true
+                self.stubLabel.isHidden = false
+            } else {
+                self.collectionView.isHidden = false
+                self.stubLabel.isHidden = true
+            }
+            self.collectionView.reloadData()
         }
-        collectionView.reloadData()
     }
     
     private func setupViews() {

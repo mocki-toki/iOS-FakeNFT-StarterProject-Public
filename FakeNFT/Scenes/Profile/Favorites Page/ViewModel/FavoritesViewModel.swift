@@ -36,15 +36,17 @@ final class FavouritesViewModel: FavouritesViewModelProtocol {
     // MARK: - Public Methods
     func loadFavouritesNFTs() {
         Logger.log("loadFavouritesNFTs вызван")
-        onLoadingStatusChanged?(true)
-        favouritesService.fetchFavourites { [weak self] result in
-            self?.onLoadingStatusChanged?(false)
-            switch result {
-            case .success(let nfts):
-                self?.favouritesNfts = nfts
-                Logger.log("Загружены \(nfts.count) NFT")
-            case .failure(let error):
-                Logger.log("Ошибка загрузки избранных NFT \(error)", level: .error)
+        DispatchQueue.main.async {
+            self.onLoadingStatusChanged?(true)
+            self.favouritesService.fetchFavourites { [weak self] result in
+                self?.onLoadingStatusChanged?(false)
+                switch result {
+                case .success(let nfts):
+                    self?.favouritesNfts = nfts
+                    Logger.log("Загружены \(nfts.count) NFT")
+                case .failure(let error):
+                    Logger.log("Ошибка загрузки избранных NFT \(error)", level: .error)
+                }
             }
         }
     }
@@ -54,18 +56,20 @@ final class FavouritesViewModel: FavouritesViewModelProtocol {
         let nft = favouritesNfts[index]
         
         favouritesService.unlikeNFT(nftID: nft.id) { [weak self] result in
-            switch result {
-            case .success(let success):
-                if success {
-                    self?.favouritesNfts.remove(at: index)
-                    Logger.log("Удалено из избранного \(nft.name) \(nft.id)")
-                } else {
-                    Logger.log("Ошибка удаления из Избранного ID: \(nft.id)", level: .error)
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let success):
+                    if success {
+                        self?.favouritesNfts.remove(at: index)
+                        Logger.log("Удалено из избранного \(nft.name) \(nft.id)")
+                    } else {
+                        Logger.log("Ошибка удаления из Избранного ID: \(nft.id)", level: .error)
+                        self?.onError?("Не удалось удалить NFT из избранного. Попробуйте снова.")
+                    }
+                case .failure(let error):
+                    Logger.log("Ошибка при удалении из избранного: \(error)", level: .error)
                     self?.onError?("Не удалось удалить NFT из избранного. Попробуйте снова.")
                 }
-            case .failure(let error):
-                Logger.log("Ошибка при удалении из избранного: \(error)", level: .error)
-                self?.onError?("Не удалось удалить NFT из избранного. Попробуйте снова.")
             }
         }
     }
