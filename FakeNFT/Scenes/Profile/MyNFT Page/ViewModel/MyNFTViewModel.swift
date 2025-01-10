@@ -52,7 +52,7 @@ final class MyNFTViewModel: MyNFTViewModelProtocol {
            let savedOption = SortOption(rawValue: savedSortOption) {
             self.currentSortOption = savedOption
         } else {
-            self.currentSortOption = .price
+            self.currentSortOption = .rating
         }
     }
     
