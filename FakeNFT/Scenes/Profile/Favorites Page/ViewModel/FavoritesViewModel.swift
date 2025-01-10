@@ -1,47 +1,74 @@
 import UIKit
 import Kingfisher
 
-protocol FavoritesViewModelProtocol {
-    var favoritesNFT: [Nft] {get set}
-    var isLiked: Bool {get set}
-    func numberOfFavoritesNFT() -> Int
+protocol FavouritesViewModelProtocol {
+    var favouritesNfts: [Nft] { get set }
+    var onLoadingStatusChanged: ((Bool) -> Void)? { get set }
+    var onFavouritesNFTsUpdated: (() -> Void)? { get set }
+    var onError: ((String) -> Void)? { get set }
+    
+    func loadFavouritesNFTs()
+    func unlikeNFT(at index: Int)
+    func getFavouriteNFT(at index: Int) -> Nft?
+    func numberOfFavouritesNFTs() -> Int
 }
 
-final class FavoritesViewModel: FavoritesViewModelProtocol {
-    var isLiked: Bool = false
+final class FavouritesViewModel: FavouritesViewModelProtocol {
+    // MARK: - Public Properties
+    var favouritesNfts: [Nft] = [] {
+        didSet {
+            Logger.log("onFavouritesNFTsUpdated вызван")
+            onFavouritesNFTsUpdated?()
+        }
+    }
+    var onLoadingStatusChanged: ((Bool) -> Void)?
+    var onFavouritesNFTsUpdated: (() -> Void)?
+    var onError: ((String) -> Void)?
     
-    var favoritesNFT: [Nft] = [
-        Nft(
-            createdAt: "2025-01-10T12:00:00Z",
-            name: "Olive Avila",
-            images: [
-                "https://code.s3.yandex.net/Mobile/iOS/NFT/Blue/Bonnie/1.png",
-                "https://code.s3.yandex.net/Mobile/iOS/NFT/Blue/Bonnie/2.png",
-                "https://code.s3.yandex.net/Mobile/iOS/NFT/Blue/Bonnie/3.png"
-            ],
-            rating: 2,
-            description: "saepe patrioque recteque doming fabellas harum libero",
-            price: 21.0,
-            author: "https://amazing_cerf.fakenfts.org/",
-            id: "28829968-8639-4e08-8853-2f30fcf09783"
-        ),
-        Nft(
-            createdAt: "2025-01-10T12:00:00Z",
-            name: "Kieth Clarke",
-            images: [
-                "https://code.s3.yandex.net/Mobile/iOS/NFT/Gray/Kaydan/1.png",
-                "https://code.s3.yandex.net/Mobile/iOS/NFT/Gray/Kaydan/2.png",
-                "https://code.s3.yandex.net/Mobile/iOS/NFT/Gray/Kaydan/3.png"
-            ],
-            rating: 2,
-            description: "tacimates docendi efficitur tempus non quod cras pellentesque commune",
-            price: 16.95,
-            author: "https://goofy_napier.fakenfts.org/",
-            id: "5093c01d-e79e-4281-96f1-76db5880ba70"
-        )
-    ]
+    // MARK: - Private Properties
+    private let favouritesService: FavouritesServiceProtocol
     
-    func numberOfFavoritesNFT() -> Int {
-        return favoritesNFT.count
+    // MARK: - Initializers
+    init(favouritesService: FavouritesService = FavouritesService()) {
+        self.favouritesService = favouritesService
+    }
+    
+    // MARK: - Public Methods
+    func loadFavouritesNFTs() {
+        Logger.log("loadFavouritesNFTs вызван")
+        onLoadingStatusChanged?(true)
+        favouritesService.fetchFavourites { [weak self] result in
+            self?.onLoadingStatusChanged?(false)
+            switch result {
+            case .success(let nfts):
+                self?.favouritesNfts = nfts
+                Logger.log("Загружены \(nfts.count) NFT")
+            case .failure(let error):
+                Logger.log("Ошибка загрузки избранных NFT \(error)", level: .error)
+            }
+        }
+    }
+    
+    func unlikeNFT(at index: Int) {
+        guard index >= 0 && index < favouritesNfts.count else { return }
+        let nft = favouritesNfts[index]
+        favouritesService.unlikeNFT(nftID: nft.id) { [weak self] success in
+            if success {
+                self?.favouritesNfts.remove(at: index)
+                Logger.log("Удалено из избранного \(nft.name) \(nft.id)")
+            } else {
+                Logger.log("Ошибка удаления из Избранного ID: \(nft.id)", level: .error)
+                self?.onError?("Не удалось удалить NFT из избранного. Попробуйте снова.")
+            }
+        }
+    }
+    
+    func getFavouriteNFT(at index: Int) -> Nft? {
+        guard index >= 0 && index < favouritesNfts.count else { return nil }
+        return favouritesNfts[index]
+    }
+    
+    func numberOfFavouritesNFTs() -> Int {
+        return favouritesNfts.count
     }
 }

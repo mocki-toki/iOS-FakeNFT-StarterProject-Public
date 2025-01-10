@@ -3,7 +3,7 @@ import UIKit
 final class FavoritesViewController: UIViewController {
     // MARK: - Properties
     
-    private var viewModel: FavoritesViewModelProtocol
+    private var viewModel: FavouritesViewModelProtocol
     
     // MARK: - UI components
     
@@ -43,9 +43,10 @@ final class FavoritesViewController: UIViewController {
     
     // MARK: - Initializers
     
-    init(viewModel: FavoritesViewModelProtocol) {
+    init(viewModel: FavouritesViewModelProtocol) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+        bindingViewModel()
         self.hidesBottomBarWhenPushed = true
     }
     
@@ -63,6 +64,36 @@ final class FavoritesViewController: UIViewController {
         setupViews()
         setupConstraints()
         setupNavigationBar()
+        
+        viewModel.loadFavouritesNFTs()
+    }
+    
+    // MARK: - binding
+    private func bindingViewModel() {
+        Logger.log("bindingViewModel вызван")
+        viewModel.onError = { [weak self] message in
+            DispatchQueue.main.async {
+                self?.showErrorAlert(message: message)
+            }
+        }
+        
+        viewModel.onFavouritesNFTsUpdated = { [weak self] in
+            self?.updateView()
+        }
+        viewModel.onLoadingStatusChanged = { [weak self] isLoading in
+            DispatchQueue.main.async {
+                Logger.log("onLoadingStatusChanged: \(isLoading)")
+                if isLoading {
+                    self?.activityIndicator.startAnimating()
+                    Logger.log("Loading data...")
+                    self?.collectionView.isHidden = true
+                    self?.stubLabel.isHidden = true
+                } else {
+                    self?.activityIndicator.stopAnimating()
+                    Logger.log("Data loaded")
+                }
+            }
+        }
     }
     
     // MARK: - Navigation
@@ -74,10 +105,21 @@ final class FavoritesViewController: UIViewController {
     
     // MARK: - UI Setup
     
+    private func updateView() {
+        if viewModel.numberOfFavouritesNFTs() == 0 {
+            collectionView.isHidden = true
+            stubLabel.isHidden = false
+        } else {
+            collectionView.isHidden = false
+            stubLabel.isHidden = true
+        }
+        collectionView.reloadData()
+    }
+    
     private func setupViews() {
-        view.addSubview(activityIndicator)
         view.addSubview(collectionView)
         view.addSubview(stubLabel)
+        view.addSubview(activityIndicator)
     }
     
     private func setupConstraints() {
@@ -95,6 +137,24 @@ final class FavoritesViewController: UIViewController {
         }
     }
     
+    // MARK: - Private Methods
+    
+    private func showErrorAlert(message: String) {
+        AlertPresenter.presentAlert(
+            on: self,
+            title: "Ошибка",
+            message: message,
+            buttons: [
+                AlertPresenter.Button(
+                    title: "OK",
+                    action: nil,
+                    style: .default,
+                    isPreferred: true
+                )
+            ]
+        )
+    }
+    
     // MARK: - Actions
     
     @objc private func backwardButtonDidTap() {
@@ -105,37 +165,31 @@ final class FavoritesViewController: UIViewController {
 // MARK: - UICollectionViewDataSource, UICollectionViewDelegate
 extension FavoritesViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 5
+        return viewModel.numberOfFavouritesNFTs()
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let nft = Nft(
-            createdAt: "2025-01-10T12:00:00Z",
-            name: "Olive Avila",
-            images: [
-                "https://code.s3.yandex.net/Mobile/iOS/NFT/Blue/Bonnie/1.png",
-                "https://code.s3.yandex.net/Mobile/iOS/NFT/Blue/Bonnie/2.png",
-                "https://code.s3.yandex.net/Mobile/iOS/NFT/Blue/Bonnie/3.png"
-            ],
-            rating: 2,
-            description: "saepe patrioque recteque doming fabellas harum libero",
-            price: 21.0,
-            author: "https://amazing_cerf.fakenfts.org/",
-            id: "28829968-8639-4e08-8853-2f30fcf09783"
-        )
+        guard let nft = viewModel.getFavouriteNFT(at: indexPath.item) else {
+            Logger.log("Ошибка: NFT для indexPath \(indexPath) не найден", level: .error)
+            return UICollectionViewCell()
+        }
         
         guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: "NftCollectionViewCell",
             for: indexPath) as? NftCollectionViewCell else {
-            Logger.log("Ошибка при создании ячейки")
+            Logger.log("Ошибка при создании ячейки", level: .error)
             return UICollectionViewCell()
         }
+        
         Logger.log("Создана ячейка NFT \(nft.name)")
+        
+        // Настройка ячейки из модели NFT
         cell.setText(nft.name)
         cell.setAuthor("от \(nft.authorName)")
         cell.setPrice(nft.formattedPrice())
         cell.setRating(nft.rating)
-        
+        cell.setLike(true)
+
         if let imageUrl = URL(string: nft.images.first ?? "") {
             cell.setImage(imageUrl)
         }
@@ -144,15 +198,15 @@ extension FavoritesViewController: UICollectionViewDataSource, UICollectionViewD
             with: .favorite,
             onLike: { [weak self] in
                 guard let self = self else { return }
-                viewModel.isLiked.toggle()
-                cell.setLike(viewModel.isLiked)
-                print("Like button tapped for \(nft.name)")
+                self.viewModel.unlikeNFT(at: indexPath.item)
             },
-            onCart: {})
+            onCart: {}
+        )
+
         return cell
     }
 }
-
+// MARK: - UICollectionViewDelegateFlowLayout
 extension FavoritesViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,

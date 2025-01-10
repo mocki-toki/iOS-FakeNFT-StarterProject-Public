@@ -61,7 +61,7 @@ final class MyNFTViewModel: MyNFTViewModelProtocol {
     func loadNFTs() {
         onLoadingStatusChanged?(true)
         
-        nftService.fetchNFTs { [weak self] result in
+        nftService.fetchMyNFTs { [weak self] result in
             self?.onLoadingStatusChanged?(false)
             switch result {
             case .success(let nfts):

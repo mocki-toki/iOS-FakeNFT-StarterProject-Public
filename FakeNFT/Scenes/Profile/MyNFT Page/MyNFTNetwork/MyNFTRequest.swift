@@ -1,6 +1,6 @@
 import Foundation
 
-struct MyNftByIdRequest: NetworkRequest {
+struct MyNftRequest: NetworkRequest {
     // MARK: - Public Properties
     var httpMethod: HttpMethod = .get
     var dto: Dto?

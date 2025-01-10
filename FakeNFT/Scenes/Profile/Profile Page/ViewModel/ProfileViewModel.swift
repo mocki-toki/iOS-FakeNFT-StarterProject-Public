@@ -89,7 +89,7 @@ final class ProfileViewModel: ProfileViewViewModelType {
                 title: String(localizable: .profileLinksFavorites),
                 count: userProfile?.likes.count ?? 0,
                 destinationProvider: {
-                    FavoritesViewController(viewModel: FavoritesViewModel()) }
+                    FavoritesViewController(viewModel: FavouritesViewModel()) }
             ),
             ProfileTableItem(
                 title: String(localizable: .profileLinksDeveloper),

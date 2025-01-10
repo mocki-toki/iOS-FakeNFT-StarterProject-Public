@@ -86,11 +86,15 @@ final class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .yWhite
-        guard let viewModel = viewModel else { return }
         setupNavBar()
         setupViews()
         setupConstraints()
         bindViewModel()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        guard let viewModel = viewModel else { return }
         viewModel.loadData()
     }
     
