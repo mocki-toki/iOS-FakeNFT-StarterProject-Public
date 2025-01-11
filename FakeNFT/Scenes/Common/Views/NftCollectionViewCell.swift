@@ -14,6 +14,7 @@ final class NftCollectionViewCell: UICollectionViewCell {
         setupBaseCell()
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupBaseCell()

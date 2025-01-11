@@ -82,16 +82,18 @@ final class ProfileViewModel: ProfileViewViewModelType {
                 title: String(localizable: .profileLinksMyNfts),
                 count: userProfile?.nfts.count ?? 0,
                 destinationProvider: {
-                    MyNftViewController(viewModel:
-                                            MyNFTViewModel(nftService: MyNFTService(),
-                                                           favouritesService: FavouritesService()))
+                    MyNftViewController(
+                        viewModel: MyNFTViewModel(
+                            nftService: MyNFTService(),
+                            favouritesService: FavouritesService()))
                 }
             ),
             ProfileTableItem(
                 title: String(localizable: .profileLinksFavorites),
                 count: userProfile?.likes.count ?? 0,
                 destinationProvider: {
-                    FavoritesViewController(viewModel: FavouritesViewModel()) }
+                    FavoritesViewController(viewModel: FavouritesViewModel())
+                }
             ),
             ProfileTableItem(
                 title: String(localizable: .profileLinksDeveloper),

@@ -13,7 +13,8 @@ final class NftTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupBaseCell()
     }
-
+    
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupBaseCell()

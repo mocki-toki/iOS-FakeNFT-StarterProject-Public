@@ -23,5 +23,6 @@ protocol MyNFTViewModelProtocol {
     // MARK: - Like Method
     func toggleLike(for nft: Nft)
     func isLiked(nft: Nft) -> Bool
-    func loadLikedNFTs()
+    func loadLikedNFTs(completion: @escaping () -> Void)
+    func loadData()
 }

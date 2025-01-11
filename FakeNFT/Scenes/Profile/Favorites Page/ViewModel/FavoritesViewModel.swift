@@ -33,12 +33,31 @@ final class FavouritesViewModel: FavouritesViewModelProtocol {
         self.favouritesService = favouritesService
     }
     
-    // MARK: - Public Methods
+    // MARK: - Methods
     func loadFavouritesNFTs() {
         Logger.log("loadFavouritesNFTs вызван")
-        DispatchQueue.main.async {
-            self.onLoadingStatusChanged?(true)
-            self.favouritesService.fetchFavourites { [weak self] result in
+        self.onLoadingStatusChanged?(true)
+
+        self.favouritesService.downloadProfile { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    Logger.log("Профиль загружен. Загружаем избранные NFT.")
+                    self?.fetchFavouritesNFTs()
+                    
+                case .failure(let error):
+                    Logger.log("Ошибка загрузки профиля: \(error)", level: .error)
+                    self?.onLoadingStatusChanged?(false)
+                    self?.onError?("Не удалось загрузить профиль. Попробуйте снова.")
+                }
+            }
+        }
+    }
+    
+    private func fetchFavouritesNFTs() {
+        Logger.log("fetchFavouritesNFTs вызван")
+        self.favouritesService.fetchFavourites { [weak self] result in
+            DispatchQueue.main.async {
                 self?.onLoadingStatusChanged?(false)
                 switch result {
                 case .success(let nfts):
@@ -46,6 +65,7 @@ final class FavouritesViewModel: FavouritesViewModelProtocol {
                     Logger.log("Загружены \(nfts.count) NFT")
                 case .failure(let error):
                     Logger.log("Ошибка загрузки избранных NFT \(error)", level: .error)
+                    self?.onError?("Не удалось загрузить избранные NFT. Попробуйте снова.")
                 }
             }
         }

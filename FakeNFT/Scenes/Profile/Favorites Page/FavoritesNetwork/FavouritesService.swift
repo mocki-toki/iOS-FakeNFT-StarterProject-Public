@@ -1,6 +1,7 @@
 import UIKit
 
 protocol FavouritesServiceProtocol {
+    func downloadProfile(completion: @escaping (Result<Profile, Error>) -> Void)
     func fetchFavourites(completion: @escaping (Result<[Nft], Error>) -> Void)
     func likeNFT(nftID: String,
                  completion: @escaping (Result<Bool, Error>) -> Void)
@@ -16,16 +17,31 @@ final class FavouritesService: FavouritesServiceProtocol {
     // MARK: - Initializers
     init(client: NetworkClient = DefaultNetworkClient()) {
         self.client = client
-        downloadProfile()
     }
     
     // MARK: - Public Properties
-    func fetchFavourites(completion: @escaping (Result<[Nft], Error>) -> Void) {
+    
+    func downloadProfile(completion: @escaping (Result<Profile, Error>) -> Void) {
         let userProfileRequest = FavouritesRequest()
-        client.send(request: userProfileRequest, type: Profile.self) { result in
+        client.send(request: userProfileRequest, type: Profile.self) { [weak self] result in
             switch result {
             case .success(let profile):
-                self.fetchFavouriteNftInfo(ids: profile.likes, completion: completion)
+                self?.profile = profile
+                Logger.log("Успешно загружен профиль: \(profile.name)")
+                completion(.success(profile))
+            case .failure(let error):
+                Logger.log("Ошибка загрузки профиля: \(error)", level: .error)
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    func fetchFavourites(completion: @escaping (Result<[Nft], Error>) -> Void) {
+        let userProfileRequest = FavouritesRequest()
+        client.send(request: userProfileRequest, type: Profile.self) { [weak self] result in
+            switch result {
+            case .success(let profile):
+                self?.fetchFavouriteNftInfo(ids: profile.likes, completion: completion)
             case .failure(let error):
                 completion(.failure(error))
             }
@@ -39,19 +55,20 @@ final class FavouritesService: FavouritesServiceProtocol {
             return
         }
         
-        if !profile.likes.contains(nftID) {
-            profile.likes.append(nftID)
-            updateProfileLikes(profile.likes) { result in
-                switch result {
-                case .success:
-                    self.profile = profile
-                    completion(.success(true))
-                case .failure(let error):
-                    completion(.failure(error))
-                }
-            }
-        } else {
+        guard !profile.likes.contains(nftID) else {
             completion(.failure(NSError(domain: "NFT already liked", code: 409, userInfo: nil)))
+            return
+        }
+
+        profile.likes.append(nftID)
+        updateProfileLikes(profile.likes) { [weak self] result in
+            switch result {
+            case .success:
+                self?.profile = profile
+                completion(.success(true))
+            case .failure(let error):
+                completion(.failure(error))
+            }
         }
     }
     
@@ -62,22 +79,25 @@ final class FavouritesService: FavouritesServiceProtocol {
             return
         }
         
-        if let index = profile.likes.firstIndex(of: nftID) {
-            profile.likes.remove(at: index)
-            updateProfileLikes(profile.likes) { result in
-                switch result {
-                case .success:
-                    self.profile = profile
-                    completion(.success(true))
-                case .failure(let error):
-                    completion(.failure(error))
-                }
-            }
-        } else {
+        guard let index = profile.likes.firstIndex(of: nftID) else {
             completion(.failure(NSError(domain: "NFT not found in likes", code: 404, userInfo: nil)))
+            return
+        }
+
+        profile.likes.remove(at: index)
+        updateProfileLikes(profile.likes) { [weak self] result in
+            switch result {
+            case .success:
+                self?.profile = profile
+                completion(.success(true))
+            case .failure(let error):
+                completion(.failure(error))
+            }
         }
     }
     
+    
+    // MARK: - Private Methods
     private func updateProfileLikes(_ likes: [String], completion: @escaping (Result<Bool, Error>) -> Void) {
         guard let profile = profile else {
             return
@@ -105,20 +125,6 @@ final class FavouritesService: FavouritesServiceProtocol {
             case .failure(let error):
                 Logger.log("Error updating favourites: \(error)")
                 completion(.failure(error))
-            }
-        }
-    }
-    
-    // MARK: - Private Methods
-    private func downloadProfile() {
-        let userProfileRequest = FavouritesRequest()
-        client.send(request: userProfileRequest, type: Profile.self) { [weak self] result in
-            switch result {
-            case .success(let profile):
-                self?.profile = profile
-                Logger.log("Успешно загружен профиль: \(profile.name)")
-            case .failure(let error):
-                Logger.log("Ошибка загрузки профиля: \(error)", level: .error)
             }
         }
     }
