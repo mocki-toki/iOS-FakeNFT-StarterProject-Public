@@ -45,7 +45,7 @@ final class StatisticsViewModel {
                     self?.users = self?.applySorting(to: fetchedUsers) ?? []
                 case .failure(let error):
                     Logger.log("Error fetching users: \(error.localizedDescription)", level: .error)
-                    self?.onErrorOccurred?(String(localizable: .alertErrorMessage), {
+                    self?.onErrorOccurred?(String(localizable: .alertErroMessage), {
                         self?.loadUsers()
                     })
                 }

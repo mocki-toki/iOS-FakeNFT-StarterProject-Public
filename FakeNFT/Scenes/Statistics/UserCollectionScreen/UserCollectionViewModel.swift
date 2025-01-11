@@ -23,7 +23,7 @@ final class UserCollectionViewModel {
                 switch result {
                 case .success(let user):
                     Logger.log("Successfully loaded user details with \(user.nfts.count) NFTs", level: .info)
-                    let nftIds = user.nfts
+                    let nftIds = user.nfts.map { $0.uuidString }
                     self?.loadNftsByIds(nftIds)
                 case .failure(let error):
                     ProgressHUD.dismiss()
@@ -43,8 +43,14 @@ final class UserCollectionViewModel {
         var errors: [Error] = []
         
         nftIds.forEach { nftId in
+            guard let uuid = UUID(uuidString: nftId) else {
+                Logger.log("Invalid UUID string: \(nftId)", level: .error)
+                errors.append(NSError(domain: "Invalid UUID", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid UUID: \(nftId)"]))
+                return
+            }
+            
             group.enter()
-            nftService.loadNft(id: nftId) { result in
+            nftService.loadNft(id: uuid) { result in
                 switch result {
                 case .success(let nft):
                     Logger.log("Successfully loaded NFT with id: \(nft.id)", level: .info)
@@ -71,6 +77,7 @@ final class UserCollectionViewModel {
             }
         }
     }
+    
     
     func getNfts() -> [Nft] {
         return nfts

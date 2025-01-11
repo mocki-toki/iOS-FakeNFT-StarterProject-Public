@@ -101,7 +101,7 @@ final class UserCardViewController: UIViewController {
             self.avatarImageView.kf.setImage(with: URL(string: user.avatar), placeholder: UIImage(named: "AvatarStub"))
             self.usernameLabel.text = user.name
             self.descriptionTextView.text = user.description
-            self.collectionLabel.text = "\(String(localizable: .buttonCollection)) (\(user.nfts.count))"
+            self.collectionLabel.text = "\(String(localizable: .statisticsCollection)) (\(user.nfts.count))"
         }
         
         viewModel.onErrorOccurred = { [weak self] message, retryAction in

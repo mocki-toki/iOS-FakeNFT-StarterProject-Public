@@ -60,6 +60,9 @@ final class NftServiceImpl: NftService {
                 completion(.success(user))
             case .failure(let error):
                 completion(.failure(error))
+            }
+        }
+    }
     func loadNfts(ids: [UUID], completion: @escaping (Result<[CartItem], Error>) -> Void) {
         let dispatchGroup = DispatchGroup()
         var cartItems: [CartItem] = []

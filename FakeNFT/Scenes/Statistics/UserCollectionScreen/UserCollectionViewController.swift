@@ -46,7 +46,7 @@ final class UserCollectionViewController: UIViewController {
     }
     override func viewDidLoad() {
         view.backgroundColor = .yWhiteUniversal
-        title = String(localizable: .buttonCollection)
+        title = String(localizable: .statisticsCollection)
 
         setupUI()
         bindViewModel()
