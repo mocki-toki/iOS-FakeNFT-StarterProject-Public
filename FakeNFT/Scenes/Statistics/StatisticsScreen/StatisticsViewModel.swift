@@ -34,14 +34,17 @@ final class StatisticsViewModel {
     
     func loadUsers() {
         ProgressHUD.show()
+        Logger.log("Started loading users", level: .info)
+
         userService.fetchUsers { [weak self] result in
             DispatchQueue.main.async {
                 ProgressHUD.dismiss()
                 switch result {
                 case .success(let fetchedUsers):
+                    Logger.log("Successfully loaded users: \(fetchedUsers.count) users fetched", level: .info)
                     self?.users = self?.applySorting(to: fetchedUsers) ?? []
                 case .failure(let error):
-                    print("Error fetching users: \(error)")
+                    Logger.log("Error fetching users: \(error.localizedDescription)", level: .error)
                     self?.onErrorOccurred?(String(localizable: .alertErrorMessage), {
                         self?.loadUsers()
                     })
