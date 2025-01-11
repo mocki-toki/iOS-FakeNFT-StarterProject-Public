@@ -8,5 +8,5 @@ struct Nft: Decodable {
     var description: String
     var price: Float
     var author: String
-    let id: String
+    let id: UUID
 }

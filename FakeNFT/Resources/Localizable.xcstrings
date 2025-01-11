@@ -1,104 +1,121 @@
 {
   "sourceLanguage" : "ru",
   "strings" : {
-    "Alert.cancel" : {
+    "Agreements.goBackTitle" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cancel"
+            "value" : "Back"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Отменить"
+            "value" : "Назад"
           }
         }
       }
     },
-    "Alert.error" : {
+    "Cart.delete" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Error"
+            "value" : "Remove"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ошибка"
+            "value" : "Удалить"
           }
         }
       }
     },
-    "Alert.errorMessage" : {
+    "Cart.deleteConfirmation" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Failed to load users. Please try again."
+            "value" : "Are you sure you want to remove the item from the cart?"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Не удалось загрузить пользователей. Пожалуйста, повторите попытку."
+            "value" : "Вы уверены, что хотите удалить объект из корзины?"
           }
         }
       }
     },
-    "Alert.retry" : {
+    "Cart.empty" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Retry"
+            "value" : "Cart is empty"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Повторить"
+            "value" : "Корзина пуста"
           }
         }
       }
     },
-    "Button.collection" : {
+    "Cart.price" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "NFTs collection"
+            "value" : "Price"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Коллекция NFT"
+            "value" : "Цена"
           }
         }
       }
     },
-    "Button.website" : {
+    "Cart.return" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Visit user’s website"
+            "value" : "Go back"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Перейти на сайт пользователя"
+            "value" : "Вернуться"
+          }
+        }
+      }
+    },
+    "Cart.toPay" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checkout"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "К оплате"
           }
         }
       }
@@ -116,6 +133,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Открыть Nft"
+          }
+        }
+      }
+    },
+    "Error.cancel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отмена"
           }
         }
       }
@@ -184,6 +218,244 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Произошла неизвестная ошибка"
+          }
+        }
+      }
+    },
+    "Onboarding.slide1.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Join and discover a new world of unique NFTs for collectors"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Присоединяйтесь и откройте новый мир уникальных NFT для коллекционеров"
+          }
+        }
+      }
+    },
+    "Onboarding.slide1.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explore"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Исследуйте"
+          }
+        }
+      }
+    },
+    "Onboarding.slide2.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expand your collection with exclusive artworks created by neural networks!"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пополняйте свою коллекцию эксклюзивными картинками, созданными нейросетью!"
+          }
+        }
+      }
+    },
+    "Onboarding.slide2.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Collect"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Коллекционируйте"
+          }
+        }
+      }
+    },
+    "Onboarding.slide3.button" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What's inside?"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Что внутри?"
+          }
+        }
+      }
+    },
+    "Onboarding.slide3.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View statistics of others and show everyone that you have the most valuable collection"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Смотрите статистику других и покажите всем, что у вас самая ценная коллекция"
+          }
+        }
+      }
+    },
+    "Onboarding.slide3.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compete"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Состязайтесь"
+          }
+        }
+      }
+    },
+    "Payment.agreementLink" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "User Agreement"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пользовательского соглашения"
+          }
+        }
+      }
+    },
+    "Payment.agreementText" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "By making a purchase, you agree to the terms"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Совершая покупку, вы соглашаетесь с условиями"
+          }
+        }
+      }
+    },
+    "Payment.buttonTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pay"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Оплатить"
+          }
+        }
+      }
+    },
+    "Payment.fail" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Payment failed"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось произвести оплату"
+          }
+        }
+      }
+    },
+    "Payment.returnToCart" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Return to catalog"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вернуться в каталог"
+          }
+        }
+      }
+    },
+    "Payment.success" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Success! Payment completed, congratulations on your purchase!"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Успех! Оплата прошла,\nпоздравляем с покупкой!"
+          }
+        }
+      }
+    },
+    "Payment.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select a payment method"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Выберите способ оплаты"
           }
         }
       }
