@@ -93,10 +93,12 @@ final class StatisticsViewController: UIViewController {
     
     private func showLoader() {
         loader.startAnimating()
+        navigationController?.setNavigationBarHidden(true, animated: true)
     }
     
     private func hideLoader() {
         loader.stopAnimating()
+        navigationController?.setNavigationBarHidden(false, animated: true)
     }
     
     // MARK: - Actions
