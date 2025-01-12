@@ -21,17 +21,22 @@ final class StatisticsCollectionViewCell: UICollectionViewCell {
     
     private lazy var nftNameLabel = UILabel().then {
         $0.font = UIFont.bold17
-        $0.textColor = .yBlackUniversal
+        $0.textColor = .yBlack
     }
     
     private lazy var nftCostLabel = UILabel().then {
         $0.font = UIFont.medium10
-        $0.textColor = .yBlackUniversal
+        $0.textColor = .yBlack
     }
     
     private lazy var cartButton = UIButton().then {
         $0.addTarget(self, action: #selector(cartButtonDidTap), for: .touchUpInside)
         $0.backgroundColor = .clear
+        $0.tintColor = UIColor { traitCollection in
+            return traitCollection.userInterfaceStyle == .dark ? .white : .black
+        }
+        let addToCartImage = UIImage(named: "AddToCart")?.withRenderingMode(.alwaysTemplate)
+        $0.setImage(addToCartImage, for: .normal)
     }
     
     private lazy var starsStackView = UIStackView().then {
@@ -49,6 +54,7 @@ final class StatisticsCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupConstraints()
+        updateCartButtonAppearance()
     }
     
     required init?(coder: NSCoder) {
@@ -61,8 +67,8 @@ final class StatisticsCollectionViewCell: UICollectionViewCell {
         nftNameLabel.text = nft.name
         nftCostLabel.text = "\(nft.price) ETH"
         likeButton.setImage(UIImage.favoriteInactive, for: .normal)
-        cartButton.setImage(UIImage.addToCart, for: .normal)
-        
+        cartButton.setImage(UIImage(named: "AddToCart")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        updateCartButtonAppearance()
         updateStars(rating: nft.rating)
     }
     
@@ -71,6 +77,19 @@ final class StatisticsCollectionViewCell: UICollectionViewCell {
             guard let imageView = starView as? UIImageView else { continue }
             imageView.image = UIImage(named: index < rating ? "ActiveStar" : "InactiveStar")
         }
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        
+        if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
+            updateCartButtonAppearance()
+        }
+    }
+    
+    private func updateCartButtonAppearance() {
+        let isDarkMode = traitCollection.userInterfaceStyle == .dark
+        cartButton.tintColor = isDarkMode ? .white : .black
     }
     
     // MARK: - View Configuration
@@ -128,8 +147,15 @@ final class StatisticsCollectionViewCell: UICollectionViewCell {
     }
     
     @objc private func cartButtonDidTap() {
-        let image: UIImage = isInCart ? .addToCart : .removeFromCart
-        cartButton.setImage(image, for: .normal)
-        isInCart.toggle()
+        let image: UIImage
+        if isInCart {
+            image = (UIImage(named: "RemoveFromCart")?.withRenderingMode(.alwaysTemplate))!
+            cartButton.setImage(image, for: .normal)
+            isInCart.toggle()
+        } else {
+            image = (UIImage(named: "AddToCart")?.withRenderingMode(.alwaysTemplate))!
+            cartButton.setImage(image, for: .normal)
+            isInCart.toggle()
+        }
     }
 }

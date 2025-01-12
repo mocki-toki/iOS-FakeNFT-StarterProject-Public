@@ -46,9 +46,6 @@ final class UserCollectionViewController: UIViewController {
         tabBarController?.tabBar.isHidden = false
     }
     override func viewDidLoad() {
-        view.backgroundColor = .yWhiteUniversal
-        title = String(localizable: .statisticsCollection)
-        
         setupUI()
         bindViewModel()
         showLoader()
@@ -85,9 +82,15 @@ final class UserCollectionViewController: UIViewController {
     }
     
     private func setupNavigationBar() {
-        let backImage = UIImage(named: "Backward")?.withRenderingMode(.alwaysOriginal)
-        navigationController?.navigationBar.backIndicatorImage = backImage
-        navigationController?.navigationBar.backIndicatorTransitionMaskImage = backImage
+        title = String(localizable: .statisticsCollection)
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemName: "chevron.left"),
+            style: .plain,
+            target: self,
+            action: #selector(backButtonTapped)
+        )
+        navigationController?.navigationBar.tintColor = .yBlack
+        navigationItem.leftBarButtonItem?.tintColor = .yBlack
     }
     
     private func setupLoader() {
@@ -122,6 +125,10 @@ final class UserCollectionViewController: UIViewController {
             retryAction()
         })
         alert.addAction(UIAlertAction(title: String(localizable: .alertCancel), style: .cancel, handler: nil))
+    }
+    
+    @objc private func backButtonTapped() {
+        navigationController?.popViewController(animated: true)
     }
 }
 

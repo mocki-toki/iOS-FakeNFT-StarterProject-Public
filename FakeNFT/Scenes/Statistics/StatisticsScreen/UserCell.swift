@@ -11,26 +11,26 @@ final class UserCell: UITableViewCell {
         $0.layer.masksToBounds = true
         $0.layer.cornerRadius = 12
     }
-
+    
     private lazy var rankLabel = UILabel().then {
         $0.font = UIFont.regular15
-        $0.textColor = .yBlackUniversal
+        $0.textColor = .yBlack
         $0.textAlignment = .center
     }
-
+    
     private lazy var avatarImageView = UIImageView().then {
         $0.layer.masksToBounds = true
         $0.layer.cornerRadius = 14
     }
-
+    
     private lazy var nameLabel = UILabel().then {
         $0.font = UIFont.bold22
-        $0.textColor = .yBlackUniversal
+        $0.textColor = .yBlack
     }
-
+    
     private lazy var nftCountLabel = UILabel().then {
         $0.font = UIFont.bold22
-        $0.textColor = .yBlackUniversal
+        $0.textColor = .yBlack
         $0.textAlignment = .center
     }
     
@@ -54,7 +54,7 @@ final class UserCell: UITableViewCell {
             make.leading.equalToSuperview().offset(5)
             make.top.equalToSuperview().offset(28)
         }
-
+        
         addSubview(cartView)
         cartView.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(35)
@@ -62,14 +62,14 @@ final class UserCell: UITableViewCell {
             make.top.equalToSuperview()
             make.bottom.equalToSuperview().offset(-8)
         }
-
+        
         addSubview(avatarImageView)
         avatarImageView.snp.makeConstraints { make in
             make.width.height.equalTo(28)
             make.leading.equalTo(cartView.snp.leading).offset(16)
             make.top.equalTo(cartView.snp.top).offset(26)
         }
-
+        
         addSubview(nftCountLabel)
         nftCountLabel.snp.makeConstraints { make in
             make.width.equalTo(38)
@@ -77,7 +77,7 @@ final class UserCell: UITableViewCell {
             make.trailing.equalTo(cartView.snp.trailing).offset(-16)
             make.top.equalTo(cartView.snp.top).offset(26)
         }
-
+        
         addSubview(nameLabel)
         nameLabel.snp.makeConstraints { make in
             make.leading.equalTo(avatarImageView.snp.trailing).offset(8)

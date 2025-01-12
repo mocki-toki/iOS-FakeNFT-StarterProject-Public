@@ -28,32 +28,35 @@ final class UserCardViewController: UIViewController {
     
     private lazy var usernameLabel = UILabel().then {
         $0.font = UIFont.bold22
-        $0.textColor = .yBlackUniversal
+        $0.textColor = .yBlack
     }
     
     private lazy var descriptionTextView = UITextView().then {
         $0.font = UIFont.regular13
-        $0.textColor = .yBlackUniversal
+        $0.textColor = .yBlack
+        $0.backgroundColor = .clear
     }
     
     private lazy var websiteButton = UIButton(type: .system).then {
         $0.setTitle(String(localizable: .buttonWebsite), for: .normal)
-        $0.setTitleColor(.yBlackUniversal, for: .normal)
+        $0.setTitleColor(.yBlack, for: .normal)
         $0.titleLabel?.font = UIFont.regular15
-        $0.layer.borderColor = UIColor.black.cgColor
+        $0.layer.borderColor = UIColor.yBlack.cgColor
         $0.layer.borderWidth = 1
         $0.layer.cornerRadius = 16
         $0.addTarget(self, action: #selector(openWebsite), for: .touchUpInside)
     }
     
     private lazy var collectionLabel = UILabel().then {
-        $0.textColor = .yBlackUniversal
+        $0.textColor = .yBlack
         $0.font = UIFont.bold17
     }
     
     private lazy var collectionImage = UIImageView().then {
-        $0.image = UIImage(named: "Forward")
+        let originalImage = UIImage(named: "Forward")?.withRenderingMode(.alwaysTemplate)
+        $0.image = originalImage
         $0.contentMode = .scaleAspectFit
+        $0.tintColor = .yBlack
     }
     
     private lazy var collectionStackView = UIStackView().then {
@@ -86,7 +89,7 @@ final class UserCardViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .yWhiteUniversal
+        view.backgroundColor = .yWhite
         setupUI()
         bindViewModel()
         hideUIElements()
@@ -166,9 +169,14 @@ final class UserCardViewController: UIViewController {
     }
     
     private func setupNavigationBar() {
-        let backImage = UIImage(named: "Backward")?.withRenderingMode(.alwaysOriginal)
-        navigationController?.navigationBar.backIndicatorImage = backImage
-        navigationController?.navigationBar.backIndicatorTransitionMaskImage = backImage
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemName: "chevron.left"),
+            style: .plain,
+            target: self,
+            action: #selector(backButtonTapped)
+        )
+        navigationController?.navigationBar.tintColor = .yBlack
+        navigationItem.leftBarButtonItem?.tintColor = .yBlack
     }
     
     private func setupLoader() {
@@ -209,7 +217,6 @@ final class UserCardViewController: UIViewController {
     // MARK: - Actions
     @objc private func openWebsite() {
         navigationItem.backButtonTitle = ""
-
         guard let websiteURL = URL(string: viewModel.website) else {
             print("Invalid URL")
             return
@@ -229,6 +236,10 @@ final class UserCardViewController: UIViewController {
         navigationController?.pushViewController(collectionViewController, animated: true)
         navigationItem.backButtonTitle = ""
         self.hidesBottomBarWhenPushed = true
+    }
+    
+    @objc private func backButtonTapped() {
+        navigationController?.popViewController(animated: true)
     }
     
     // MARK: - Methods

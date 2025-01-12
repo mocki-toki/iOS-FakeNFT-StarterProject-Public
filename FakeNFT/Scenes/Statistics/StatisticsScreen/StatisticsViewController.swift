@@ -5,12 +5,11 @@ import Then
 final class StatisticsViewController: UIViewController {
     // MARK: - Properties
     let servicesAssembly: ServicesAssembly
-
+    
     private let viewModel: StatisticsViewModel
     private let loader = UIActivityIndicatorView(style: .large)
-
+    
     private lazy var tableView = UITableView().then {
-        $0.backgroundColor = .white
         $0.separatorStyle = .none
         $0.register(UserCell.self, forCellReuseIdentifier: "UserCell")
     }
@@ -32,7 +31,7 @@ final class StatisticsViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = false
-        tabBarController?.tabBar.backgroundColor = .yWhiteUniversal
+        tabBarController?.tabBar.backgroundColor = .yWhite
     }
     
     override func viewDidLoad() {
