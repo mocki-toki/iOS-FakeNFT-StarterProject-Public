@@ -1,5 +1,5 @@
 import Foundation
 
-struct MyNFTOrderModel: Codable {
+struct MyNFTModel: Codable {
     let nfts: [String]
 }

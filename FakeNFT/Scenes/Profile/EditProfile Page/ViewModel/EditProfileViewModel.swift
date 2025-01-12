@@ -53,7 +53,8 @@ final class EditProfileViewModel: EditProfileViewModelProtocol {
                 name: userProfile.name,
                 description: userProfile.description,
                 website: userProfile.website,
-                avatar: userProfile.avatar
+                avatar: userProfile.avatar,
+                likes: encodedLikes
             )
             
             Logger.log("Инфо о созданном updateDto \(updateDto)", level: .debug)

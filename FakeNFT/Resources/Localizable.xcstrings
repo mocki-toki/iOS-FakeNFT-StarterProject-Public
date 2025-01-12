@@ -154,6 +154,23 @@
         }
       }
     },
+    "Error.ok" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ok"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ок"
+          }
+        }
+      }
+    },
     "Error.repeat" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -201,6 +218,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Произошла неизвестная ошибка"
+          }
+        }
+      }
+    },
+    "Favorites.stub" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You don't have any favorites NFT yet"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "У Вас ещё нет избранных NFT"
+          }
+        }
+      }
+    },
+    "MyNFT.stub" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You don't have NFT yet"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "У Вас ещё нет NFT"
           }
         }
       }

@@ -1,7 +1,6 @@
 import UIKit
 import SnapKit
 import Then
-import ProgressHUD
 
 final class MyNftViewController: UIViewController {
     // MARK: - Properties
@@ -17,7 +16,7 @@ final class MyNftViewController: UIViewController {
     
     private lazy var stubLabel = UILabel().then {
         $0.font = UIFont.bold17
-        $0.text = "У Вас ещё нет NFT"
+        $0.text = String(localizable: .myNFTStub) // У Вас ещё нет NFT
         $0.textColor = UIColor.textPrimary
         $0.textAlignment = .center
         $0.isHidden = true
@@ -72,14 +71,13 @@ final class MyNftViewController: UIViewController {
         setupConstraints()
         
         setupNavigationBar()
-
-        viewModel.loadNFTs()
+        viewModel.loadData()
     }
     
     // MARK: - Navigation
     
     private func setupNavigationBar() {
-        title = "Мои NFT"
+        title = String(localizable: .profileLinksMyNfts) // Мои NFT
         navigationItem.leftBarButtonItem = backwardButton
         navigationController?.navigationBar.tintColor = .yBlack
     }
@@ -181,6 +179,7 @@ extension MyNftViewController: UITableViewDataSource, UITableViewDelegate {
         cell.setAuthor("от \(nft.authorName)")
         cell.setPrice(nft.formattedPrice())
         cell.setRating(nft.rating)
+        cell.backgroundColor = .yWhite
         
         viewModel.loadImage(for: nft) { image in
             DispatchQueue.main.async { 
@@ -190,13 +189,18 @@ extension MyNftViewController: UITableViewDataSource, UITableViewDelegate {
             }
         }
         
+        let isLiked = viewModel.isLiked(nft: nft)
+        cell.setLike(isLiked)
+        
         cell.configure(
             with: .myNft,
             onLike: { [weak self] in
                 guard let self = self else { return }
-                viewModel.isLiked.toggle()
-                cell.setLike(viewModel.isLiked)
-                print("Like button tapped for \(nft.name)")
+
+                self.viewModel.toggleLike(for: nft)
+                let isLiked = self.viewModel.isLiked(nft: nft)
+                cell.setLike(!isLiked)
+                Logger.log("Like button tapped for \(nft.name)")
             },
             onCart: {})
         cell.selectionStyle = .none

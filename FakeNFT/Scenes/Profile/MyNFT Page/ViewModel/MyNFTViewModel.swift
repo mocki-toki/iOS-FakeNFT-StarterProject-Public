@@ -25,15 +25,19 @@ final class MyNFTViewModel: MyNFTViewModelProtocol {
     
     var onNFTsUpdated: (() -> Void)?
     var onLoadingStatusChanged: ((Bool) -> Void)?
-    var isLiked: Bool = false
     var nfts: [Nft] = [] {
         didSet {
             onNFTsUpdated?()
         }
     }
     
+    private var likedNFTs: [String] = []
+    private var profileLoaded: Bool = false
+    private var isLikedNFTsLoaded = false
+    
     // MARK: - Private Properties
     private let nftService: MyNFTServiceProtocol
+    private let favouritesService: FavouritesServiceProtocol
     
     private var currentSortOption: SortOption? {
         didSet {
@@ -45,23 +49,22 @@ final class MyNFTViewModel: MyNFTViewModelProtocol {
     
     // MARK: - Initializer
     
-    init(nftService: MyNFTServiceProtocol) {
+    init(nftService: MyNFTServiceProtocol, favouritesService: FavouritesServiceProtocol) {
         self.nftService = nftService
+        self.favouritesService = favouritesService
 
         if let savedSortOption = UserDefaults.standard.string(forKey: "selectedSortOption"),
            let savedOption = SortOption(rawValue: savedSortOption) {
             self.currentSortOption = savedOption
         } else {
-            self.currentSortOption = .price
+            self.currentSortOption = .rating
         }
     }
     
     // MARK: - Public Methods
     
     func loadNFTs() {
-        onLoadingStatusChanged?(true)
-        
-        nftService.fetchNFTs { [weak self] result in
+        nftService.fetchMyNFTs { [weak self] result in
             self?.onLoadingStatusChanged?(false)
             switch result {
             case .success(let nfts):
@@ -71,9 +74,78 @@ final class MyNFTViewModel: MyNFTViewModelProtocol {
                     self?.onNFTsUpdated?()
                 }
             case .failure(let error):
-                Logger.log("Failed to load NFTs: \(error)", level: .error)
+                Logger.log("Не удалось загрузить NFT.: \(error)", level: .error)
             }
         }
+    }
+    
+    func loadLikedNFTs(completion: @escaping () -> Void) {
+        Logger.log("loadLikedNFTs вызван")
+        downloadProfile { [weak self] result in
+            switch result {
+            case .success:
+                self?.favouritesService.fetchFavourites { [weak self] result in
+                    switch result {
+                    case .success(let likedNfts):
+                        self?.likedNFTs = likedNfts.map { $0.id }
+                        self?.onNFTsUpdated?()
+                        Logger.log("Liked \(likedNfts.count)")
+                        completion()
+                    case .failure(let error):
+                        Logger.log("Не удалось загрузить избранное: \(error)")
+                        completion()
+                    }
+                }
+            case .failure(let error):
+                Logger.log("Ошибка при загрузке профиля: \(error)", level: .error)
+                completion()
+            }
+        }
+    }
+    
+    func loadData() {
+        onLoadingStatusChanged?(true)
+
+        loadLikedNFTs { [weak self] in
+            self?.loadNFTs()
+        }
+    }
+    
+    func toggleLike(for nft: Nft) {
+        guard profileLoaded else {
+            Logger.log("Профиль не загружен, не могу изменить лайк для NFT", level: .error)
+            return
+        }
+        
+        if likedNFTs.contains(nft.id) {
+            // Удаление лайка
+            favouritesService.unlikeNFT(nftID: nft.id) { [weak self] result in
+                switch result {
+                case .success:
+                    self?.likedNFTs.removeAll { $0 == nft.id }
+                    Logger.log("Лайк удален для NFT с ID: \(nft.id)")
+                    self?.onNFTsUpdated?()
+                case .failure(let error):
+                    Logger.log("Ошибка при удалении лайка: \(error)", level: .error)
+                }
+            }
+        } else {
+            // Добавление лайка
+            favouritesService.likeNFT(nftID: nft.id) { [weak self] result in
+                switch result {
+                case .success:
+                    self?.likedNFTs.append(nft.id)
+                    Logger.log("Лайк добавлен для NFT с ID: \(nft.id)")
+                    self?.onNFTsUpdated?()
+                case .failure(let error):
+                    Logger.log("Ошибка при добавлении лайка: \(error)", level: .error)
+                }
+            }
+        }
+    }
+
+    func isLiked(nft: Nft) -> Bool {
+        return likedNFTs.contains(nft.id)
     }
     
     func getNFT(at index: Int) -> Nft? {
@@ -103,6 +175,22 @@ final class MyNFTViewModel: MyNFTViewModelProtocol {
     
     func numberOfNFTs() -> Int {
         return nfts.count
+    }
+    
+    // MARK: - Profile Loading
+
+    func downloadProfile(completion: @escaping (Result<Void, Error>) -> Void) {
+        favouritesService.downloadProfile { [weak self] result in
+            switch result {
+            case .success:
+                self?.profileLoaded = true
+                Logger.log("Профиль успешно загружен")
+                completion(.success(()))
+            case .failure(let error):
+                Logger.log("Ошибка при загрузке профиля: \(error)", level: .error)
+                completion(.failure(error))
+            }
+        }
     }
     
     // MARK: - Sorting Methods

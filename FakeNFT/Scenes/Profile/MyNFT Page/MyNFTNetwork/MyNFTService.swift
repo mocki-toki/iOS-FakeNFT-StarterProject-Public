@@ -1,7 +1,7 @@
 import UIKit
 
 protocol MyNFTServiceProtocol {
-    func fetchNFTs(completion: @escaping (Result<[Nft], Error>) -> Void)
+    func fetchMyNFTs(completion: @escaping (Result<[Nft], Error>) -> Void)
 }
 
 final class MyNFTService: MyNFTServiceProtocol {
@@ -14,8 +14,8 @@ final class MyNFTService: MyNFTServiceProtocol {
     }
     
     // MARK: - Public Properties
-    func fetchNFTs(completion: @escaping (Result<[Nft], Error>) -> Void) {
-        fetchNftsIDInProfile { [weak self] result in
+    func fetchMyNFTs(completion: @escaping (Result<[Nft], Error>) -> Void) {
+        fetchNftsIDs { [weak self] result in
             switch result {
             case .success(let nftsInMyProfile):
                 self?.fetchMyNFTs(nftsInMyProfile: nftsInMyProfile) { result in
@@ -42,17 +42,17 @@ final class MyNFTService: MyNFTServiceProtocol {
         }
     }
     
-    private func fetchNftsIDInProfile(
-        _ completion: @escaping (Result<MyNFTOrderModel, Error>) -> Void
+    private func fetchNftsIDs(
+        _ completion: @escaping (Result<MyNFTModel, Error>) -> Void
     ) {
         let request = ProfileRequest()
-        client.send(request: request, type: MyNFTOrderModel.self) { [weak self] result in
+        client.send(request: request, type: MyNFTModel.self) { [weak self] result in
             self?.handleResult(result, completion: completion)
         }
     }
     
     private func fetchMyNFTs(
-        nftsInMyProfile: MyNFTOrderModel,
+        nftsInMyProfile: MyNFTModel,
         _ completion: @escaping (Result<[Nft], Error>) -> Void
     ) {
         var nftItems: [Nft] = []
@@ -62,7 +62,7 @@ final class MyNFTService: MyNFTServiceProtocol {
         
         for item in nfts {
             dispatchGroup.enter()
-            client.send(request: MyNftByIdRequest(id: item), type: Nft.self) { result in
+            client.send(request: MyNftRequest(id: item), type: Nft.self) { result in
                 switch result {
                 case .success(let nftItem):
                     nftItems.append(nftItem)
@@ -74,7 +74,7 @@ final class MyNFTService: MyNFTServiceProtocol {
         }
         
         dispatchGroup.notify(queue: .main) {
-            nftItems.sort { $0.price < $1.price }
+            nftItems.sort { $0.rating < $1.rating }
             completion(.success(nftItems))
         }
     }
