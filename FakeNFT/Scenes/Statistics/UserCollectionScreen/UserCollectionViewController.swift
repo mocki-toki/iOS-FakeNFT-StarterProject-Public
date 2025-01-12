@@ -72,6 +72,9 @@ final class UserCollectionViewController: UIViewController {
         setupNavigationBar()
         setupLoader()
         
+        collectionView.showsVerticalScrollIndicator = true
+        collectionView.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: -15)
+
         view.addSubview(collectionView)
         collectionView.snp.makeConstraints { make in
             make.top.equalTo(108)

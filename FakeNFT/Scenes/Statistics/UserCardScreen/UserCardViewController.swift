@@ -35,6 +35,7 @@ final class UserCardViewController: UIViewController {
         $0.font = UIFont.regular13
         $0.textColor = .yBlack
         $0.backgroundColor = .clear
+        $0.isEditable = false
     }
     
     private lazy var websiteButton = UIButton(type: .system).then {
