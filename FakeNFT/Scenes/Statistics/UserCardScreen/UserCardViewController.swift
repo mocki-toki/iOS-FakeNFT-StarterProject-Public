@@ -89,6 +89,7 @@ final class UserCardViewController: UIViewController {
         view.backgroundColor = .yWhiteUniversal
         setupUI()
         bindViewModel()
+        hideUIElements()
         showLoader()
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(stackViewTapped))
@@ -178,16 +179,30 @@ final class UserCardViewController: UIViewController {
         }
     }
     
+    private func hideUIElements() {
+        profileStackView.isHidden = true
+        websiteButton.isHidden = true
+        collectionStackView.isHidden = true
+    }
+    
+    private func showUIElements() {
+        profileStackView.isHidden = false
+        websiteButton.isHidden = false
+        collectionStackView.isHidden = false
+    }
+    
     // MARK: - Loader Methods
     private func showLoader() {
         DispatchQueue.main.async {
             self.loader.startAnimating()
+            self.hideUIElements()
         }
     }
     
     private func hideLoader() {
         DispatchQueue.main.async {
             self.loader.stopAnimating()
+            self.showUIElements()
         }
     }
     
