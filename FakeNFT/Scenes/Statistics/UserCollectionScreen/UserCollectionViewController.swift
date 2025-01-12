@@ -5,6 +5,7 @@ import Then
 final class UserCollectionViewController: UIViewController {
     // MARK: - Properties
     private let viewModel: UserCollectionViewModel
+    private let loader = UIActivityIndicatorView(style: .large)
     
     let servicesAssembly: ServicesAssembly
     
@@ -47,20 +48,24 @@ final class UserCollectionViewController: UIViewController {
     override func viewDidLoad() {
         view.backgroundColor = .yWhiteUniversal
         title = String(localizable: .statisticsCollection)
-
+        
         setupUI()
         bindViewModel()
+        showLoader()
         
-        viewModel.loadUserNfts() 
+        viewModel.loadUserNfts()
     }
     
     // MARK: - Bindings
     private func bindViewModel() {
         viewModel.onDataUpdated = { [weak self] in
-            self?.collectionView.reloadData()
+            guard let self = self else { return }
+            self.collectionView.reloadData()
+            self.hideLoader()
         }
         viewModel.onErrorOccurred = { [weak self] message, retryAction in
             guard let self = self else { return }
+            self.hideLoader()
             self.showErrorAlert(message: message, retryAction: retryAction)
         }
     }
@@ -68,6 +73,7 @@ final class UserCollectionViewController: UIViewController {
     // MARK: - UI Setup
     private func setupUI() {
         setupNavigationBar()
+        setupLoader()
         
         view.addSubview(collectionView)
         collectionView.snp.makeConstraints { make in
@@ -82,6 +88,27 @@ final class UserCollectionViewController: UIViewController {
         let backImage = UIImage(named: "Backward")?.withRenderingMode(.alwaysOriginal)
         navigationController?.navigationBar.backIndicatorImage = backImage
         navigationController?.navigationBar.backIndicatorTransitionMaskImage = backImage
+    }
+    
+    private func setupLoader() {
+        view.addSubview(loader)
+        loader.hidesWhenStopped = true
+        loader.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+    }
+    
+    // MARK: - Loader Methods
+    private func showLoader() {
+        DispatchQueue.main.async {
+            self.loader.startAnimating()
+        }
+    }
+    
+    private func hideLoader() {
+        DispatchQueue.main.async {
+            self.loader.stopAnimating()
+        }
     }
     
     // MARK: - Methods

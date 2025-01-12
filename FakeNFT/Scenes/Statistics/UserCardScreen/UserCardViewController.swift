@@ -7,6 +7,7 @@ final class UserCardViewController: UIViewController {
     let servicesAssembly: ServicesAssembly
     
     private let viewModel: UserCardViewModel
+    private let loader = UIActivityIndicatorView(style: .large)
     
     private lazy var profileStackView = UIStackView().then {
         $0.distribution = .fill
@@ -88,6 +89,7 @@ final class UserCardViewController: UIViewController {
         view.backgroundColor = .yWhiteUniversal
         setupUI()
         bindViewModel()
+        showLoader()
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(stackViewTapped))
         collectionStackView.isUserInteractionEnabled = true
@@ -102,10 +104,12 @@ final class UserCardViewController: UIViewController {
             self.usernameLabel.text = user.name
             self.descriptionTextView.text = user.description
             self.collectionLabel.text = "\(String(localizable: .statisticsCollection)) (\(user.nfts.count))"
+            self.hideLoader()
         }
         
         viewModel.onErrorOccurred = { [weak self] message, retryAction in
             guard let self = self else { return }
+            self.hideLoader()
             self.showErrorAlert(message: message, retryAction: retryAction)
         }
     }
@@ -115,6 +119,7 @@ final class UserCardViewController: UIViewController {
     // MARK: - UI Setup
     private func setupUI() {
         setupNavigationBar()
+        setupLoader()
         
         view.addSubview(profileStackView)
         view.addSubview(websiteButton)
@@ -163,6 +168,27 @@ final class UserCardViewController: UIViewController {
         let backImage = UIImage(named: "Backward")?.withRenderingMode(.alwaysOriginal)
         navigationController?.navigationBar.backIndicatorImage = backImage
         navigationController?.navigationBar.backIndicatorTransitionMaskImage = backImage
+    }
+    
+    private func setupLoader() {
+        view.addSubview(loader)
+        loader.hidesWhenStopped = true
+        loader.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+    }
+    
+    // MARK: - Loader Methods
+    private func showLoader() {
+        DispatchQueue.main.async {
+            self.loader.startAnimating()
+        }
+    }
+    
+    private func hideLoader() {
+        DispatchQueue.main.async {
+            self.loader.stopAnimating()
+        }
     }
     
     // MARK: - Actions

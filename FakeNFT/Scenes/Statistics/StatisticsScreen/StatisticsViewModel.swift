@@ -1,5 +1,4 @@
 import UIKit
-import ProgressHUD
 
 final class StatisticsViewModel {
     private let nftService: NftService
@@ -33,12 +32,10 @@ final class StatisticsViewModel {
     }
     
     func loadUsers() {
-        ProgressHUD.show()
         Logger.log("Started loading users", level: .info)
 
         userService.fetchUsers { [weak self] result in
             DispatchQueue.main.async {
-                ProgressHUD.dismiss()
                 switch result {
                 case .success(let fetchedUsers):
                     Logger.log("Successfully loaded users: \(fetchedUsers.count) users fetched", level: .info)

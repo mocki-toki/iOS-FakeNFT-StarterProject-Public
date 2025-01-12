@@ -1,5 +1,4 @@
 import Foundation
-import ProgressHUD
 
 final class UserCardViewModel {
     private let userId: String
@@ -23,13 +22,10 @@ final class UserCardViewModel {
     }
     
     func loadUserDetails() {
-        ProgressHUD.show()
         Logger.log("Started loading user details for userId: \(userId)", level: .info)
 
         userService.fetchUserDetails(userId: userId) { [weak self] result in
             DispatchQueue.main.async {
-                ProgressHUD.dismiss()
-
                 switch result {
                 case .success(let userDetails):
                     Logger.log("Successfully loaded user details: \(userDetails.name)", level: .info)

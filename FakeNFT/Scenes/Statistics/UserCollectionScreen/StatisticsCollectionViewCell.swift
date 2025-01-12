@@ -114,7 +114,7 @@ final class StatisticsCollectionViewCell: UICollectionViewCell {
         }
         
         cartButton.snp.makeConstraints { make in
-            make.height.width.equalTo(40)
+            make.height.width.equalTo(20)
             make.centerY.equalTo(nftCostLabel.snp.centerY).offset(-5)
             make.trailing.equalTo(nftPictureImageView.snp.trailing)
         }

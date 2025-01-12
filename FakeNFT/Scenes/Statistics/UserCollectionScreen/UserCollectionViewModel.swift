@@ -1,5 +1,4 @@
 import Foundation
-import ProgressHUD
 
 final class UserCollectionViewModel {
     private let nftService: NftService
@@ -15,7 +14,6 @@ final class UserCollectionViewModel {
     }
     
     func loadUserNfts() {
-        ProgressHUD.show()
         Logger.log("Started loading NFTs for userId: \(userId)", level: .info)
         
         nftService.loadUserDetails(userId: userId) { [weak self] (result: Result<Users, Error>) in
@@ -26,7 +24,6 @@ final class UserCollectionViewModel {
                     let nftIds = user.nfts.map { $0.uuidString }
                     self?.loadNftsByIds(nftIds)
                 case .failure(let error):
-                    ProgressHUD.dismiss()
                     Logger.log("Error loading user details: \(error.localizedDescription)", level: .error)
                     self?.onErrorOccurred?("Error loading user details: \(error.localizedDescription)", {
                         self?.loadUserNfts()
@@ -64,7 +61,6 @@ final class UserCollectionViewModel {
         }
         
         group.notify(queue: .main) {
-            ProgressHUD.dismiss()
             if errors.isEmpty {
                 Logger.log("Successfully loaded all NFTs", level: .info)
                 self.nfts = loadedNfts

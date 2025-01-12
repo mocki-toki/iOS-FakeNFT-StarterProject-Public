@@ -7,7 +7,8 @@ final class StatisticsViewController: UIViewController {
     let servicesAssembly: ServicesAssembly
 
     private let viewModel: StatisticsViewModel
-    
+    private let loader = UIActivityIndicatorView(style: .large)
+
     private lazy var tableView = UITableView().then {
         $0.backgroundColor = .white
         $0.separatorStyle = .none
@@ -38,18 +39,23 @@ final class StatisticsViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         bindViewModel()
+        setupLoader()
+        showLoader()
         viewModel.loadUsers()
     }
     
     // MARK: - Bindings
     private func bindViewModel() {
         viewModel.onDataUpdated = { [weak self] in
-            self?.tableView.reloadData()
+            guard let self = self else { return }
+            self.tableView.reloadData()
+            self.hideLoader()
         }
         
         viewModel.onErrorOccurred = { [weak self] message, retryAction in
             guard let self = self else { return }
             self.showErrorAlert(message: message, retryAction: retryAction)
+            self.hideLoader()
         }
     }
     
@@ -75,6 +81,22 @@ final class StatisticsViewController: UIViewController {
             make.left.right.equalTo(view)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
+    }
+    
+    private func setupLoader() {
+        view.addSubview(loader)
+        loader.hidesWhenStopped = true
+        loader.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+    }
+    
+    private func showLoader() {
+        loader.startAnimating()
+    }
+    
+    private func hideLoader() {
+        loader.stopAnimating()
     }
     
     // MARK: - Actions
