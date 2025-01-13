@@ -199,9 +199,9 @@ final class NftBaseCell: UIView {
         }
 
         likeButton.snp.makeConstraints { make in
-            make.trailing.equalTo(imgView.snp.trailing).offset(-5)
-            make.top.equalTo(imgView.snp.top).offset(5)
-            make.size.equalTo(CGSize(width: 21, height: 21))
+            make.trailing.equalTo(imgView.snp.trailing).offset(5)
+            make.top.equalTo(imgView.snp.top).offset(-6)
+            make.size.equalTo(CGSize(width: 42, height: 42))
         }
 
         nameLabel.snp.makeConstraints { make in
@@ -220,7 +220,6 @@ final class NftBaseCell: UIView {
             make.leading.equalTo(nameLabel)
         }
     }
-
     private func setupMyNftView() {
         priceLabel.font = .bold17
         nameLabel.lineBreakMode = .byTruncatingTail
@@ -246,9 +245,9 @@ final class NftBaseCell: UIView {
         }
 
         likeButton.snp.makeConstraints { make in
-            make.trailing.equalTo(imgView.snp.trailing).offset(-10)
-            make.top.equalTo(imgView.snp.top).offset(10)
-            make.size.equalTo(CGSize(width: 17, height: 17))
+            make.trailing.equalTo(imgView.snp.trailing)
+            make.top.equalTo(imgView.snp.top)
+            make.size.equalTo(CGSize(width: 40, height: 40))
         }
 
         nameLabel.snp.makeConstraints { make in
