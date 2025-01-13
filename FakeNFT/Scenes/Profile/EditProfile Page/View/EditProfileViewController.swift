@@ -20,7 +20,7 @@ final class EditProfileViewController: UIViewController {
     }
     
     private lazy var changePhotoButton = UIButton(type: .system).then {
-        $0.setTitle("Сменить фото", for: .normal)
+        $0.setTitle(String(localizable: .editChangePhoto), for: .normal) // Сменить фото
         $0.titleLabel?.font = UIFont.medium10
         $0.titleLabel?.numberOfLines = 2
         $0.titleLabel?.textAlignment = .center
@@ -29,12 +29,12 @@ final class EditProfileViewController: UIViewController {
     }
     
     private lazy var nameLabel = UILabel().then {
-        $0.text = "Имя"
+        $0.text = String(localizable: .editName) // "Имя"
         $0.font = UIFont.bold22
     }
     
     private lazy var nameTextField = UITextField().then {
-        $0.placeholder = "Введите имя"
+        $0.placeholder = String(localizable: .editNameTF) // "Введите имя"
         $0.backgroundColor = .yLightGrey
         $0.layer.cornerRadius = 12
         $0.layer.masksToBounds = true
@@ -53,7 +53,7 @@ final class EditProfileViewController: UIViewController {
     }
     
     private lazy var descriptionLabel = UILabel().then {
-        $0.text = "Описание"
+        $0.text = String(localizable: .editDescription) // "Описание"
         $0.font = UIFont.bold22
     }
     
@@ -70,12 +70,12 @@ final class EditProfileViewController: UIViewController {
     }
     
     private lazy var websiteLabel = UILabel().then {
-        $0.text = "Сайт"
+        $0.text = String(localizable: .editWebsite) // "Сайт"
         $0.font = UIFont.bold22
     }
     
     private lazy var websiteTextField = UITextField().then {
-        $0.placeholder = "Введите ссылку на сайт"
+        $0.placeholder = String(localizable: .editWebsiteTF) // "Введите ссылку на сайт"
         $0.backgroundColor = .yLightGrey
         $0.layer.cornerRadius = 12
         $0.layer.masksToBounds = true
@@ -237,13 +237,13 @@ final class EditProfileViewController: UIViewController {
     
     func showAlertWithTextField(with currentURL: String, completion: @escaping (String) -> Void) {
         let alertController = UIAlertController(
-            title: "Введите URL",
-            message: "Пожалуйста, введите новый URL фотографии",
+            title: String(localizable: .editAlertName), // "Введите URL"
+            message: String(localizable: .editAlertMessage), // "Пожалуйста, введите новый URL фотографии"
             preferredStyle: .alert
         )
         
         alertController.addTextField { textField in
-            textField.placeholder = "Введите URL"
+            textField.placeholder = String(localizable: .editAlertName) // "Введите URL"
             textField.keyboardType = .URL
             textField.text = currentURL
             textField.clearButtonMode = .whileEditing
@@ -251,7 +251,7 @@ final class EditProfileViewController: UIViewController {
             textField.autocorrectionType = .no
         }
         
-        let okButton = UIAlertAction(title: "OK", style: .default) { _ in
+        let okButton = UIAlertAction(title: String(localizable: .errorOk), style: .default) { _ in // "Ok"
             if let textField = alertController.textFields?.first,
                let newValue = textField.text {
                 Logger.log("Новое значение URL: \(newValue)")
@@ -259,7 +259,7 @@ final class EditProfileViewController: UIViewController {
             }
         }
         
-        let cancelButton = UIAlertAction(title: "Отмена", style: .cancel, handler: nil)
+        let cancelButton = UIAlertAction(title: String(localizable: .errorCancel), style: .cancel, handler: nil) // "Отмена"
         
         alertController.addAction(okButton)
         alertController.addAction(cancelButton)
@@ -281,11 +281,11 @@ final class EditProfileViewController: UIViewController {
     private func showErrorAlert(message: String) {
         let buttons = [
             AlertPresenter.Button(
-                title: "OK", action: nil, style: .default, isPreferred: true)
+                title: String(localizable: .errorOk), action: nil, style: .default, isPreferred: true) // "Ok"
         ]
         AlertPresenter.presentAlert(
             on: self,
-            title: "Ошибка",
+            title: String(localizable: .errorTitle), // "Ошибка"
             message: message,
             buttons: buttons
         )

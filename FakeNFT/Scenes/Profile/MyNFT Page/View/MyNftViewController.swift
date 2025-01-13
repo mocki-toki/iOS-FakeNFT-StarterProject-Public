@@ -176,7 +176,7 @@ extension MyNftViewController: UITableViewDataSource, UITableViewDelegate {
         }
         Logger.log("Создана ячейка NFT \(nft.name)")
         cell.setText(nft.name)
-        cell.setAuthor("от \(nft.authorName)")
+        cell.setAuthor("\(String(localizable: .myNFTFrom)) \(nft.authorName)") // от
         cell.setPrice(nft.formattedPrice())
         cell.setRating(nft.rating)
         cell.backgroundColor = .yWhite
