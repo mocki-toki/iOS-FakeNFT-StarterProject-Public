@@ -42,4 +42,8 @@ final class ServicesAssembly {
     var profilePutService: ProfilePutService {
         ProfilePutServiceImpl(networkClient: networkClient)
     }
+    
+    var currenciesService: CurrenciesService {
+        CurrenciesServiceImpl(networkClient: networkClient)
+    }
 }

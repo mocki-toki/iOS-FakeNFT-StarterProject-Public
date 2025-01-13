@@ -1,56 +1,46 @@
 import Foundation
 
-enum CollectionDetailsState {
+enum NftDetailsState {
     case initial, loading
     case failed(Error)
-    case data(CollectionDetailsModel)
+    case data(NftDetailsModel)
 }
 
-enum CollectionDetailsNftListState {
-    case initial, loading
-    case failed(Error)
-    case data([CollectionDetailsTableCellModel])
-}
-
-enum CollectionDetailsNftListAdditionalState {
-    case initial, loading
-    case failed(Error)
-    case data([UUID: CollectionDetailsTableCellAdditionalModel])
-}
-
-protocol CollectionDetailsViewModel {
-    var stateDidChanged: ((CollectionDetailsState) -> Void)? { get set }
+protocol NftDetailsViewModel {
+    var stateDidChanged: ((NftDetailsState) -> Void)? { get set }
     var stateOfNftsDidChanged: ((CollectionDetailsNftListState) -> Void)? { get set }
     var stateOfNftAdditionalsDidChanged: ((CollectionDetailsNftListAdditionalState) -> Void)? {
         get set
     }
 
-    var detailsModel: CollectionDetailsModel? { get }
+    var detailsModel: NftDetailsModel? { get }
     var cellModels: [CollectionDetailsTableCellModel] { get }
     var cellAdditionalModels: [UUID: CollectionDetailsTableCellAdditionalModel] { get }
 
-    func fetchCollectionDetails()
+    func fetchNftDetails()
     func toggleLikeNft(byId id: UUID)
     func toggleCartNft(byId id: UUID)
 }
 
-final class CollectionDetailsViewModelImpl: CollectionDetailsViewModel {
-    private let input: CollectionDetailsInput
+final class NftDetailsViewModelImpl: NftDetailsViewModel {
+    private let input: NftDetailsInput
     private let nftCollectionService: NftCollectionService
     private let nftService: NftService
-
+    
     private let orderService: OrderService
     private let orderPutService: OrderPutService
 
     private let profileService: ProfileService
     private let profilePutService: ProfilePutService
-
-    private var state = CollectionDetailsState.initial {
+    
+    private let currenciesService: CurrenciesService
+    
+    private var state = NftDetailsState.initial {
         didSet {
             stateDidChanged?(state)
         }
     }
-
+    
     private var stateOfNfts: CollectionDetailsNftListState = .initial {
         didSet {
             stateOfNftsDidChanged?(stateOfNfts)
@@ -62,19 +52,19 @@ final class CollectionDetailsViewModelImpl: CollectionDetailsViewModel {
             stateOfNftAdditionalsDidChanged?(stateOfNftAdditionals)
         }
     }
-
-    var stateDidChanged: ((CollectionDetailsState) -> Void)?
+    
+    var stateDidChanged: ((NftDetailsState) -> Void)?
     var stateOfNftsDidChanged: ((CollectionDetailsNftListState) -> Void)?
     var stateOfNftAdditionalsDidChanged: ((CollectionDetailsNftListAdditionalState) -> Void)?
-
-    var detailsModel: CollectionDetailsModel? {
+    
+    var detailsModel: NftDetailsModel? {
         if case .data(let model) = state {
             return model
         } else {
             return nil
         }
     }
-
+    
     var cellModels: [CollectionDetailsTableCellModel] {
         if case .data(let models) = stateOfNfts {
             return models
@@ -90,15 +80,16 @@ final class CollectionDetailsViewModelImpl: CollectionDetailsViewModel {
             return [:]
         }
     }
-
+    
     init(
-        input: CollectionDetailsInput,
+        input: NftDetailsInput,
         nftCollectionService: NftCollectionService,
         nftService: NftService,
         orderService: OrderService,
         orderPutService: OrderPutService,
         profileService: ProfileService,
-        profilePutService: ProfilePutService
+        profilePutService: ProfilePutService,
+        currenciesService: CurrenciesService
     ) {
         self.input = input
         self.nftCollectionService = nftCollectionService
@@ -107,29 +98,57 @@ final class CollectionDetailsViewModelImpl: CollectionDetailsViewModel {
         self.orderPutService = orderPutService
         self.profileService = profileService
         self.profilePutService = profilePutService
+        self.currenciesService = currenciesService
     }
-
-    func fetchCollectionDetails() {
+    
+    func fetchNftDetails() {
         state = .loading
-        nftCollectionService.loadCollectionById(id: input.id) { [weak self] result in
+        nftService.loadNft(id: input.nftId) { [weak self] result in
             switch result {
-            case .success(let collectionDetails):
-                self?.state = .data(
-                    CollectionDetailsModel(
-                        id: collectionDetails.id,
-                        coverUrl: collectionDetails.cover,
-                        name: collectionDetails.name,
-                        author: collectionDetails.author,
-                        authorSiteUrl: nil,
-                        description: collectionDetails.description))
-                self?.fetchNfts(for: collectionDetails.nfts)
-                self?.fetchNftAdditionals()
+            case .success(let nftModel):
+                guard let self = self else { return }
+                nftCollectionService.loadCollectionById(id: self.input.collectionId) { [weak self] result in
+                    switch result {
+                    case .success(let collectionModel):
+                        guard let self = self else { return }
+                        currenciesService.fetchCurrencies { [weak self] result in
+                            switch result {
+                            case .success(let currencies):
+                                self?.state = .data(
+                                    NftDetailsModel(
+                                        id: nftModel.id,
+                                        images: nftModel.images,
+                                        name: nftModel.name,
+                                        rating: nftModel.rating,
+                                        collectionName: collectionModel.name,
+                                        price: nftModel.price,
+                                        authorSiteUrl: nftModel.author,
+                                        currencies: currencies.map {
+                                            NftDetailsCurrencyModel(
+                                                id: $0.id,
+                                                imageUrl: $0.image,
+                                                name: $0.name,
+                                                title: $0.title)
+                                        }
+                                    )
+                                )
+                                
+                                self?.fetchNfts(for: collectionModel.nfts)
+                                self?.fetchNftAdditionals()
+                            case .failure(let error):
+                                self?.state = .failed(error)
+                            }
+                        }
+                    case .failure(let error):
+                        self?.state = .failed(error)
+                    }
+                }
             case .failure(let error):
                 self?.state = .failed(error)
             }
         }
     }
-
+    
     private func fetchNfts(for nftIds: [UUID]) {
         stateOfNfts = .loading
         var nfts: [Nft] = []
@@ -159,7 +178,7 @@ final class CollectionDetailsViewModelImpl: CollectionDetailsViewModel {
                         nfts.map {
                             CollectionDetailsTableCellModel(
                                 id: $0.id,
-                                collectionId: self.input.id,
+                                collectionId: self.input.collectionId,
                                 coverUrl: $0.images.first ?? URL(string: "")!,
                                 rating: $0.rating,
                                 name: $0.name,
@@ -167,19 +186,6 @@ final class CollectionDetailsViewModelImpl: CollectionDetailsViewModel {
                             )
                         }
                     )
-
-                    if let authorSiteUrl = nfts.first?.author, let detailsModel = self.detailsModel {
-                        self.state = .data(
-                            CollectionDetailsModel(
-                                id: detailsModel.id,
-                                coverUrl: detailsModel.coverUrl,
-                                name: detailsModel.name,
-                                author: detailsModel.author,
-                                authorSiteUrl: authorSiteUrl,
-                                description: detailsModel.description
-                            )
-                        )
-                    }
                 }
             })
     }

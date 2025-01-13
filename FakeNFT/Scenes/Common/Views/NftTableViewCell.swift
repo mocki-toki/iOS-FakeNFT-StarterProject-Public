@@ -1,6 +1,6 @@
 import UIKit
 
-final class NftTableViewCell: UITableViewCell {
+final class NftTableViewCell: UITableViewCell, ReuseIdentifying {
     // MARK: - Properties
     private let baseCell = NftBaseCell()
 

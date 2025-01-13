@@ -8,6 +8,12 @@ final class LikeButton: UIButton {
             updateAppearance()
         }
     }
+    
+    private var defaultColor: UIColor = .yWhite {
+        didSet {
+            updateAppearance()
+        }
+    }
 
     // MARK: - Lifecycle
 
@@ -28,6 +34,10 @@ final class LikeButton: UIButton {
     func setLike(_ isLiked: Bool) {
         self.isLiked = isLiked
     }
+    
+    func setDefaultColor(_ color: UIColor) {
+        self.defaultColor = color
+    }
 
     // MARK: - Private methods
 
@@ -37,6 +47,6 @@ final class LikeButton: UIButton {
     }
 
     private func updateAppearance() {
-        setImage(isLiked ? .favoriteActive : .favoriteInactive, for: .normal)
+        setImage(isLiked ? .favoriteActive : .favoriteInactive.withTintColor(defaultColor), for: .normal)
     }
 }
