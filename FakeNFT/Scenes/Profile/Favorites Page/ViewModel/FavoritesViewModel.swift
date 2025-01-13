@@ -2,20 +2,20 @@ import UIKit
 import Kingfisher
 
 protocol FavouritesViewModelProtocol {
-    var favouritesNfts: [Nft] { get set }
+    var favouritesNfts: [ProfileNft] { get set }
     var onLoadingStatusChanged: ((Bool) -> Void)? { get set }
     var onFavouritesNFTsUpdated: (() -> Void)? { get set }
     var onError: ((String) -> Void)? { get set }
     
     func loadFavouritesNFTs()
     func unlikeNFT(at index: Int)
-    func getFavouriteNFT(at index: Int) -> Nft?
+    func getFavouriteNFT(at index: Int) -> ProfileNft?
     func numberOfFavouritesNFTs() -> Int
 }
 
 final class FavouritesViewModel: FavouritesViewModelProtocol {
     // MARK: - Public Properties
-    var favouritesNfts: [Nft] = [] {
+    var favouritesNfts: [ProfileNft] = [] {
         didSet {
             Logger.log("onFavouritesNFTsUpdated вызван")
             onFavouritesNFTsUpdated?()
@@ -94,7 +94,7 @@ final class FavouritesViewModel: FavouritesViewModelProtocol {
         }
     }
     
-    func getFavouriteNFT(at index: Int) -> Nft? {
+    func getFavouriteNFT(at index: Int) -> ProfileNft? {
         guard index >= 0 && index < favouritesNfts.count else { return nil }
         return favouritesNfts[index]
     }

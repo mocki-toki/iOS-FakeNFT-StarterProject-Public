@@ -5,11 +5,11 @@ protocol MyNFTViewModelProtocol {
     var onNFTsUpdated: (() -> Void)? { get set }
     
     var onLoadingStatusChanged: ((Bool) -> Void)? { get set }
-    var nfts: [Nft] { get set}
+    var nfts: [ProfileNft] { get set}
     func loadNFTs()
     func numberOfNFTs() -> Int
-    func getNFT(at index: Int) -> Nft?
-    func loadImage(for nft: Nft, completion: @escaping (UIImage?) -> Void)
+    func getNFT(at index: Int) -> ProfileNft?
+    func loadImage(for nft: ProfileNft, completion: @escaping (UIImage?) -> Void)
     
     // MARK: - Sorting Methods
     
@@ -21,8 +21,8 @@ protocol MyNFTViewModelProtocol {
     func applySavedSort()
     
     // MARK: - Like Method
-    func toggleLike(for nft: Nft)
-    func isLiked(nft: Nft) -> Bool
+    func toggleLike(for nft: ProfileNft)
+    func isLiked(nft: ProfileNft) -> Bool
     func loadLikedNFTs(completion: @escaping () -> Void)
     func loadData()
 }

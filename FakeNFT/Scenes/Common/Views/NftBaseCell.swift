@@ -145,6 +145,10 @@ final class NftBaseCell: UIView {
     func setInCart(_ isInCart: Bool) {
         self.isInCart = isInCart
     }
+    
+    func setPriceCaption(_ caption: String) {
+        self.priceCaptionLabel.text = caption
+    }
 
     // MARK: - Private methods
 
@@ -281,48 +285,51 @@ final class NftBaseCell: UIView {
 
     private func setupCartView() {
         priceLabel.font = .bold17
-        cartButton.setInCart(isInCart)
-
-        [imgView, likeButton, ratingView, nameLabel, priceCaptionLabel, priceLabel, cartButton]
-            .forEach {
-              addSubview($0)
-            }
-
-        imgView.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-            make.leading.equalToSuperview()
-            make.bottom.equalToSuperview()
-            make.width.equalTo(self.snp.height)
+        cartButton.setInCart(true)
+        
+        addSubview(containerView)
+        containerView.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(16)
         }
-
+        
+        [imgView, ratingView, nameLabel, priceCaptionLabel, priceLabel, cartButton]
+            .forEach {
+                containerView.addSubview($0)
+            }
+        
+        imgView.snp.makeConstraints { make in
+            make.top.leading.bottom.equalToSuperview()
+            make.width.equalTo(containerView.snp.height)
+        }
+        
         nameLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(8)
             make.leading.equalTo(imgView.snp.trailing).offset(20)
             make.trailing.equalTo(cartButton.snp.leading).offset(-16)
         }
-
+        
         ratingView.snp.makeConstraints { make in
             make.top.equalTo(nameLabel.snp.bottom).offset(4)
             make.leading.equalTo(nameLabel)
         }
-
+        
         priceCaptionLabel.snp.makeConstraints { make in
             make.top.equalTo(ratingView.snp.bottom).offset(12)
             make.leading.equalTo(nameLabel)
         }
-
+        
         priceLabel.snp.makeConstraints { make in
             make.top.equalTo(priceCaptionLabel.snp.bottom).offset(2)
             make.leading.equalTo(nameLabel)
         }
-
+        
         cartButton.snp.makeConstraints { make in
             make.size.equalTo(CGSize(width: 18, height: 18))
             make.centerY.equalToSuperview()
             make.trailing.equalToSuperview().offset(-12)
         }
     }
-
+    
     private func setupCollectionView() {
         cartButton.setInCart(isInCart)
 

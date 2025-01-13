@@ -2,7 +2,7 @@ import UIKit
 
 protocol FavouritesServiceProtocol {
     func downloadProfile(completion: @escaping (Result<Profile, Error>) -> Void)
-    func fetchFavourites(completion: @escaping (Result<[Nft], Error>) -> Void)
+    func fetchFavourites(completion: @escaping (Result<[ProfileNft], Error>) -> Void)
     func likeNFT(nftID: String,
                  completion: @escaping (Result<Bool, Error>) -> Void)
     func unlikeNFT(nftID: String,
@@ -36,7 +36,7 @@ final class FavouritesService: FavouritesServiceProtocol {
         }
     }
     
-    func fetchFavourites(completion: @escaping (Result<[Nft], Error>) -> Void) {
+    func fetchFavourites(completion: @escaping (Result<[ProfileNft], Error>) -> Void) {
         let userProfileRequest = FavouritesRequest()
         client.send(request: userProfileRequest, type: Profile.self) { [weak self] result in
             switch result {
@@ -96,7 +96,6 @@ final class FavouritesService: FavouritesServiceProtocol {
         }
     }
     
-    
     // MARK: - Private Methods
     private func updateProfileLikes(_ likes: [String], completion: @escaping (Result<Bool, Error>) -> Void) {
         guard let profile = profile else {
@@ -129,14 +128,14 @@ final class FavouritesService: FavouritesServiceProtocol {
         }
     }
     
-    private func fetchFavouriteNftInfo(ids: [String], completion: @escaping (Result<[Nft], Error>) -> Void) {
-        var nfts: [Nft] = []
+    private func fetchFavouriteNftInfo(ids: [String], completion: @escaping (Result<[ProfileNft], Error>) -> Void) {
+        var nfts: [ProfileNft] = []
         let dispatchGroup = DispatchGroup()
         
         for id in ids {
             dispatchGroup.enter()
-            let request = NFTRequest(id: id)
-            client.send(request: request, type: Nft.self) { result in
+            let request = FavoritesNFTIDRequest(id: id)
+            client.send(request: request, type: ProfileNft.self) { result in
                 switch result {
                 case .success(let nft):
                     nfts.append(nft)

@@ -99,7 +99,7 @@ final class ProfileViewModel: ProfileViewViewModelType {
                 title: String(localizable: .profileLinksDeveloper),
                 count: nil,
                 destinationProvider: {
-                    WebViewController(viewModel: WebViewModel(urlString: "practicum.yandex.ru"))
+                    ProfileWebViewController(viewModel: ProfileWebViewModel(urlString: "practicum.yandex.ru"))
                 }
             )
         ]

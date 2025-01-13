@@ -1,7 +1,7 @@
 import UIKit
 
 protocol MyNFTServiceProtocol {
-    func fetchMyNFTs(completion: @escaping (Result<[Nft], Error>) -> Void)
+    func fetchMyNFTs(completion: @escaping (Result<[ProfileNft], Error>) -> Void)
 }
 
 final class MyNFTService: MyNFTServiceProtocol {
@@ -14,7 +14,7 @@ final class MyNFTService: MyNFTServiceProtocol {
     }
     
     // MARK: - Public Properties
-    func fetchMyNFTs(completion: @escaping (Result<[Nft], Error>) -> Void) {
+    func fetchMyNFTs(completion: @escaping (Result<[ProfileNft], Error>) -> Void) {
         fetchNftsIDs { [weak self] result in
             switch result {
             case .success(let nftsInMyProfile):
@@ -53,16 +53,16 @@ final class MyNFTService: MyNFTServiceProtocol {
     
     private func fetchMyNFTs(
         nftsInMyProfile: MyNFTModel,
-        _ completion: @escaping (Result<[Nft], Error>) -> Void
+        _ completion: @escaping (Result<[ProfileNft], Error>) -> Void
     ) {
-        var nftItems: [Nft] = []
+        var nftItems: [ProfileNft] = []
         let dispatchGroup = DispatchGroup()
         
         let nfts: [String] = nftsInMyProfile.nfts
         
         for item in nfts {
             dispatchGroup.enter()
-            client.send(request: MyNftRequest(id: item), type: Nft.self) { result in
+            client.send(request: MyNftRequest(id: item), type: ProfileNft.self) { result in
                 switch result {
                 case .success(let nftItem):
                     nftItems.append(nftItem)

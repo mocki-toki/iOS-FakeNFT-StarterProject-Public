@@ -25,7 +25,7 @@ final class MyNFTViewModel: MyNFTViewModelProtocol {
     
     var onNFTsUpdated: (() -> Void)?
     var onLoadingStatusChanged: ((Bool) -> Void)?
-    var nfts: [Nft] = [] {
+    var nfts: [ProfileNft] = [] {
         didSet {
             onNFTsUpdated?()
         }
@@ -111,7 +111,7 @@ final class MyNFTViewModel: MyNFTViewModelProtocol {
         }
     }
     
-    func toggleLike(for nft: Nft) {
+    func toggleLike(for nft: ProfileNft) {
         guard profileLoaded else {
             Logger.log("Профиль не загружен, не могу изменить лайк для NFT", level: .error)
             return
@@ -144,16 +144,16 @@ final class MyNFTViewModel: MyNFTViewModelProtocol {
         }
     }
 
-    func isLiked(nft: Nft) -> Bool {
+    func isLiked(nft: ProfileNft) -> Bool {
         return likedNFTs.contains(nft.id)
     }
     
-    func getNFT(at index: Int) -> Nft? {
+    func getNFT(at index: Int) -> ProfileNft? {
         guard index >= 0 && index < nfts.count else { return nil }
         return nfts[index]
     }
     
-    func loadImage(for nft: Nft, completion: @escaping (UIImage?) -> Void) {
+    func loadImage(for nft: ProfileNft, completion: @escaping (UIImage?) -> Void) {
         guard let url = nft.imageUrl() else {
             completion(nil)
             return

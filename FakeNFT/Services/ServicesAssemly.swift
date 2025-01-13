@@ -20,4 +20,23 @@ final class ServicesAssembly {
     lazy var profileNetworkService: ProfileNetworkService = {
         ProfileNetworkService(networkClient: networkClient)
     }()
+    
+    var userService: UserService {
+        UserServiceImpl(networkClient: networkClient)
+    }
+    
+    var currenciesService: CurrenciesService {
+        CurrenciesServiceImpl(
+            networkClient: networkClient
+        )
+    }
+    
+    var orderService: OrderService {
+        OrderServiceImpl(networkClient: networkClient)
+    }
+    
+    var orderPutService: OrderPutService {
+        OrderPutServiceImpl(networkClient: networkClient)
+    }
 }
+

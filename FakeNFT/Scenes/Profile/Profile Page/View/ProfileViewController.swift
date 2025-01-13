@@ -230,8 +230,8 @@ final class ProfileViewController: UIViewController {
         guard let viewModel = viewModel,
               let website = viewModel.userProfile?.website else { return }
         
-        let webViewModel = WebViewModel(urlString: website)
-        let webViewController = WebViewController(viewModel: webViewModel)
+        let webViewModel = ProfileWebViewModel(urlString: website)
+        let webViewController = ProfileWebViewController(viewModel: webViewModel)
         navigationController?.pushViewController(webViewController, animated: true)
     }
 }
