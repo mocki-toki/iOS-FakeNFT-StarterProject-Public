@@ -1,8 +1,11 @@
 import Foundation
 
 typealias NftCompletion = (Result<Nft, Error>) -> Void
+typealias NftsCompletion = (Result<[Nft], Error>) -> Void
 
 protocol NftService {
+    func loadUserNfts(id: String, completion: @escaping NftsCompletion)
+    func loadUserDetails(userId: String, completion: @escaping UserDetailsCompletion)
     func loadNft(id: UUID, completion: @escaping NftCompletion)
     func loadNfts(ids: [UUID], completion: @escaping (Result<[CartItem], Error>) -> Void)
 }
@@ -42,6 +45,24 @@ final class NftServiceImpl: NftService {
         }
     }
     
+    func loadUserNfts(id: String, completion: @escaping NftsCompletion) {
+        let request = UserNftsRequest(nftIds: [id])
+        networkClient.send(request: request, type: [Nft].self, completionQueue: .main) { result in
+            completion(result)
+        }
+    }
+    
+    func loadUserDetails(userId: String, completion: @escaping UserDetailsCompletion) {
+        let request = UserRequest(userId: userId)
+        networkClient.send(request: request, type: Users.self, completionQueue: .main) { result in
+            switch result {
+            case .success(let user):
+                completion(.success(user))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
     func loadNfts(ids: [UUID], completion: @escaping (Result<[CartItem], Error>) -> Void) {
         let dispatchGroup = DispatchGroup()
         var cartItems: [CartItem] = []
