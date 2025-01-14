@@ -42,7 +42,9 @@ final class UserCollectionViewModel {
         nftIds.forEach { nftId in
             guard let uuid = UUID(uuidString: nftId) else {
                 Logger.log("Invalid UUID string: \(nftId)", level: .error)
-                errors.append(NSError(domain: "Invalid UUID", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid UUID: \(nftId)"]))
+                errors.append(NSError(domain: "Invalid UUID",
+                                      code: 0,
+                                      userInfo: [NSLocalizedDescriptionKey: "Invalid UUID: \(nftId)"]))
                 return
             }
             
@@ -73,7 +75,6 @@ final class UserCollectionViewModel {
             }
         }
     }
-    
     
     func getNfts() -> [Nft] {
         return nfts

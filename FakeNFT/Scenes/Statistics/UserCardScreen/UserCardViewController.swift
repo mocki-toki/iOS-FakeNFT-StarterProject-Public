@@ -119,8 +119,6 @@ final class UserCardViewController: UIViewController {
         }
     }
     
-    
-    
     // MARK: - UI Setup
     private func setupUI() {
         setupNavigationBar()

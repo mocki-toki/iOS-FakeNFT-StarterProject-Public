@@ -12,7 +12,7 @@ struct OrderDto: Dto {
     let nftIds: [UUID]?
     
     enum CodingKeys: String, CodingKey {
-        case nfts = "nfts"
+        case nfts
     }
     
     func asDictionary() -> [String: String] {

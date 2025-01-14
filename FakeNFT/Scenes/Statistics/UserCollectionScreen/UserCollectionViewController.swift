@@ -74,7 +74,7 @@ final class UserCollectionViewController: UIViewController {
         
         collectionView.showsVerticalScrollIndicator = true
         collectionView.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: -15)
-
+        
         view.addSubview(collectionView)
         collectionView.snp.makeConstraints { make in
             make.top.equalTo(108)
@@ -142,7 +142,10 @@ extension UserCollectionViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: StatisticsCollectionViewCell.identifier, for: indexPath) as? StatisticsCollectionViewCell else {
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: StatisticsCollectionViewCell.identifier,
+            for: indexPath
+        ) as? StatisticsCollectionViewCell else {
             fatalError("Unable to dequeue StatisticsCollectionViewCell")
         }
         
@@ -154,7 +157,9 @@ extension UserCollectionViewController: UICollectionViewDataSource {
 
 // MARK: - CollectionView DelegateFlowLayout
 extension UserCollectionViewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width: CGFloat = 108
         let height: CGFloat = 192
         return CGSize(width: width, height: height)
