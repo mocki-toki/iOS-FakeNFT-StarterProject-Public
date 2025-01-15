@@ -114,6 +114,7 @@ final class NftDetailsViewModelImpl: NftDetailsViewModel {
                         currenciesService.fetchCurrencies { [weak self] result in
                             switch result {
                             case .success(let currencies):
+                                guard let author = URL(string: nftModel.author) else { return }
                                 self?.state = .data(
                                     NftDetailsModel(
                                         id: nftModel.id,
@@ -122,7 +123,7 @@ final class NftDetailsViewModelImpl: NftDetailsViewModel {
                                         rating: nftModel.rating,
                                         collectionName: collectionModel.name,
                                         price: nftModel.price,
-                                        authorSiteUrl: nftModel.author,
+                                        authorSiteUrl: author,
                                         currencies: currencies.map {
                                             NftDetailsCurrencyModel(
                                                 id: $0.id,
@@ -179,7 +180,7 @@ final class NftDetailsViewModelImpl: NftDetailsViewModel {
                             CollectionDetailsTableCellModel(
                                 id: $0.id,
                                 collectionId: self.input.collectionId,
-                                coverUrl: $0.images.first ?? URL(string: "")!,
+                                coverUrl: $0.images.first ?? "",
                                 rating: $0.rating,
                                 name: $0.name,
                                 price: $0.price
@@ -211,8 +212,8 @@ final class NftDetailsViewModelImpl: NftDetailsViewModel {
 
         orderService.loadOrder { result in
             switch result {
-            case .success(let order):
-                nftsInCart = order.nfts.map { $0 }
+            case .success(let nfts):
+                nftsInCart = nfts.map { $0 }
 
                 self.profileService.loadProfile { result in
                     switch result {
@@ -306,9 +307,9 @@ final class NftDetailsViewModelImpl: NftDetailsViewModel {
         stateOfNftAdditionals = .loading
         orderService.loadOrder { result in
             switch result {
-            case .success(let order):
-                if order.nfts.contains(id) {
-                    self.orderPutService.sendOrderPutRequest(nftIds: order.nfts.filter { $0 != id })
+            case .success(let nfts):
+                if nfts.contains(id) {
+                    self.orderPutService.sendOrderPutRequest(nftIds: nfts.filter { $0 != id })
                     {
                         result in
                         switch result {
@@ -329,7 +330,7 @@ final class NftDetailsViewModelImpl: NftDetailsViewModel {
                         }
                     }
                 } else {
-                    self.orderPutService.sendOrderPutRequest(nftIds: order.nfts + [id]) { result in
+                    self.orderPutService.sendOrderPutRequest(nftIds: nfts + [id]) { result in
                         switch result {
                         case .success(let order):
                             let isInCart = order.nfts.contains(id)

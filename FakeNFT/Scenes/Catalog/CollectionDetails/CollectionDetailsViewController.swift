@@ -349,7 +349,10 @@ extension CollectionDetailsViewController: UICollectionViewDataSource {
             }
         )
 
-        cell.setImage(nft.coverUrl)
+            if let url = URL(string: nft.coverUrl) {
+                
+            cell.setImage(url)
+            }
 
         cell.setRating(nft.rating)
         cell.setPrice("\(nft.price) ETH")

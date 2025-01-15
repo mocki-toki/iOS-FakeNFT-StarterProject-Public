@@ -160,7 +160,7 @@ final class CollectionDetailsViewModelImpl: CollectionDetailsViewModel {
                             CollectionDetailsTableCellModel(
                                 id: $0.id,
                                 collectionId: self.input.id,
-                                coverUrl: $0.images.first ?? URL(string: "")!,
+                                coverUrl: $0.images.first ?? "",
                                 rating: $0.rating,
                                 name: $0.name,
                                 price: $0.price
@@ -168,7 +168,7 @@ final class CollectionDetailsViewModelImpl: CollectionDetailsViewModel {
                         }
                     )
 
-                    if let authorSiteUrl = nfts.first?.author, let detailsModel = self.detailsModel {
+                    if let authorSiteUrl = URL(string: nfts.first?.author ?? ""), let detailsModel = self.detailsModel {
                         self.state = .data(
                             CollectionDetailsModel(
                                 id: detailsModel.id,
@@ -205,8 +205,8 @@ final class CollectionDetailsViewModelImpl: CollectionDetailsViewModel {
 
         orderService.loadOrder { result in
             switch result {
-            case .success(let order):
-                nftsInCart = order.nfts.map { $0 }
+            case .success(let nfts):
+                nftsInCart = nfts.map { $0 }
 
                 self.profileService.loadProfile { result in
                     switch result {
@@ -300,9 +300,9 @@ final class CollectionDetailsViewModelImpl: CollectionDetailsViewModel {
         stateOfNftAdditionals = .loading
         orderService.loadOrder { result in
             switch result {
-            case .success(let order):
-                if order.nfts.contains(id) {
-                    self.orderPutService.sendOrderPutRequest(nftIds: order.nfts.filter { $0 != id })
+            case .success(let nfts):
+                if nfts.contains(id) {
+                    self.orderPutService.sendOrderPutRequest(nftIds: nfts.filter { $0 != id })
                     {
                         result in
                         switch result {
@@ -323,7 +323,7 @@ final class CollectionDetailsViewModelImpl: CollectionDetailsViewModel {
                         }
                     }
                 } else {
-                    self.orderPutService.sendOrderPutRequest(nftIds: order.nfts + [id]) { result in
+                    self.orderPutService.sendOrderPutRequest(nftIds: nfts + [id]) { result in
                         switch result {
                         case .success(let order):
                             let isInCart = order.nfts.contains(id)

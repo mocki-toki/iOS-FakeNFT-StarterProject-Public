@@ -9,7 +9,7 @@ protocol NftDetailsView: AnyObject, ErrorView, LoadingView {
 final class NftDetailsViewController: UIViewController, UIScrollViewDelegate {
     // MARK: - Properties
     
-    private let viewModel: NftDetailsViewModel
+    private var viewModel: NftDetailsViewModel
     private let detailsAssembly: NftDetailsAssembly
     
     private lazy var scrollView = UIScrollView().then {
@@ -161,7 +161,7 @@ final class NftDetailsViewController: UIViewController, UIScrollViewDelegate {
         }
         
         likeButton.snp.makeConstraints { make in
-            make.width.height.equalTo(21)
+            make.width.height.equalTo(38)
         }
         
         imagesScrollView.snp.makeConstraints { make in
@@ -397,7 +397,7 @@ extension NftDetailsViewController: NftDetailsView {
         currenciesCollectionView.reloadData()
     }
     
-    private func configureImagesScrollView(with images: [URL]) {
+    private func configureImagesScrollView(with images: [String]) {
         imagesScrollView.subviews.forEach { $0.removeFromSuperview() }
         
         let scrollViewWidth = imagesScrollView.bounds.width
@@ -413,7 +413,10 @@ extension NftDetailsViewController: NftDetailsView {
             imageView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
             imageView.layer.masksToBounds = true
             
-            imageView.kf.setImage(with: imageUrl)
+            if let imageUrl = URL(string: imageUrl) {
+                
+                imageView.kf.setImage(with: imageUrl)
+            }
             
             imageView.frame = CGRect(x: xPosition,
                                      y: 0,
@@ -477,7 +480,9 @@ extension NftDetailsViewController: UICollectionViewDataSource, UICollectionView
                 }
             )
 
-            cell.setImage(nft.coverUrl)
+            if let nftImageUrl = URL(string:nft.coverUrl) {
+                cell.setImage(nftImageUrl)
+            }
 
             cell.setRating(nft.rating)
             cell.setPrice("\(nft.price) ETH")

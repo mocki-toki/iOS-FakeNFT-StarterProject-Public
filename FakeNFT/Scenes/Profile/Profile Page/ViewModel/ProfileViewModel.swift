@@ -12,8 +12,8 @@ protocol ProfileViewViewModelType {
     
     // MARK: - Public Methods
     func loadData()
-    func updateMyNftCount(_ count: [String])
-    func updateFavoriteNftCount(_ count: [String])
+    func updateMyNftCount(_ count: [UUID])
+    func updateFavoriteNftCount(_ count: [UUID])
 }
 
 final class ProfileViewModel: ProfileViewViewModelType {
@@ -60,11 +60,11 @@ final class ProfileViewModel: ProfileViewViewModelType {
         }
     }
     
-    func updateMyNftCount(_ count: [String]) {
+    func updateMyNftCount(_ count: [UUID]) {
         userProfile = userProfile.map { $0.updateMyNftCount(count) }
     }
 
-    func updateFavoriteNftCount(_ count: [String]) {
+    func updateFavoriteNftCount(_ count: [UUID]) {
         userProfile = userProfile.map { $0.updateFavoriteNftCount(count) }
     }
     

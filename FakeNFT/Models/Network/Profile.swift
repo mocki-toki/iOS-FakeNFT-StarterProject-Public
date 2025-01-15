@@ -2,11 +2,11 @@ import Foundation
 
 struct Profile: Codable, Equatable {
     var name: String
-    var avatar: URL
+    var avatar: String
     var description: String
     var website: String
-    var nfts: [String]
-    var likes: [String]
+    var nfts: [UUID]
+    var likes: [UUID]
     let id: String
     
     enum CodingKeys: String, CodingKey {
@@ -67,7 +67,7 @@ struct Profile: Codable, Equatable {
         )
     }
     
-    func updateMyNftCount(_ count: [String]) -> Profile {
+    func updateMyNftCount(_ count: [UUID]) -> Profile {
         Profile(
             name: self.name,
             avatar: self.avatar,
@@ -79,7 +79,7 @@ struct Profile: Codable, Equatable {
         )
     }
     
-    func updateFavoriteNftCount(_ count: [String]) -> Profile {
+    func updateFavoriteNftCount(_ count: [UUID]) -> Profile {
         Profile(
             name: self.name,
             avatar: self.avatar,

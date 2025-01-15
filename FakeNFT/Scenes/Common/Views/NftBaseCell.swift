@@ -344,9 +344,9 @@ final class NftBaseCell: UIView {
         }
 
         likeButton.snp.makeConstraints { make in
-            make.trailing.equalTo(imgView.snp.trailing).offset(-10)
-            make.top.equalTo(imgView.snp.top).offset(10)
-            make.size.equalTo(CGSize(width: 21, height: 21))
+            make.trailing.equalTo(imgView.snp.trailing)
+            make.top.equalTo(imgView.snp.top)
+            make.size.equalTo(CGSize(width: 38, height: 38))
         }
 
         ratingView.snp.makeConstraints { make in

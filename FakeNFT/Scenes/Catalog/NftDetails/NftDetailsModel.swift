@@ -2,7 +2,7 @@ import Foundation
 
 struct NftDetailsModel {
     let id: UUID
-    let images: [URL]
+    let images: [String]
     let name: String
     let rating: Int
     let collectionName: String

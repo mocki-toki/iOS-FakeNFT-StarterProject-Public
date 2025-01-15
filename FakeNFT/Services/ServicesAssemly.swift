@@ -31,8 +31,14 @@ final class ServicesAssembly {
         UserServiceImpl(networkClient: networkClient)
     }
     
-    var currenciesService: CurrenciesService {
-        CurrenciesServiceImpl(
+    var profileService: ProfileService {
+        ProfileServiceImpl(
+            networkClient: networkClient
+        )
+    }
+    
+    var profilePutService: ProfilePutService {
+        ProfilePutServiceImpl(
             networkClient: networkClient
         )
     }
@@ -48,8 +54,7 @@ final class ServicesAssembly {
     var nftCollectionService: NftCollectionService {
         NftCollectionServiceImpl(
             networkClient: networkClient,
-            storage: nftCollectionStorage
+            storage: nftCollectionStorage)
     }
-        )
 }
 

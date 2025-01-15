@@ -8,7 +8,7 @@ struct ProfileNft: Decodable {
     var description: String
     var price: Float
     var author: String
-    let id: String
+    let id: UUID
     
     var authorName: String {
         URL(string: author)?.host?.split(separator: ".").first.map(String.init) ?? "John Doe"

@@ -1,9 +1,9 @@
 import Foundation
 
 struct FavoritesNFTIDRequest: NetworkRequest {
-    let id: String
+    let id: UUID
     var endpoint: URL? {
-        URL(string: "\(RequestConstants.baseURL)/api/v1/nft/\(id)")
+        URL(string: "\(RequestConstants.baseURL)/api/v1/nft/\(id.uuidString.lowercased())")
     }
     var dto: Dto?
 }

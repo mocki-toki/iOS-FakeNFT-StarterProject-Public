@@ -62,7 +62,7 @@ final class PaymentSelectionViewModel {
                     PaymentMethod(
                         title: currency.title,
                         name: currency.name,
-                        imageUrl: URL(string: currency.image),
+                        imageUrl:  currency.image,
                         id: currency.id
                     )
                 }

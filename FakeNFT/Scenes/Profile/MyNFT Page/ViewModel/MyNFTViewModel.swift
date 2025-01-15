@@ -31,7 +31,7 @@ final class MyNFTViewModel: MyNFTViewModelProtocol {
         }
     }
     
-    private var likedNFTs: [String] = []
+    private var likedNFTs: [UUID] = []
     private var profileLoaded: Bool = false
     private var isLikedNFTsLoaded = false
     
