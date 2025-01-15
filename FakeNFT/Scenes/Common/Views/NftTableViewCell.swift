@@ -1,6 +1,6 @@
 import UIKit
 
-final class NftTableViewCell: UITableViewCell {
+final class NftTableViewCell: UITableViewCell, ReuseIdentifying {
     // MARK: - Properties
     private let baseCell = NftBaseCell()
 
@@ -39,7 +39,7 @@ final class NftTableViewCell: UITableViewCell {
     func setImage(_ url: URL) {
         baseCell.setImage(url)
     }
-    
+
     func setAuthor(_ author: String) {
         baseCell.setAuthor(author)
     }

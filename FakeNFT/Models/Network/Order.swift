@@ -1,6 +1,6 @@
 import Foundation
 
 struct Order: Codable {
-    var nfts: [UUID]
-    var id: UUID
+    let nfts: [UUID]
+    let id: UUID
 }

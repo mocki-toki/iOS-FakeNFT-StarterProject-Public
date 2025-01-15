@@ -3,9 +3,9 @@ import UIKit
 protocol FavouritesServiceProtocol {
     func downloadProfile(completion: @escaping (Result<Profile, Error>) -> Void)
     func fetchFavourites(completion: @escaping (Result<[ProfileNft], Error>) -> Void)
-    func likeNFT(nftID: String,
+    func likeNFT(nftID: UUID,
                  completion: @escaping (Result<Bool, Error>) -> Void)
-    func unlikeNFT(nftID: String,
+    func unlikeNFT(nftID: UUID,
                    completion: @escaping (Result<Bool, Error>) -> Void)
 }
 
@@ -49,7 +49,7 @@ final class FavouritesService: FavouritesServiceProtocol {
     }
     
     // Метод для добавления NFT в избранное
-    func likeNFT(nftID: String, completion: @escaping (Result<Bool, Error>) -> Void) {
+    func likeNFT(nftID: UUID, completion: @escaping (Result<Bool, Error>) -> Void) {
         guard var profile = profile else {
             completion(.failure(NSError(domain: "Profile not found", code: 404, userInfo: nil)))
             return
@@ -73,7 +73,7 @@ final class FavouritesService: FavouritesServiceProtocol {
     }
     
     // Метод для удаления NFT из избранного
-    func unlikeNFT(nftID: String, completion: @escaping (Result<Bool, Error>) -> Void) {
+    func unlikeNFT(nftID: UUID, completion: @escaping (Result<Bool, Error>) -> Void) {
         guard var profile = profile else {
             completion(.failure(NSError(domain: "Profile not found", code: 404, userInfo: nil)))
             return
@@ -97,12 +97,12 @@ final class FavouritesService: FavouritesServiceProtocol {
     }
     
     // MARK: - Private Methods
-    private func updateProfileLikes(_ likes: [String], completion: @escaping (Result<Bool, Error>) -> Void) {
+    private func updateProfileLikes(_ likes: [UUID], completion: @escaping (Result<Bool, Error>) -> Void) {
         guard let profile = profile else {
             return
         }
         
-        var encodedLikes = likes.joined(separator: ",")
+        var encodedLikes = likes.map{ $0.uuidString.lowercased() }.joined(separator: ",")
         if encodedLikes.isEmpty {
             encodedLikes = "null"
         }
@@ -128,7 +128,7 @@ final class FavouritesService: FavouritesServiceProtocol {
         }
     }
     
-    private func fetchFavouriteNftInfo(ids: [String], completion: @escaping (Result<[ProfileNft], Error>) -> Void) {
+    private func fetchFavouriteNftInfo(ids: [UUID], completion: @escaping (Result<[ProfileNft], Error>) -> Void) {
         var nfts: [ProfileNft] = []
         let dispatchGroup = DispatchGroup()
         

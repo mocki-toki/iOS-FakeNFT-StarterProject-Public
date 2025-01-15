@@ -1,4 +1,5 @@
 import UIKit
+import Kingfisher
 
 final class NftImageCollectionViewCell: UICollectionViewCell, ReuseIdentifying {
     // MARK: - Properties
@@ -38,7 +39,8 @@ final class NftImageCollectionViewCell: UICollectionViewCell, ReuseIdentifying {
     // MARK: - Functions
 
     func configure(with cellModel: NftDetailCellModel) {
-        imageView.kf.setImage(with: cellModel.url)
+        guard let url = URL(string: cellModel.url) else { return }
+        imageView.kf.setImage(with: url)
     }
 }
 
