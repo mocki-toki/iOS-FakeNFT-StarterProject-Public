@@ -44,7 +44,7 @@ final class EditProfileViewModel: EditProfileViewModelProtocol {
     
     func saveProfileData(
         completion: @escaping (Result<Profile, Error>) -> Void) {
-            var encodedLikes = userProfile.likes.map { "\($0)" }.joined(separator: ",")
+            var encodedLikes = userProfile.likes.map { $0.uuidString.lowercased() }.joined(separator: ",")
             if encodedLikes.isEmpty {
                 encodedLikes = "null"
             }

@@ -102,7 +102,7 @@ final class FavouritesService: FavouritesServiceProtocol {
             return
         }
         
-        var encodedLikes = likes.map{ "\($0)"}.joined(separator: ",")
+        var encodedLikes = likes.map{ $0.uuidString.lowercased() }.joined(separator: ",")
         if encodedLikes.isEmpty {
             encodedLikes = "null"
         }
