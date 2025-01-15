@@ -1,6 +1,6 @@
+import UIKit
 import SnapKit
 import Then
-import UIKit
 
 enum NftCellType {
     case cart
@@ -9,39 +9,40 @@ enum NftCellType {
     case favorite
 }
 
-class NftBaseCell: UIView {
+final class NftBaseCell: UIView {
     // MARK: - Properties
-    let imgView = UIImageView().then {
+    private let imgView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
         $0.layer.cornerRadius = 12
         $0.layer.masksToBounds = true
         $0.backgroundColor = .gray
     }
 
-    let nameLabel = UILabel().then {
+    private let nameLabel = UILabel().then {
         $0.font = .bold17
         $0.textColor = .yBlack
     }
 
-    let priceCaptionLabel = UILabel().then {
+    private let priceCaptionLabel = UILabel().then {
         $0.font = .regular13
         $0.textColor = .yBlack
+        $0.text = String(localizable: .cellPriceCaptionLabel)
     }
 
-    let priceLabel = UILabel().then {
+    private let priceLabel = UILabel().then {
         $0.font = .medium10
         $0.textColor = .yBlack
     }
 
-    let authorLabel = UILabel().then {
+    private let authorLabel = UILabel().then {
         $0.font = .regular13
         $0.textColor = .yBlack
         $0.text = "Author"
     }
 
-    let ratingView = RatingView()
-    let likeButton = LikeButton()
-    let cartButton = CartButton()
+    private let ratingView = RatingView()
+    private let likeButton = LikeButton()
+    private let cartButton = CartButton()
 
     private var image = UIImage() {
         didSet {
@@ -82,23 +83,28 @@ class NftBaseCell: UIView {
             cartButton.setInCart(isInCart)
         }
     }
+    
+    private let containerView = UIView().then {
+        $0.backgroundColor = .clear
+    }
 
-    var onLikeButtonTapped: (() -> Void)?
-    var onCartButtonTapped: (() -> Void)?
+    private var onLikeButtonTapped: (() -> Void)?
+    private var onCartButtonTapped: (() -> Void)?
 
-    // MARK: - Initialization
+    // MARK: - Lifecycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupActionHandlers()
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupActionHandlers()
     }
 
-    // MARK: - Public Methods
+    // MARK: - Public methods
 
     func configure(
         with type: NftCellType, onLike: @escaping () -> Void, onCart: @escaping () -> Void
@@ -111,13 +117,13 @@ class NftBaseCell: UIView {
     func setText(_ text: String) {
         self.text = text
     }
+    
+    func setImage(_ url: URL) {
+        imgView.kf.setImage(with: url)
+    }
 
     func setImage(_ image: UIImage) {
         self.image = image
-    }
-
-    func setImage(_ url: URL) {
-        imgView.kf.setImage(with: url)
     }
 
     func setAuthor(_ author: String) {
@@ -139,8 +145,12 @@ class NftBaseCell: UIView {
     func setInCart(_ isInCart: Bool) {
         self.isInCart = isInCart
     }
+    
+    func setPriceCaption(_ caption: String) {
+        self.priceCaptionLabel.text = caption
+    }
 
-    // MARK: - Private Methods
+    // MARK: - Private methods
 
     private func setupActionHandlers() {
         likeButton.addTarget(self, action: #selector(handleLikeButtonTapped), for: .touchUpInside)
@@ -169,7 +179,7 @@ class NftBaseCell: UIView {
             setupCollectionView()
         }
     }
-
+    
     private func setupCommonSubviews() {
         addSubview(imgView)
         addSubview(likeButton)
@@ -189,9 +199,9 @@ class NftBaseCell: UIView {
         }
 
         likeButton.snp.makeConstraints { make in
-            make.trailing.equalTo(imgView.snp.trailing).offset(-5)
-            make.top.equalTo(imgView.snp.top).offset(5)
-            make.size.equalTo(CGSize(width: 21, height: 21))
+            make.trailing.equalTo(imgView.snp.trailing).offset(5)
+            make.top.equalTo(imgView.snp.top).offset(-6)
+            make.size.equalTo(CGSize(width: 42, height: 42))
         }
 
         nameLabel.snp.makeConstraints { make in
@@ -210,30 +220,40 @@ class NftBaseCell: UIView {
             make.leading.equalTo(nameLabel)
         }
     }
-
     private func setupMyNftView() {
         priceLabel.font = .bold17
+        nameLabel.lineBreakMode = .byTruncatingTail
+        authorLabel.lineBreakMode = .byTruncatingTail
 
-        addSubview(authorLabel)
-        addSubview(priceCaptionLabel)
+        addSubview(containerView)
+        containerView.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(16)
+        }
+        
+        [imgView, likeButton,
+            nameLabel, ratingView, authorLabel,
+            priceCaptionLabel, priceLabel
+        ].forEach {
+            containerView.addSubview($0)
+        }
 
         imgView.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.leading.equalToSuperview()
             make.bottom.equalToSuperview()
-            make.width.equalTo(self.snp.height)
+            make.width.equalTo(containerView.snp.height)
         }
 
         likeButton.snp.makeConstraints { make in
-            make.trailing.equalTo(imgView.snp.trailing).offset(-10)
-            make.top.equalTo(imgView.snp.top).offset(10)
-            make.size.equalTo(CGSize(width: 17, height: 17))
+            make.trailing.equalTo(imgView.snp.trailing)
+            make.top.equalTo(imgView.snp.top)
+            make.size.equalTo(CGSize(width: 40, height: 40))
         }
 
         nameLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(23)
             make.leading.equalTo(imgView.snp.trailing).offset(20)
-            make.trailing.equalTo(priceCaptionLabel.snp.leading).offset(-16)
+            make.width.lessThanOrEqualTo(110)
         }
 
         ratingView.snp.makeConstraints { make in
@@ -244,67 +264,77 @@ class NftBaseCell: UIView {
         authorLabel.snp.makeConstraints { make in
             make.top.equalTo(ratingView.snp.bottom).offset(4)
             make.leading.equalTo(nameLabel)
+            make.width.lessThanOrEqualTo(nameLabel)
         }
 
         priceCaptionLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(33)
             make.leading.equalTo(priceLabel)
             make.trailing.equalToSuperview().offset(-23)
+            make.width.equalTo(priceLabel)
         }
 
         priceLabel.snp.makeConstraints { make in
             make.top.equalTo(priceCaptionLabel.snp.bottom).offset(2)
             make.leading.equalTo(priceCaptionLabel)
             make.trailing.equalToSuperview().offset(-23)
+            make.width.greaterThanOrEqualTo(70)
         }
     }
 
     private func setupCartView() {
         priceLabel.font = .bold17
-        cartButton.setInCart(isInCart)
-
-        addSubview(cartButton)
-        addSubview(priceCaptionLabel)
-
-        imgView.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-            make.leading.equalToSuperview()
-            make.bottom.equalToSuperview()
-            make.width.equalTo(self.snp.height)
+        cartButton.setInCart(true)
+        
+        addSubview(containerView)
+        containerView.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(16)
         }
-
+        
+        [imgView, ratingView, nameLabel, priceCaptionLabel, priceLabel, cartButton]
+            .forEach {
+                containerView.addSubview($0)
+            }
+        
+        imgView.snp.makeConstraints { make in
+            make.top.leading.bottom.equalToSuperview()
+            make.width.equalTo(containerView.snp.height)
+        }
+        
         nameLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(8)
             make.leading.equalTo(imgView.snp.trailing).offset(20)
             make.trailing.equalTo(cartButton.snp.leading).offset(-16)
         }
-
+        
         ratingView.snp.makeConstraints { make in
             make.top.equalTo(nameLabel.snp.bottom).offset(4)
             make.leading.equalTo(nameLabel)
         }
-
+        
         priceCaptionLabel.snp.makeConstraints { make in
             make.top.equalTo(ratingView.snp.bottom).offset(12)
             make.leading.equalTo(nameLabel)
         }
-
+        
         priceLabel.snp.makeConstraints { make in
             make.top.equalTo(priceCaptionLabel.snp.bottom).offset(2)
             make.leading.equalTo(nameLabel)
         }
-
+        
         cartButton.snp.makeConstraints { make in
             make.size.equalTo(CGSize(width: 18, height: 18))
             make.centerY.equalToSuperview()
             make.trailing.equalToSuperview().offset(-12)
         }
     }
-
+    
     private func setupCollectionView() {
         cartButton.setInCart(isInCart)
 
-        addSubview(cartButton)
+        [imgView, likeButton, ratingView, nameLabel, priceLabel, cartButton].forEach {
+            addSubview($0)
+        }
 
         imgView.snp.makeConstraints { make in
             make.top.equalToSuperview()

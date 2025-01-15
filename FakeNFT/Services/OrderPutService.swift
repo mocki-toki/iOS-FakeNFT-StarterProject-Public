@@ -11,11 +11,11 @@ protocol OrderPutService {
 
 final class OrderPutServiceImpl: OrderPutService {
     private let networkClient: NetworkClient
-
+    
     init(networkClient: NetworkClient) {
         self.networkClient = networkClient
     }
-
+    
     func sendOrderPutRequest(
         nftIds: [UUID],
         completion: @escaping OrderPutCompletion

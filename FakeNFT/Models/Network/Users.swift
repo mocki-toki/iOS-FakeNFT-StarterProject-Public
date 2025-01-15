@@ -7,5 +7,5 @@ struct Users: Decodable {
     let description: String
     let website: String
     let id: String
-    let nfts: [String]
+    let nfts: [UUID]
 }

@@ -19,31 +19,37 @@ final class ServicesAssembly {
             storage: nftStorage
         )
     }
+    var currenciesService: CurrenciesService {
+        CurrenciesServiceImpl(networkClient: networkClient)
+    }
+    
+    lazy var profileNetworkService: ProfileNetworkService = {
+        ProfileNetworkService(networkClient: networkClient)
+    }()
+    
+    var userService: UserService {
+        UserServiceImpl(networkClient: networkClient)
+    }
+    
+    var currenciesService: CurrenciesService {
+        CurrenciesServiceImpl(
+            networkClient: networkClient
+        )
+    }
+    
+    var orderService: OrderService {
+        OrderServiceImpl(networkClient: networkClient)
+    }
+    
+    var orderPutService: OrderPutService {
+        OrderPutServiceImpl(networkClient: networkClient)
+    }
 
     var nftCollectionService: NftCollectionService {
         NftCollectionServiceImpl(
             networkClient: networkClient,
             storage: nftCollectionStorage
+    }
         )
-    }
-
-    var orderService: OrderService {
-        OrderServiceImpl(networkClient: networkClient)
-    }
-
-    var orderPutService: OrderPutService {
-        OrderPutServiceImpl(networkClient: networkClient)
-    }
-
-    var profileService: ProfileService {
-        ProfileServiceImpl(networkClient: networkClient)
-    }
-
-    var profilePutService: ProfilePutService {
-        ProfilePutServiceImpl(networkClient: networkClient)
-    }
-    
-    var currenciesService: CurrenciesService {
-        CurrenciesServiceImpl(networkClient: networkClient)
-    }
 }
+
