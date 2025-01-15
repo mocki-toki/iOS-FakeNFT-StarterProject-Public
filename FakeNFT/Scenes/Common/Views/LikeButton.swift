@@ -9,7 +9,7 @@ final class LikeButton: UIButton {
         }
     }
     
-    private var defaultColor: UIColor = .yWhite {
+    private var defaultColor: UIColor = .yWhiteUniversal {
         didSet {
             updateAppearance()
         }

@@ -22,7 +22,9 @@ final class CollectionListViewController: UIViewController {
         style: .plain,
         target: self,
         action: #selector(sortButtonTapped)
-    )
+    ).then {
+        $0.tintColor = .yBlack
+    }
 
     lazy var activityIndicator = UIActivityIndicatorView()
 
