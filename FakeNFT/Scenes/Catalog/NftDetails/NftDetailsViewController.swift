@@ -9,7 +9,7 @@ protocol NftDetailsView: AnyObject, ErrorView, LoadingView {
 final class NftDetailsViewController: UIViewController, UIScrollViewDelegate {
     // MARK: - Properties
     
-    private var viewModel: NftDetailsViewModel
+    private let viewModel: NftDetailsViewModel
     private let detailsAssembly: NftDetailsAssembly
     
     private lazy var scrollView = UIScrollView().then {
