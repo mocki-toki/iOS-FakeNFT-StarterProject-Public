@@ -228,8 +228,16 @@ final class UserCardViewController: UIViewController {
     @objc private func stackViewTapped() {
         guard let userId = viewModel.user?.id else { return }
         let nftService = servicesAssembly.nftService
+        let orderService = servicesAssembly.orderService
+        let orderPutService = servicesAssembly.orderPutService
+        let profileService = servicesAssembly.profileService
+        let profilePutService = servicesAssembly.profilePutService
         
-        let userCollectionViewModel = UserCollectionViewModel(userId: userId, nftService: nftService)
+        let userCollectionViewModel = UserCollectionViewModel(
+            userId: userId, nftService: nftService, orderService: orderService,
+            orderPutService: orderPutService, profileService: profileService,
+            profilePutService: profilePutService
+        )
         let collectionViewController = UserCollectionViewController(servicesAssembly: servicesAssembly, viewModel: userCollectionViewModel)
         
         navigationController?.pushViewController(collectionViewController, animated: true)

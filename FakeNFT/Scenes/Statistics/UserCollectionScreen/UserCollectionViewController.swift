@@ -17,7 +17,7 @@ final class UserCollectionViewController: UIViewController {
             $0.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         }
     ).then {
-        $0.register(StatisticsCollectionViewCell.self, forCellWithReuseIdentifier: "NFTCell")
+        $0.register(NftCollectionViewCell.self)
         $0.dataSource = self
         $0.delegate = self
         $0.backgroundColor = .clear
@@ -69,6 +69,7 @@ final class UserCollectionViewController: UIViewController {
     
     // MARK: - UI Setup
     private func setupUI() {
+        view.backgroundColor = .yWhite
         setupNavigationBar()
         setupLoader()
         
@@ -141,16 +142,38 @@ extension UserCollectionViewController: UICollectionViewDataSource {
         return viewModel.getNfts().count
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: StatisticsCollectionViewCell.identifier,
-            for: indexPath
-        ) as? StatisticsCollectionViewCell else {
-            fatalError("Unable to dequeue StatisticsCollectionViewCell")
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath)
+        -> UICollectionViewCell {
+        guard
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: "NftCollectionViewCell", for: indexPath)
+                as? NftCollectionViewCell
+        else {
+            return UICollectionViewCell()
         }
-        
         let nft = viewModel.getNfts()[indexPath.item]
-        cell.configure(for: nft)
+        cell.configure(
+            with: .collection,
+            onLike: {
+                self.viewModel.toggleLikeNft(byId: nft.id)
+            },
+            onCart: {
+                self.viewModel.toggleCartNft(byId: nft.id)
+            }
+        )
+
+            if let url = URL(string: nft.images[0]) {
+                
+            cell.setImage(url)
+            }
+
+        cell.setRating(nft.rating)
+        cell.setPrice("\(nft.price) ETH")
+        cell.setText(nft.name)
+
+        let nftStates = viewModel.getAdditions()
+        cell.setLike(nftStates[nft.id]?.isLiked ?? false)
+        cell.setInCart(nftStates[nft.id]?.isInCart ?? false)
         return cell
     }
 }
