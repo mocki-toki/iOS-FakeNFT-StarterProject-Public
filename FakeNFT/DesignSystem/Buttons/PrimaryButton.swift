@@ -6,12 +6,12 @@ final class PrimaryButton: UIButton {
         setupButton()
         self.setTitle(title, for: .normal)
     }
-    
+
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupButton()
     }
-    
+
     private func setupButton() {
         self.backgroundColor = .yBlack
         self.setTitleColor(.yWhite, for: .normal)

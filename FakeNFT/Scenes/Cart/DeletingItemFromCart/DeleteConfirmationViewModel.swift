@@ -6,10 +6,10 @@ final class DeleteConfirmationViewModel {
     let message: String
     let confirmButtonText: String
     let cancelButtonText: String
-    
+
     private let onConfirm: () -> Void
     private let onCancel: () -> Void
-    
+
     // MARK: - Initializer
     init(
         nftImage: UIImage,
@@ -26,12 +26,12 @@ final class DeleteConfirmationViewModel {
         self.onConfirm = onConfirm
         self.onCancel = onCancel
     }
-    
+
     // MARK: - Public Methods
     func confirmDeletion() {
         onConfirm()
     }
-    
+
     func cancelDeletion() {
         onCancel()
     }

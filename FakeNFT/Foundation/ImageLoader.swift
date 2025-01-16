@@ -1,5 +1,5 @@
-import UIKit
 import Kingfisher
+import UIKit
 
 final class ImageLoader {
     static func loadImage(from url: URL?, completion: @escaping (Result<UIImage, Error>) -> Void) {
@@ -7,7 +7,7 @@ final class ImageLoader {
             completion(.failure(NSError(domain: "Invalid URL", code: 0, userInfo: nil)))
             return
         }
-        
+
         KingfisherManager.shared.retrieveImage(with: url) { result in
             switch result {
             case .success(let imageResult):

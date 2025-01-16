@@ -6,12 +6,12 @@ final class SecondaryButton: UIButton {
         setupButton()
         self.setTitle(title, for: .normal)
     }
-    
+
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupButton()
     }
-    
+
     private func setupButton() {
         self.backgroundColor = .clear
         self.layer.borderWidth = 1
@@ -20,7 +20,7 @@ final class SecondaryButton: UIButton {
         self.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         self.layer.cornerRadius = 16
     }
-    
+
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         layer.borderColor = UIColor.yBlack.cgColor

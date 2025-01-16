@@ -3,7 +3,7 @@ import Foundation
 final class SuccessViewModel {
     // MARK: - Public Properties
     let successData: SuccessModel
-    
+
     init() {
         successData = SuccessModel(
             imageName: "SucessfulPayment",
