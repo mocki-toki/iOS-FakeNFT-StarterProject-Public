@@ -35,9 +35,15 @@ extension UICollectionView {
         register(T.self, forCellWithReuseIdentifier: T.defaultReuseIdentifier)
     }
 
-    func dequeueReusableCell<T: UICollectionViewCell>(indexPath: IndexPath) -> T where T: ReuseIdentifying {
-        guard let cell = dequeueReusableCell(withReuseIdentifier: T.defaultReuseIdentifier, for: indexPath) as? T else {
-            assertionFailure("Could not dequeue cell with identifier: \(T.defaultReuseIdentifier) for: \(indexPath)")
+    func dequeueReusableCell<T: UICollectionViewCell>(indexPath: IndexPath) -> T
+    where T: ReuseIdentifying {
+        guard
+            let cell = dequeueReusableCell(
+                withReuseIdentifier: T.defaultReuseIdentifier, for: indexPath) as? T
+        else {
+            assertionFailure(
+                "Could not dequeue cell with identifier: \(T.defaultReuseIdentifier) for: \(indexPath)"
+            )
             return T()
         }
         return cell

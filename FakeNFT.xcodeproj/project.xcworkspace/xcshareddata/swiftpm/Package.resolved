@@ -1,4 +1,5 @@
 {
+  "originHash" : "77942f470e8aa260f338f5318757d31a37510a6e257b8156083bf799560a434a",
   "pins" : [
     {
       "identity" : "kingfisher",
@@ -17,7 +18,43 @@
         "revision" : "2b80c6f5a091c76a01f080545723f9b0bcf928cd",
         "version" : "13.6.2"
       }
+    },
+    {
+      "identity" : "snapkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SnapKit/SnapKit",
+      "state" : {
+        "revision" : "2842e6e84e82eb9a8dac0100ca90d9444b0307f4",
+        "version" : "5.7.1"
+      }
+    },
+    {
+      "identity" : "swiftlintplugins",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SimplyDanny/SwiftLintPlugins",
+      "state" : {
+        "revision" : "f9731bef175c3eea3a0ca960f1be78fcc2bc7853",
+        "version" : "0.57.1"
+      }
+    },
+    {
+      "identity" : "then",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/devxoul/Then",
+      "state" : {
+        "revision" : "d41ef523faef0f911369f79c0b96815d9dbb6d7a",
+        "version" : "3.0.0"
+      }
+    },
+    {
+      "identity" : "xcstrings-tool-plugin",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/liamnichols/xcstrings-tool-plugin",
+      "state" : {
+        "revision" : "448890f1c47c0d70b6e539341f623c33bd1385af",
+        "version" : "1.0.0"
+      }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

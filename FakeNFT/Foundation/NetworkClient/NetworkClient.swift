@@ -9,29 +9,36 @@ enum NetworkClientError: Error {
 
 protocol NetworkClient {
     @discardableResult
-    func send(request: NetworkRequest,
-              completionQueue: DispatchQueue,
-              onResponse: @escaping (Result<Data, Error>) -> Void) -> NetworkTask?
+    func send(
+        request: NetworkRequest,
+        completionQueue: DispatchQueue,
+        onResponse: @escaping (Result<Data, Error>) -> Void
+    ) -> NetworkTask?
 
     @discardableResult
-    func send<T: Decodable>(request: NetworkRequest,
-                            type: T.Type,
-                            completionQueue: DispatchQueue,
-                            onResponse: @escaping (Result<T, Error>) -> Void) -> NetworkTask?
+    func send<T: Decodable>(
+        request: NetworkRequest,
+        type: T.Type,
+        completionQueue: DispatchQueue,
+        onResponse: @escaping (Result<T, Error>) -> Void
+    ) -> NetworkTask?
 }
 
 extension NetworkClient {
-
     @discardableResult
-    func send(request: NetworkRequest,
-              onResponse: @escaping (Result<Data, Error>) -> Void) -> NetworkTask? {
+    func send(
+        request: NetworkRequest,
+        onResponse: @escaping (Result<Data, Error>) -> Void
+    ) -> NetworkTask? {
         send(request: request, completionQueue: .main, onResponse: onResponse)
     }
 
     @discardableResult
-    func send<T: Decodable>(request: NetworkRequest,
-                            type: T.Type,
-                            onResponse: @escaping (Result<T, Error>) -> Void) -> NetworkTask? {
+    func send<T: Decodable>(
+        request: NetworkRequest,
+        type: T.Type,
+        onResponse: @escaping (Result<T, Error>) -> Void
+    ) -> NetworkTask? {
         send(request: request, type: type, completionQueue: .main, onResponse: onResponse)
     }
 }
@@ -41,9 +48,11 @@ struct DefaultNetworkClient: NetworkClient {
     private let decoder: JSONDecoder
     private let encoder: JSONEncoder
 
-    init(session: URLSession = URLSession.shared,
-         decoder: JSONDecoder = JSONDecoder(),
-         encoder: JSONEncoder = JSONEncoder()) {
+    init(
+        session: URLSession = URLSession.shared,
+        decoder: JSONDecoder = JSONDecoder(),
+        encoder: JSONEncoder = JSONEncoder()
+    ) {
         self.session = session
         self.decoder = decoder
         self.encoder = encoder
@@ -68,7 +77,7 @@ struct DefaultNetworkClient: NetworkClient {
                 return
             }
 
-            guard 200 ..< 300 ~= response.statusCode else {
+            guard 200..<300 ~= response.statusCode else {
                 onResponse(.failure(NetworkClientError.httpStatusCode(response.statusCode)))
                 return
             }
@@ -98,6 +107,7 @@ struct DefaultNetworkClient: NetworkClient {
         onResponse: @escaping (Result<T, Error>) -> Void
     ) -> NetworkTask? {
         return send(request: request, completionQueue: completionQueue) { result in
+            Logger.log("Response is : \(result)")
             switch result {
             case let .success(data):
                 self.parse(data: data, type: type, onResponse: onResponse)
@@ -126,7 +136,7 @@ struct DefaultNetworkClient: NetworkClient {
                 URLQueryItem(
                     name: field.key,
                     value: field.value
-                    )
+                )
             }
             urlComponents.queryItems = queryItems
             urlRequest.httpBody = urlComponents.query?.data(using: .utf8)
@@ -138,7 +148,9 @@ struct DefaultNetworkClient: NetworkClient {
         return urlRequest
     }
 
-    private func parse<T: Decodable>(data: Data, type _: T.Type, onResponse: @escaping (Result<T, Error>) -> Void) {
+    private func parse<T: Decodable>(
+        data: Data, type _: T.Type, onResponse: @escaping (Result<T, Error>) -> Void
+    ) {
         do {
             let response = try decoder.decode(T.self, from: data)
             onResponse(.success(response))
